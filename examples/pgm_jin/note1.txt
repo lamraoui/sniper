@@ -1,0 +1,42 @@
+13-01-2014 
+
+ I wrote another 5 C programs, and I will explain them in detail as follows.
+
+(1) binary_search.c
+In this program, both for loops and while loop are used.
+
+function "assign" just assigns an arithmetic sequence to the array a[low]...a[high]
+function "binary_search" tries to find "value" in the array a[low]...a[high]
+function "foo" will call the function "binary_search".
+
+I think it is a correct program, while Sniper reported "error".
+
+(2) factorial.c
+In this program, recursive function call appears.
+
+function "fac" just calculates the factorial of n, and returns the value.
+
+I think it is a simple and correct program, but Sniper says something like below
+
+> -- Error-inducing Input:
+> (= x 5)
+> SNIPER was unable to localize root causes.
+
+(3) Fibonacci.c
+function "Fib" calculates the value of Fibonacci[n] and returns it
+
+Sniper says "error" while I think the program should have worked well.
+
+(4) insertion_sort.c(the code is adapted from the book "Introduction to algorithms")
+In this program, several functions appears.
+function "assign" assigns arbitrary value to the a[0]...a[len - 1]
+function "insertion_sort" sorts the array a[0]...a[len - 1] using insertion sort
+function "check" checks whether the array a[0]...a[len - 1] is sorted
+
+Though a little bit complicated, I think the program is correct.
+Sniper also says "error" but no more information is displayed.
+
+(5) merge_sort.c(the code is adapted from the book "Introduction to algorithms")
+This program is just like "insertion_sort.c" but it sorts the array using merge sort.
+When we use merge sort, recursive function call will appear.
+Sniper says "error" to this program, too.

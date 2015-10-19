@@ -1,0 +1,59 @@
+(set-evidence! true)
+(set-verbosity! 3)
+
+(define bb1_return::bool)
+(define bb_bb1::bool)
+(define entry_bb::bool)
+(define entry_bb1::bool)
+(define _x::int)
+(define _y::int)
+(define tmp4::int)
+(define _y1::int)
+(define input::int)
+(define tmp::bool)
+(define tmp2::int)
+(define tmp5::bool)
+(define tmp6::bool)
+(define tmp7::int)
+(define entry::bool)
+(define bb::bool)
+(define bb1::bool)
+(define return::bool)
+
+(assert (= entry true))
+(assert (= bb (and entry entry_bb)))
+(assert (= bb1
+   (or (and (and bb bb_bb1) (not (and entry entry_bb1)))
+       (and (not (and bb bb_bb1)) (and entry entry_bb1)))))
+(assert (= return (and bb1 bb1_return)))
+(assert (= tmp (= input 1042)))
+(assert (= tmp2 (ite tmp 1 0)))
+(assert (and entry (= tmp2 1)))
+(assert (and (= entry_bb tmp5) (= entry_bb1 (not tmp5))))
+(assert (= bb bb_bb1))
+(assert (= tmp6 (/= _x 0)))
+(assert (= tmp7 (ite tmp6 1 0)))
+(assert (= bb1 bb1_return))
+
+
+(assert+ (= _x 0)              100)
+(assert+ (= tmp4 (- input 42)) 30)
+(assert+ (= _y tmp4)           30)
+(assert+ (= tmp5 (< _y 0))     30)
+(assert+ (= _y1 0)             30)
+
+
+;;# CE
+(assert (= input 1042))
+;;# POST
+(assert (and bb1 (= tmp7 1)))
+
+
+;;#We run SNIPER on this program. The Path Exporation step found two failing trace.
+;;#In the first failling trace, the input value is 42 and the statements at the lines 3, 4, 5 and 7 are executed.
+;;#In the second failling trace, the input value is 41 and the statements at the lines 3, 4, 5, 6 and 7 are executed.
+;;#The input value (\texttt{input==42}) of the first failing trace was used as a counterexample for the Error Localization step. All the weights were set to $W_{a}$.
+;;#After running the Iteration Algorithm we obtain one potential root cause (line 3).
+
+
+(max-sat)

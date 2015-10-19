@@ -1,0 +1,961 @@
+; ModuleID = 'examples/tcas/tcas_original.c.bc'
+target datalayout = "e-p:64:64:64-i1:8:8-i8:8:8-i16:16:16-i32:32:32-i64:64:64-f32:32:32-f64:64:64-v64:64:64-v128:128:128-a0:0:64-s0:64:64-f80:128:128-n8:16:32:64"
+target triple = "x86_64-apple-darwin10.8"
+
+%struct.FILE = type { i8*, i32, i32, i16, i16, %struct.__sbuf, i32, i8*, i32 (i8*)*, i32 (i8*, i8*, i32)*, i64 (i8*, i64, i32)*, i32 (i8*, i8*, i32)*, %struct.__sbuf, %struct.__sFILEX*, i32, [3 x i8], [1 x i8], %struct.__sbuf, i32, i64 }
+%struct.__sFILEX = type opaque
+%struct.__sbuf = type { i8*, i32 }
+
+@Positive_RA_Alt_Thresh = common global [4 x i32] zeroinitializer, align 16
+@Alt_Layer_Value = common global i32 0
+@Climb_Inhibit = common global i32 0
+@Up_Separation = common global i32 0
+@Down_Separation = common global i32 0
+@Cur_Vertical_Sep = common global i32 0
+@Own_Tracked_Alt = common global i32 0
+@Other_Tracked_Alt = common global i32 0
+@High_Confidence = common global i32 0
+@Own_Tracked_Alt_Rate = common global i32 0
+@Other_Capability = common global i32 0
+@Two_of_Three_Reports_Valid = common global i32 0
+@Other_RAC = common global i32 0
+@__stdoutp = external global %struct.FILE*
+@.str = private constant [35 x i8] c"Error: Command line arguments are\0A\00", align 8
+@.str1 = private constant [63 x i8] c"Cur_Vertical_Sep, High_Confidence, Two_of_Three_Reports_Valid\0A\00", align 8
+@.str2 = private constant [58 x i8] c"Own_Tracked_Alt, Own_Tracked_Alt_Rate, Other_Tracked_Alt\0A\00", align 8
+@.str3 = private constant [49 x i8] c"Alt_Layer_Value, Up_Separation, Down_Separation\0A\00", align 8
+@.str4 = private constant [44 x i8] c"Other_RAC, Other_Capability, Climb_Inhibit\0A\00", align 8
+@.str5 = private constant [4 x i8] c"%d\0A\00", align 1
+
+define void @initialize() nounwind ssp {
+entry:
+  store i32 400, i32* getelementptr inbounds ([4 x i32]* @Positive_RA_Alt_Thresh, i64 0, i64 0), align 4
+  store i32 500, i32* getelementptr inbounds ([4 x i32]* @Positive_RA_Alt_Thresh, i64 0, i64 1), align 4
+  store i32 640, i32* getelementptr inbounds ([4 x i32]* @Positive_RA_Alt_Thresh, i64 0, i64 2), align 4
+  store i32 740, i32* getelementptr inbounds ([4 x i32]* @Positive_RA_Alt_Thresh, i64 0, i64 3), align 4
+  br label %return
+
+return:                                           ; preds = %entry
+  ret void
+}
+
+define i32 @ALIM() nounwind ssp {
+entry:
+  %"alloca point" = bitcast i32 0 to i32
+  %0 = load i32* @Alt_Layer_Value, align 4
+  %1 = sext i32 %0 to i64
+  %2 = getelementptr inbounds [4 x i32]* @Positive_RA_Alt_Thresh, i64 0, i64 %1
+  %3 = load i32* %2, align 4
+  br label %return
+
+return:                                           ; preds = %entry
+  ret i32 %3
+}
+
+define i32 @Inhibit_Biased_Climb() nounwind ssp {
+entry:
+  %"alloca point" = bitcast i32 0 to i32
+  %0 = load i32* @Climb_Inhibit, align 4
+  %1 = icmp ne i32 %0, 0
+  br i1 %1, label %bb, label %bb1
+
+bb:                                               ; preds = %entry
+  %2 = load i32* @Up_Separation, align 4
+  %3 = add nsw i32 %2, 100
+  br label %bb2
+
+bb1:                                              ; preds = %entry
+  %4 = load i32* @Up_Separation, align 4
+  br label %bb2
+
+bb2:                                              ; preds = %bb1, %bb
+  %iftmp.1.0 = phi i32 [ %3, %bb ], [ %4, %bb1 ]
+  br label %return
+
+return:                                           ; preds = %bb2
+  ret i32 %iftmp.1.0
+}
+
+define i32 @Non_Crossing_Biased_Climb() nounwind ssp {
+entry:
+  %"alloca point" = bitcast i32 0 to i32
+  %0 = load i32* @Climb_Inhibit, align 4
+  %1 = icmp ne i32 %0, 0
+  br i1 %1, label %bb.i, label %bb1.i
+
+bb.i:                                             ; preds = %entry
+  %2 = load i32* @Up_Separation, align 4
+  %3 = add nsw i32 %2, 100
+  br label %Inhibit_Biased_Climb.exit
+
+bb1.i:                                            ; preds = %entry
+  %4 = load i32* @Up_Separation, align 4
+  br label %Inhibit_Biased_Climb.exit
+
+Inhibit_Biased_Climb.exit:                        ; preds = %bb.i, %bb1.i
+  %iftmp.1.0.i = phi i32 [ %3, %bb.i ], [ %4, %bb1.i ]
+  %5 = load i32* @Down_Separation, align 4
+  %6 = icmp sgt i32 %iftmp.1.0.i, %5
+  %7 = zext i1 %6 to i32
+  %8 = icmp ne i32 %7, 0
+  br i1 %8, label %bb, label %bb6
+
+bb:                                               ; preds = %Inhibit_Biased_Climb.exit
+  %9 = call i32 (...)* bitcast (i32 ()* @Own_Below_Threat to i32 (...)*)() nounwind
+  %10 = icmp eq i32 %9, 0
+  br i1 %10, label %bb3, label %bb1
+
+bb1:                                              ; preds = %bb
+  %11 = call i32 (...)* bitcast (i32 ()* @Own_Below_Threat to i32 (...)*)() nounwind
+  %12 = icmp eq i32 %11, 0
+  br i1 %12, label %bb4, label %bb2
+
+bb2:                                              ; preds = %bb1
+  %13 = load i32* @Alt_Layer_Value, align 4
+  %14 = sext i32 %13 to i64
+  %15 = getelementptr inbounds [4 x i32]* @Positive_RA_Alt_Thresh, i64 0, i64 %14
+  %16 = load i32* %15, align 4
+  %17 = load i32* @Down_Separation, align 4
+  %18 = icmp sge i32 %16, %17
+  br i1 %18, label %bb3, label %bb4
+
+bb3:                                              ; preds = %bb2, %bb
+  br label %bb5
+
+bb4:                                              ; preds = %bb2, %bb1
+  br label %bb5
+
+bb5:                                              ; preds = %bb4, %bb3
+  %iftmp.5.0 = phi i32 [ 1, %bb3 ], [ 0, %bb4 ]
+  br label %bb12
+
+bb6:                                              ; preds = %Inhibit_Biased_Climb.exit
+  %19 = call i32 (...)* bitcast (i32 ()* @Own_Above_Threat to i32 (...)*)() nounwind
+  %20 = icmp eq i32 %19, 0
+  br i1 %20, label %bb10, label %bb7
+
+bb7:                                              ; preds = %bb6
+  %21 = load i32* @Cur_Vertical_Sep, align 4
+  %22 = icmp sle i32 %21, 299
+  br i1 %22, label %bb10, label %bb8
+
+bb8:                                              ; preds = %bb7
+  %23 = load i32* @Alt_Layer_Value, align 4
+  %24 = sext i32 %23 to i64
+  %25 = getelementptr inbounds [4 x i32]* @Positive_RA_Alt_Thresh, i64 0, i64 %24
+  %26 = load i32* %25, align 4
+  %27 = load i32* @Up_Separation, align 4
+  %28 = icmp sgt i32 %26, %27
+  br i1 %28, label %bb10, label %bb9
+
+bb9:                                              ; preds = %bb8
+  br label %bb11
+
+bb10:                                             ; preds = %bb8, %bb7, %bb6
+  br label %bb11
+
+bb11:                                             ; preds = %bb10, %bb9
+  %iftmp.7.0 = phi i32 [ 0, %bb10 ], [ 1, %bb9 ]
+  br label %bb12
+
+bb12:                                             ; preds = %bb11, %bb5
+  %result.0 = phi i32 [ %iftmp.5.0, %bb5 ], [ %iftmp.7.0, %bb11 ]
+  br label %return
+
+return:                                           ; preds = %bb12
+  ret i32 %result.0
+}
+
+define i32 @Non_Crossing_Biased_Descend() nounwind ssp {
+entry:
+  %"alloca point" = bitcast i32 0 to i32
+  %0 = load i32* @Climb_Inhibit, align 4
+  %1 = icmp ne i32 %0, 0
+  br i1 %1, label %bb.i, label %bb1.i
+
+bb.i:                                             ; preds = %entry
+  %2 = load i32* @Up_Separation, align 4
+  %3 = add nsw i32 %2, 100
+  br label %Inhibit_Biased_Climb.exit
+
+bb1.i:                                            ; preds = %entry
+  %4 = load i32* @Up_Separation, align 4
+  br label %Inhibit_Biased_Climb.exit
+
+Inhibit_Biased_Climb.exit:                        ; preds = %bb.i, %bb1.i
+  %iftmp.1.0.i = phi i32 [ %3, %bb.i ], [ %4, %bb1.i ]
+  %5 = load i32* @Down_Separation, align 4
+  %6 = icmp sgt i32 %iftmp.1.0.i, %5
+  %7 = zext i1 %6 to i32
+  %8 = icmp ne i32 %7, 0
+  br i1 %8, label %bb, label %bb6
+
+bb:                                               ; preds = %Inhibit_Biased_Climb.exit
+  %9 = call i32 (...)* bitcast (i32 ()* @Own_Below_Threat to i32 (...)*)() nounwind
+  %10 = icmp eq i32 %9, 0
+  br i1 %10, label %bb4, label %bb1
+
+bb1:                                              ; preds = %bb
+  %11 = load i32* @Cur_Vertical_Sep, align 4
+  %12 = icmp sle i32 %11, 299
+  br i1 %12, label %bb4, label %bb2
+
+bb2:                                              ; preds = %bb1
+  %13 = load i32* @Alt_Layer_Value, align 4
+  %14 = sext i32 %13 to i64
+  %15 = getelementptr inbounds [4 x i32]* @Positive_RA_Alt_Thresh, i64 0, i64 %14
+  %16 = load i32* %15, align 4
+  %17 = load i32* @Down_Separation, align 4
+  %18 = icmp sgt i32 %16, %17
+  br i1 %18, label %bb4, label %bb3
+
+bb3:                                              ; preds = %bb2
+  br label %bb5
+
+bb4:                                              ; preds = %bb2, %bb1, %bb
+  br label %bb5
+
+bb5:                                              ; preds = %bb4, %bb3
+  %iftmp.11.0 = phi i32 [ 0, %bb4 ], [ 1, %bb3 ]
+  br label %bb12
+
+bb6:                                              ; preds = %Inhibit_Biased_Climb.exit
+  %19 = call i32 (...)* bitcast (i32 ()* @Own_Above_Threat to i32 (...)*)() nounwind
+  %20 = icmp eq i32 %19, 0
+  br i1 %20, label %bb9, label %bb7
+
+bb7:                                              ; preds = %bb6
+  %21 = call i32 (...)* bitcast (i32 ()* @Own_Above_Threat to i32 (...)*)() nounwind
+  %22 = icmp eq i32 %21, 0
+  br i1 %22, label %bb10, label %bb8
+
+bb8:                                              ; preds = %bb7
+  %23 = load i32* @Alt_Layer_Value, align 4
+  %24 = sext i32 %23 to i64
+  %25 = getelementptr inbounds [4 x i32]* @Positive_RA_Alt_Thresh, i64 0, i64 %24
+  %26 = load i32* %25, align 4
+  %27 = load i32* @Up_Separation, align 4
+  %28 = icmp sle i32 %26, %27
+  br i1 %28, label %bb9, label %bb10
+
+bb9:                                              ; preds = %bb8, %bb6
+  br label %bb11
+
+bb10:                                             ; preds = %bb8, %bb7
+  br label %bb11
+
+bb11:                                             ; preds = %bb10, %bb9
+  %iftmp.14.0 = phi i32 [ 1, %bb9 ], [ 0, %bb10 ]
+  br label %bb12
+
+bb12:                                             ; preds = %bb11, %bb5
+  %result.0 = phi i32 [ %iftmp.11.0, %bb5 ], [ %iftmp.14.0, %bb11 ]
+  br label %return
+
+return:                                           ; preds = %bb12
+  ret i32 %result.0
+}
+
+define i32 @Own_Below_Threat() nounwind ssp {
+entry:
+  %"alloca point" = bitcast i32 0 to i32
+  %0 = load i32* @Own_Tracked_Alt, align 4
+  %1 = load i32* @Other_Tracked_Alt, align 4
+  %2 = icmp slt i32 %0, %1
+  %3 = zext i1 %2 to i32
+  br label %return
+
+return:                                           ; preds = %entry
+  ret i32 %3
+}
+
+define i32 @Own_Above_Threat() nounwind ssp {
+entry:
+  %"alloca point" = bitcast i32 0 to i32
+  %0 = load i32* @Other_Tracked_Alt, align 4
+  %1 = load i32* @Own_Tracked_Alt, align 4
+  %2 = icmp slt i32 %0, %1
+  %3 = zext i1 %2 to i32
+  br label %return
+
+return:                                           ; preds = %entry
+  ret i32 %3
+}
+
+define i32 @alt_sep_test() nounwind ssp {
+entry:
+  %"alloca point" = bitcast i32 0 to i32
+  %0 = load i32* @High_Confidence, align 4
+  %1 = icmp eq i32 %0, 0
+  br i1 %1, label %bb3, label %bb
+
+bb:                                               ; preds = %entry
+  %2 = load i32* @Own_Tracked_Alt_Rate, align 4
+  %3 = icmp sgt i32 %2, 600
+  br i1 %3, label %bb3, label %bb1
+
+bb1:                                              ; preds = %bb
+  %4 = load i32* @Cur_Vertical_Sep, align 4
+  %5 = icmp sle i32 %4, 600
+  br i1 %5, label %bb3, label %bb2
+
+bb2:                                              ; preds = %bb1
+  br label %bb4
+
+bb3:                                              ; preds = %bb1, %bb, %entry
+  br label %bb4
+
+bb4:                                              ; preds = %bb3, %bb2
+  %iftmp.20.0 = phi i32 [ 0, %bb3 ], [ 1, %bb2 ]
+  %6 = load i32* @Other_Capability, align 4
+  %7 = icmp eq i32 %6, 1
+  %8 = zext i1 %7 to i32
+  %9 = load i32* @Two_of_Three_Reports_Valid, align 4
+  %10 = icmp eq i32 %9, 0
+  br i1 %10, label %bb7, label %bb5
+
+bb5:                                              ; preds = %bb4
+  %11 = load i32* @Other_RAC, align 4
+  %12 = icmp ne i32 %11, 0
+  br i1 %12, label %bb7, label %bb6
+
+bb6:                                              ; preds = %bb5
+  br label %bb8
+
+bb7:                                              ; preds = %bb5, %bb4
+  br label %bb8
+
+bb8:                                              ; preds = %bb7, %bb6
+  %iftmp.25.0 = phi i32 [ 0, %bb7 ], [ 1, %bb6 ]
+  %13 = icmp ne i32 %iftmp.20.0, 0
+  br i1 %13, label %bb9, label %bb28
+
+bb9:                                              ; preds = %bb8
+  %14 = icmp eq i32 %8, 0
+  br i1 %14, label %bb11, label %bb10
+
+bb10:                                             ; preds = %bb9
+  %15 = icmp ne i32 %iftmp.25.0, 0
+  br i1 %15, label %bb12, label %bb11
+
+bb11:                                             ; preds = %bb10, %bb9
+  %16 = icmp eq i32 %8, 0
+  br i1 %16, label %bb12, label %bb28
+
+bb12:                                             ; preds = %bb11, %bb10
+  %17 = load i32* @Climb_Inhibit, align 4
+  %18 = icmp ne i32 %17, 0
+  br i1 %18, label %bb.i.i, label %bb1.i.i
+
+bb.i.i:                                           ; preds = %bb12
+  %19 = load i32* @Up_Separation, align 4
+  %20 = add nsw i32 %19, 100
+  br label %Inhibit_Biased_Climb.exit.i
+
+bb1.i.i:                                          ; preds = %bb12
+  %21 = load i32* @Up_Separation, align 4
+  br label %Inhibit_Biased_Climb.exit.i
+
+Inhibit_Biased_Climb.exit.i:                      ; preds = %bb1.i.i, %bb.i.i
+  %iftmp.1.0.i.i = phi i32 [ %20, %bb.i.i ], [ %21, %bb1.i.i ]
+  %22 = load i32* @Down_Separation, align 4
+  %23 = icmp sgt i32 %iftmp.1.0.i.i, %22
+  %24 = zext i1 %23 to i32
+  %25 = icmp ne i32 %24, 0
+  br i1 %25, label %bb.i, label %bb6.i
+
+bb.i:                                             ; preds = %Inhibit_Biased_Climb.exit.i
+  %26 = call i32 (...)* bitcast (i32 ()* @Own_Below_Threat to i32 (...)*)() nounwind
+  %27 = icmp eq i32 %26, 0
+  br i1 %27, label %bb3.i, label %bb1.i
+
+bb1.i:                                            ; preds = %bb.i
+  %28 = call i32 (...)* bitcast (i32 ()* @Own_Below_Threat to i32 (...)*)() nounwind
+  %29 = icmp eq i32 %28, 0
+  br i1 %29, label %bb4.i, label %bb2.i
+
+bb2.i:                                            ; preds = %bb1.i
+  %30 = load i32* @Alt_Layer_Value, align 4
+  %31 = sext i32 %30 to i64
+  %32 = getelementptr inbounds [4 x i32]* @Positive_RA_Alt_Thresh, i64 0, i64 %31
+  %33 = load i32* %32, align 4
+  %34 = load i32* @Down_Separation, align 4
+  %35 = icmp sge i32 %33, %34
+  br i1 %35, label %bb3.i, label %bb4.i
+
+bb3.i:                                            ; preds = %bb2.i, %bb.i
+  br label %bb5.i
+
+bb4.i:                                            ; preds = %bb2.i, %bb1.i
+  br label %bb5.i
+
+bb5.i:                                            ; preds = %bb4.i, %bb3.i
+  %iftmp.5.0.i = phi i32 [ 1, %bb3.i ], [ 0, %bb4.i ]
+  br label %Non_Crossing_Biased_Climb.exit
+
+bb6.i:                                            ; preds = %Inhibit_Biased_Climb.exit.i
+  %36 = call i32 (...)* bitcast (i32 ()* @Own_Above_Threat to i32 (...)*)() nounwind
+  %37 = icmp eq i32 %36, 0
+  br i1 %37, label %bb10.i, label %bb7.i
+
+bb7.i:                                            ; preds = %bb6.i
+  %38 = load i32* @Cur_Vertical_Sep, align 4
+  %39 = icmp sle i32 %38, 299
+  br i1 %39, label %bb10.i, label %bb8.i
+
+bb8.i:                                            ; preds = %bb7.i
+  %40 = load i32* @Alt_Layer_Value, align 4
+  %41 = sext i32 %40 to i64
+  %42 = getelementptr inbounds [4 x i32]* @Positive_RA_Alt_Thresh, i64 0, i64 %41
+  %43 = load i32* %42, align 4
+  %44 = load i32* @Up_Separation, align 4
+  %45 = icmp sgt i32 %43, %44
+  br i1 %45, label %bb10.i, label %bb9.i
+
+bb9.i:                                            ; preds = %bb8.i
+  br label %bb11.i
+
+bb10.i:                                           ; preds = %bb8.i, %bb7.i, %bb6.i
+  br label %bb11.i
+
+bb11.i:                                           ; preds = %bb10.i, %bb9.i
+  %iftmp.7.0.i = phi i32 [ 0, %bb10.i ], [ 1, %bb9.i ]
+  br label %Non_Crossing_Biased_Climb.exit
+
+Non_Crossing_Biased_Climb.exit:                   ; preds = %bb5.i, %bb11.i
+  %result.0.i = phi i32 [ %iftmp.5.0.i, %bb5.i ], [ %iftmp.7.0.i, %bb11.i ]
+  %46 = icmp eq i32 %result.0.i, 0
+  br i1 %46, label %bb15, label %bb13
+
+bb13:                                             ; preds = %Non_Crossing_Biased_Climb.exit
+  %47 = load i32* @Own_Tracked_Alt, align 4
+  %48 = load i32* @Other_Tracked_Alt, align 4
+  %49 = icmp slt i32 %47, %48
+  %50 = zext i1 %49 to i32
+  %51 = icmp eq i32 %50, 0
+  br i1 %51, label %bb15, label %bb14
+
+bb14:                                             ; preds = %bb13
+  br label %bb16
+
+bb15:                                             ; preds = %bb13, %Non_Crossing_Biased_Climb.exit
+  br label %bb16
+
+bb16:                                             ; preds = %bb15, %bb14
+  %iftmp.28.0 = phi i32 [ 0, %bb15 ], [ 1, %bb14 ]
+  %52 = load i32* @Climb_Inhibit, align 4
+  %53 = icmp ne i32 %52, 0
+  br i1 %53, label %bb.i.i1, label %bb1.i.i2
+
+bb.i.i1:                                          ; preds = %bb16
+  %54 = load i32* @Up_Separation, align 4
+  %55 = add nsw i32 %54, 100
+  br label %Inhibit_Biased_Climb.exit.i4
+
+bb1.i.i2:                                         ; preds = %bb16
+  %56 = load i32* @Up_Separation, align 4
+  br label %Inhibit_Biased_Climb.exit.i4
+
+Inhibit_Biased_Climb.exit.i4:                     ; preds = %bb1.i.i2, %bb.i.i1
+  %iftmp.1.0.i.i3 = phi i32 [ %55, %bb.i.i1 ], [ %56, %bb1.i.i2 ]
+  %57 = load i32* @Down_Separation, align 4
+  %58 = icmp sgt i32 %iftmp.1.0.i.i3, %57
+  %59 = zext i1 %58 to i32
+  %60 = icmp ne i32 %59, 0
+  br i1 %60, label %bb.i5, label %bb6.i11
+
+bb.i5:                                            ; preds = %Inhibit_Biased_Climb.exit.i4
+  %61 = call i32 (...)* bitcast (i32 ()* @Own_Below_Threat to i32 (...)*)() nounwind
+  %62 = icmp eq i32 %61, 0
+  br i1 %62, label %bb4.i9, label %bb1.i6
+
+bb1.i6:                                           ; preds = %bb.i5
+  %63 = load i32* @Cur_Vertical_Sep, align 4
+  %64 = icmp sle i32 %63, 299
+  br i1 %64, label %bb4.i9, label %bb2.i7
+
+bb2.i7:                                           ; preds = %bb1.i6
+  %65 = load i32* @Alt_Layer_Value, align 4
+  %66 = sext i32 %65 to i64
+  %67 = getelementptr inbounds [4 x i32]* @Positive_RA_Alt_Thresh, i64 0, i64 %66
+  %68 = load i32* %67, align 4
+  %69 = load i32* @Down_Separation, align 4
+  %70 = icmp sgt i32 %68, %69
+  br i1 %70, label %bb4.i9, label %bb3.i8
+
+bb3.i8:                                           ; preds = %bb2.i7
+  br label %bb5.i10
+
+bb4.i9:                                           ; preds = %bb2.i7, %bb1.i6, %bb.i5
+  br label %bb5.i10
+
+bb5.i10:                                          ; preds = %bb4.i9, %bb3.i8
+  %iftmp.11.0.i = phi i32 [ 0, %bb4.i9 ], [ 1, %bb3.i8 ]
+  br label %Non_Crossing_Biased_Descend.exit
+
+bb6.i11:                                          ; preds = %Inhibit_Biased_Climb.exit.i4
+  %71 = call i32 (...)* bitcast (i32 ()* @Own_Above_Threat to i32 (...)*)() nounwind
+  %72 = icmp eq i32 %71, 0
+  br i1 %72, label %bb9.i14, label %bb7.i12
+
+bb7.i12:                                          ; preds = %bb6.i11
+  %73 = call i32 (...)* bitcast (i32 ()* @Own_Above_Threat to i32 (...)*)() nounwind
+  %74 = icmp eq i32 %73, 0
+  br i1 %74, label %bb10.i15, label %bb8.i13
+
+bb8.i13:                                          ; preds = %bb7.i12
+  %75 = load i32* @Alt_Layer_Value, align 4
+  %76 = sext i32 %75 to i64
+  %77 = getelementptr inbounds [4 x i32]* @Positive_RA_Alt_Thresh, i64 0, i64 %76
+  %78 = load i32* %77, align 4
+  %79 = load i32* @Up_Separation, align 4
+  %80 = icmp sle i32 %78, %79
+  br i1 %80, label %bb9.i14, label %bb10.i15
+
+bb9.i14:                                          ; preds = %bb8.i13, %bb6.i11
+  br label %bb11.i16
+
+bb10.i15:                                         ; preds = %bb8.i13, %bb7.i12
+  br label %bb11.i16
+
+bb11.i16:                                         ; preds = %bb10.i15, %bb9.i14
+  %iftmp.14.0.i = phi i32 [ 1, %bb9.i14 ], [ 0, %bb10.i15 ]
+  br label %Non_Crossing_Biased_Descend.exit
+
+Non_Crossing_Biased_Descend.exit:                 ; preds = %bb5.i10, %bb11.i16
+  %result.0.i17 = phi i32 [ %iftmp.11.0.i, %bb5.i10 ], [ %iftmp.14.0.i, %bb11.i16 ]
+  %81 = icmp eq i32 %result.0.i17, 0
+  br i1 %81, label %bb19, label %bb17
+
+bb17:                                             ; preds = %Non_Crossing_Biased_Descend.exit
+  %82 = load i32* @Other_Tracked_Alt, align 4
+  %83 = load i32* @Own_Tracked_Alt, align 4
+  %84 = icmp slt i32 %82, %83
+  %85 = zext i1 %84 to i32
+  %86 = icmp eq i32 %85, 0
+  br i1 %86, label %bb19, label %bb18
+
+bb18:                                             ; preds = %bb17
+  br label %bb20
+
+bb19:                                             ; preds = %bb17, %Non_Crossing_Biased_Descend.exit
+  br label %bb20
+
+bb20:                                             ; preds = %bb19, %bb18
+  %iftmp.29.0 = phi i32 [ 0, %bb19 ], [ 1, %bb18 ]
+  %87 = icmp eq i32 %iftmp.28.0, 0
+  br i1 %87, label %bb23, label %bb21
+
+bb21:                                             ; preds = %bb20
+  %88 = icmp eq i32 %iftmp.29.0, 0
+  br i1 %88, label %bb23, label %bb22
+
+bb22:                                             ; preds = %bb21
+  br label %bb28
+
+bb23:                                             ; preds = %bb21, %bb20
+  %89 = icmp ne i32 %iftmp.28.0, 0
+  br i1 %89, label %bb24, label %bb25
+
+bb24:                                             ; preds = %bb23
+  br label %bb28
+
+bb25:                                             ; preds = %bb23
+  %90 = icmp ne i32 %iftmp.29.0, 0
+  br i1 %90, label %bb26, label %bb27
+
+bb26:                                             ; preds = %bb25
+  br label %bb28
+
+bb27:                                             ; preds = %bb25
+  br label %bb28
+
+bb28:                                             ; preds = %bb27, %bb26, %bb24, %bb22, %bb11, %bb8
+  %alt_sep.0 = phi i32 [ 1, %bb24 ], [ 2, %bb26 ], [ 0, %bb27 ], [ 0, %bb22 ], [ 0, %bb11 ], [ 0, %bb8 ]
+  br label %return
+
+return:                                           ; preds = %bb28
+  ret i32 %alt_sep.0
+}
+
+define i32 @main(i32 %argc, i8** %argv) nounwind ssp {
+entry:
+  %"alloca point" = bitcast i32 0 to i32
+  %0 = icmp sle i32 %argc, 12
+  br i1 %0, label %bb, label %bb1
+
+bb:                                               ; preds = %entry
+  %1 = load %struct.FILE** @__stdoutp, align 8
+  %2 = bitcast %struct.FILE* %1 to i8*
+  %3 = call i64 @"\01_fwrite"(i8* getelementptr inbounds ([35 x i8]* @.str, i64 0, i64 0), i64 1, i64 34, i8* %2) nounwind
+  %4 = load %struct.FILE** @__stdoutp, align 8
+  %5 = bitcast %struct.FILE* %4 to i8*
+  %6 = call i64 @"\01_fwrite"(i8* getelementptr inbounds ([63 x i8]* @.str1, i64 0, i64 0), i64 1, i64 62, i8* %5) nounwind
+  %7 = load %struct.FILE** @__stdoutp, align 8
+  %8 = bitcast %struct.FILE* %7 to i8*
+  %9 = call i64 @"\01_fwrite"(i8* getelementptr inbounds ([58 x i8]* @.str2, i64 0, i64 0), i64 1, i64 57, i8* %8) nounwind
+  %10 = load %struct.FILE** @__stdoutp, align 8
+  %11 = bitcast %struct.FILE* %10 to i8*
+  %12 = call i64 @"\01_fwrite"(i8* getelementptr inbounds ([49 x i8]* @.str3, i64 0, i64 0), i64 1, i64 48, i8* %11) nounwind
+  %13 = load %struct.FILE** @__stdoutp, align 8
+  %14 = bitcast %struct.FILE* %13 to i8*
+  %15 = call i64 @"\01_fwrite"(i8* getelementptr inbounds ([44 x i8]* @.str4, i64 0, i64 0), i64 1, i64 43, i8* %14) nounwind
+  call void @exit(i32 1) noreturn nounwind
+  unreachable
+
+bb1:                                              ; preds = %entry
+  store i32 400, i32* getelementptr inbounds ([4 x i32]* @Positive_RA_Alt_Thresh, i64 0, i64 0), align 4
+  store i32 500, i32* getelementptr inbounds ([4 x i32]* @Positive_RA_Alt_Thresh, i64 0, i64 1), align 4
+  store i32 640, i32* getelementptr inbounds ([4 x i32]* @Positive_RA_Alt_Thresh, i64 0, i64 2), align 4
+  store i32 740, i32* getelementptr inbounds ([4 x i32]* @Positive_RA_Alt_Thresh, i64 0, i64 3), align 4
+  %16 = getelementptr inbounds i8** %argv, i64 1
+  %17 = load i8** %16, align 1
+  %18 = call i32 (...)* @atoi(i8* %17) nounwind
+  store i32 %18, i32* @Cur_Vertical_Sep, align 4
+  %19 = getelementptr inbounds i8** %argv, i64 2
+  %20 = load i8** %19, align 1
+  %21 = call i32 (...)* @atoi(i8* %20) nounwind
+  store i32 %21, i32* @High_Confidence, align 4
+  %22 = getelementptr inbounds i8** %argv, i64 3
+  %23 = load i8** %22, align 1
+  %24 = call i32 (...)* @atoi(i8* %23) nounwind
+  store i32 %24, i32* @Two_of_Three_Reports_Valid, align 4
+  %25 = getelementptr inbounds i8** %argv, i64 4
+  %26 = load i8** %25, align 1
+  %27 = call i32 (...)* @atoi(i8* %26) nounwind
+  store i32 %27, i32* @Own_Tracked_Alt, align 4
+  %28 = getelementptr inbounds i8** %argv, i64 5
+  %29 = load i8** %28, align 1
+  %30 = call i32 (...)* @atoi(i8* %29) nounwind
+  store i32 %30, i32* @Own_Tracked_Alt_Rate, align 4
+  %31 = getelementptr inbounds i8** %argv, i64 6
+  %32 = load i8** %31, align 1
+  %33 = call i32 (...)* @atoi(i8* %32) nounwind
+  store i32 %33, i32* @Other_Tracked_Alt, align 4
+  %34 = getelementptr inbounds i8** %argv, i64 7
+  %35 = load i8** %34, align 1
+  %36 = call i32 (...)* @atoi(i8* %35) nounwind
+  store i32 %36, i32* @Alt_Layer_Value, align 4
+  %37 = getelementptr inbounds i8** %argv, i64 8
+  %38 = load i8** %37, align 1
+  %39 = call i32 (...)* @atoi(i8* %38) nounwind
+  store i32 %39, i32* @Up_Separation, align 4
+  %40 = getelementptr inbounds i8** %argv, i64 9
+  %41 = load i8** %40, align 1
+  %42 = call i32 (...)* @atoi(i8* %41) nounwind
+  store i32 %42, i32* @Down_Separation, align 4
+  %43 = getelementptr inbounds i8** %argv, i64 10
+  %44 = load i8** %43, align 1
+  %45 = call i32 (...)* @atoi(i8* %44) nounwind
+  store i32 %45, i32* @Other_RAC, align 4
+  %46 = getelementptr inbounds i8** %argv, i64 11
+  %47 = load i8** %46, align 1
+  %48 = call i32 (...)* @atoi(i8* %47) nounwind
+  store i32 %48, i32* @Other_Capability, align 4
+  %49 = getelementptr inbounds i8** %argv, i64 12
+  %50 = load i8** %49, align 1
+  %51 = call i32 (...)* @atoi(i8* %50) nounwind
+  store i32 %51, i32* @Climb_Inhibit, align 4
+  %52 = load i32* @High_Confidence, align 4
+  %53 = icmp eq i32 %52, 0
+  br i1 %53, label %bb3.i, label %bb.i
+
+bb.i:                                             ; preds = %bb1
+  %54 = load i32* @Own_Tracked_Alt_Rate, align 4
+  %55 = icmp sgt i32 %54, 600
+  br i1 %55, label %bb3.i, label %bb1.i
+
+bb1.i:                                            ; preds = %bb.i
+  %56 = load i32* @Cur_Vertical_Sep, align 4
+  %57 = icmp sle i32 %56, 600
+  br i1 %57, label %bb3.i, label %bb2.i
+
+bb2.i:                                            ; preds = %bb1.i
+  br label %bb4.i
+
+bb3.i:                                            ; preds = %bb1.i, %bb.i, %bb1
+  br label %bb4.i
+
+bb4.i:                                            ; preds = %bb3.i, %bb2.i
+  %iftmp.20.0.i = phi i32 [ 0, %bb3.i ], [ 1, %bb2.i ]
+  %58 = load i32* @Other_Capability, align 4
+  %59 = icmp eq i32 %58, 1
+  %60 = zext i1 %59 to i32
+  %61 = load i32* @Two_of_Three_Reports_Valid, align 4
+  %62 = icmp eq i32 %61, 0
+  br i1 %62, label %bb7.i, label %bb5.i
+
+bb5.i:                                            ; preds = %bb4.i
+  %63 = load i32* @Other_RAC, align 4
+  %64 = icmp ne i32 %63, 0
+  br i1 %64, label %bb7.i, label %bb6.i
+
+bb6.i:                                            ; preds = %bb5.i
+  br label %bb8.i
+
+bb7.i:                                            ; preds = %bb5.i, %bb4.i
+  br label %bb8.i
+
+bb8.i:                                            ; preds = %bb7.i, %bb6.i
+  %iftmp.25.0.i = phi i32 [ 0, %bb7.i ], [ 1, %bb6.i ]
+  %65 = icmp ne i32 %iftmp.20.0.i, 0
+  br i1 %65, label %bb9.i, label %alt_sep_test.exit
+
+bb9.i:                                            ; preds = %bb8.i
+  %66 = icmp eq i32 %60, 0
+  br i1 %66, label %bb11.i, label %bb10.i
+
+bb10.i:                                           ; preds = %bb9.i
+  %67 = icmp ne i32 %iftmp.25.0.i, 0
+  br i1 %67, label %bb12.i, label %bb11.i
+
+bb11.i:                                           ; preds = %bb10.i, %bb9.i
+  %68 = icmp eq i32 %60, 0
+  br i1 %68, label %bb12.i, label %alt_sep_test.exit
+
+bb12.i:                                           ; preds = %bb11.i, %bb10.i
+  %69 = load i32* @Climb_Inhibit, align 4
+  %70 = icmp ne i32 %69, 0
+  br i1 %70, label %bb.i.i.i, label %bb1.i.i.i
+
+bb.i.i.i:                                         ; preds = %bb12.i
+  %71 = load i32* @Up_Separation, align 4
+  %72 = add nsw i32 %71, 100
+  br label %Inhibit_Biased_Climb.exit.i.i
+
+bb1.i.i.i:                                        ; preds = %bb12.i
+  %73 = load i32* @Up_Separation, align 4
+  br label %Inhibit_Biased_Climb.exit.i.i
+
+Inhibit_Biased_Climb.exit.i.i:                    ; preds = %bb1.i.i.i, %bb.i.i.i
+  %iftmp.1.0.i.i.i = phi i32 [ %72, %bb.i.i.i ], [ %73, %bb1.i.i.i ]
+  %74 = load i32* @Down_Separation, align 4
+  %75 = icmp sgt i32 %iftmp.1.0.i.i.i, %74
+  %76 = zext i1 %75 to i32
+  %77 = icmp ne i32 %76, 0
+  br i1 %77, label %bb.i.i, label %bb6.i.i
+
+bb.i.i:                                           ; preds = %Inhibit_Biased_Climb.exit.i.i
+  %78 = call i32 (...)* bitcast (i32 ()* @Own_Below_Threat to i32 (...)*)() nounwind
+  %79 = icmp eq i32 %78, 0
+  br i1 %79, label %bb3.i.i, label %bb1.i.i
+
+bb1.i.i:                                          ; preds = %bb.i.i
+  %80 = call i32 (...)* bitcast (i32 ()* @Own_Below_Threat to i32 (...)*)() nounwind
+  %81 = icmp eq i32 %80, 0
+  br i1 %81, label %bb4.i.i, label %bb2.i.i
+
+bb2.i.i:                                          ; preds = %bb1.i.i
+  %82 = load i32* @Alt_Layer_Value, align 4
+  %83 = sext i32 %82 to i64
+  %84 = getelementptr inbounds [4 x i32]* @Positive_RA_Alt_Thresh, i64 0, i64 %83
+  %85 = load i32* %84, align 4
+  %86 = load i32* @Down_Separation, align 4
+  %87 = icmp sge i32 %85, %86
+  br i1 %87, label %bb3.i.i, label %bb4.i.i
+
+bb3.i.i:                                          ; preds = %bb2.i.i, %bb.i.i
+  br label %bb5.i.i
+
+bb4.i.i:                                          ; preds = %bb2.i.i, %bb1.i.i
+  br label %bb5.i.i
+
+bb5.i.i:                                          ; preds = %bb4.i.i, %bb3.i.i
+  %iftmp.5.0.i.i = phi i32 [ 1, %bb3.i.i ], [ 0, %bb4.i.i ]
+  br label %Non_Crossing_Biased_Climb.exit.i
+
+bb6.i.i:                                          ; preds = %Inhibit_Biased_Climb.exit.i.i
+  %88 = call i32 (...)* bitcast (i32 ()* @Own_Above_Threat to i32 (...)*)() nounwind
+  %89 = icmp eq i32 %88, 0
+  br i1 %89, label %bb10.i.i, label %bb7.i.i
+
+bb7.i.i:                                          ; preds = %bb6.i.i
+  %90 = load i32* @Cur_Vertical_Sep, align 4
+  %91 = icmp sle i32 %90, 299
+  br i1 %91, label %bb10.i.i, label %bb8.i.i
+
+bb8.i.i:                                          ; preds = %bb7.i.i
+  %92 = load i32* @Alt_Layer_Value, align 4
+  %93 = sext i32 %92 to i64
+  %94 = getelementptr inbounds [4 x i32]* @Positive_RA_Alt_Thresh, i64 0, i64 %93
+  %95 = load i32* %94, align 4
+  %96 = load i32* @Up_Separation, align 4
+  %97 = icmp sgt i32 %95, %96
+  br i1 %97, label %bb10.i.i, label %bb9.i.i
+
+bb9.i.i:                                          ; preds = %bb8.i.i
+  br label %bb11.i.i
+
+bb10.i.i:                                         ; preds = %bb8.i.i, %bb7.i.i, %bb6.i.i
+  br label %bb11.i.i
+
+bb11.i.i:                                         ; preds = %bb10.i.i, %bb9.i.i
+  %iftmp.7.0.i.i = phi i32 [ 0, %bb10.i.i ], [ 1, %bb9.i.i ]
+  br label %Non_Crossing_Biased_Climb.exit.i
+
+Non_Crossing_Biased_Climb.exit.i:                 ; preds = %bb11.i.i, %bb5.i.i
+  %result.0.i.i = phi i32 [ %iftmp.5.0.i.i, %bb5.i.i ], [ %iftmp.7.0.i.i, %bb11.i.i ]
+  %98 = icmp eq i32 %result.0.i.i, 0
+  br i1 %98, label %bb15.i, label %bb13.i
+
+bb13.i:                                           ; preds = %Non_Crossing_Biased_Climb.exit.i
+  %99 = load i32* @Own_Tracked_Alt, align 4
+  %100 = load i32* @Other_Tracked_Alt, align 4
+  %101 = icmp slt i32 %99, %100
+  %102 = zext i1 %101 to i32
+  %103 = icmp eq i32 %102, 0
+  br i1 %103, label %bb15.i, label %bb14.i
+
+bb14.i:                                           ; preds = %bb13.i
+  br label %bb16.i
+
+bb15.i:                                           ; preds = %bb13.i, %Non_Crossing_Biased_Climb.exit.i
+  br label %bb16.i
+
+bb16.i:                                           ; preds = %bb15.i, %bb14.i
+  %iftmp.28.0.i = phi i32 [ 0, %bb15.i ], [ 1, %bb14.i ]
+  %104 = load i32* @Climb_Inhibit, align 4
+  %105 = icmp ne i32 %104, 0
+  br i1 %105, label %bb.i.i1.i, label %bb1.i.i2.i
+
+bb.i.i1.i:                                        ; preds = %bb16.i
+  %106 = load i32* @Up_Separation, align 4
+  %107 = add nsw i32 %106, 100
+  br label %Inhibit_Biased_Climb.exit.i4.i
+
+bb1.i.i2.i:                                       ; preds = %bb16.i
+  %108 = load i32* @Up_Separation, align 4
+  br label %Inhibit_Biased_Climb.exit.i4.i
+
+Inhibit_Biased_Climb.exit.i4.i:                   ; preds = %bb1.i.i2.i, %bb.i.i1.i
+  %iftmp.1.0.i.i3.i = phi i32 [ %107, %bb.i.i1.i ], [ %108, %bb1.i.i2.i ]
+  %109 = load i32* @Down_Separation, align 4
+  %110 = icmp sgt i32 %iftmp.1.0.i.i3.i, %109
+  %111 = zext i1 %110 to i32
+  %112 = icmp ne i32 %111, 0
+  br i1 %112, label %bb.i5.i, label %bb6.i11.i
+
+bb.i5.i:                                          ; preds = %Inhibit_Biased_Climb.exit.i4.i
+  %113 = call i32 (...)* bitcast (i32 ()* @Own_Below_Threat to i32 (...)*)() nounwind
+  %114 = icmp eq i32 %113, 0
+  br i1 %114, label %bb4.i9.i, label %bb1.i6.i
+
+bb1.i6.i:                                         ; preds = %bb.i5.i
+  %115 = load i32* @Cur_Vertical_Sep, align 4
+  %116 = icmp sle i32 %115, 299
+  br i1 %116, label %bb4.i9.i, label %bb2.i7.i
+
+bb2.i7.i:                                         ; preds = %bb1.i6.i
+  %117 = load i32* @Alt_Layer_Value, align 4
+  %118 = sext i32 %117 to i64
+  %119 = getelementptr inbounds [4 x i32]* @Positive_RA_Alt_Thresh, i64 0, i64 %118
+  %120 = load i32* %119, align 4
+  %121 = load i32* @Down_Separation, align 4
+  %122 = icmp sgt i32 %120, %121
+  br i1 %122, label %bb4.i9.i, label %bb3.i8.i
+
+bb3.i8.i:                                         ; preds = %bb2.i7.i
+  br label %bb5.i10.i
+
+bb4.i9.i:                                         ; preds = %bb2.i7.i, %bb1.i6.i, %bb.i5.i
+  br label %bb5.i10.i
+
+bb5.i10.i:                                        ; preds = %bb4.i9.i, %bb3.i8.i
+  %iftmp.11.0.i.i = phi i32 [ 0, %bb4.i9.i ], [ 1, %bb3.i8.i ]
+  br label %Non_Crossing_Biased_Descend.exit.i
+
+bb6.i11.i:                                        ; preds = %Inhibit_Biased_Climb.exit.i4.i
+  %123 = call i32 (...)* bitcast (i32 ()* @Own_Above_Threat to i32 (...)*)() nounwind
+  %124 = icmp eq i32 %123, 0
+  br i1 %124, label %bb9.i14.i, label %bb7.i12.i
+
+bb7.i12.i:                                        ; preds = %bb6.i11.i
+  %125 = call i32 (...)* bitcast (i32 ()* @Own_Above_Threat to i32 (...)*)() nounwind
+  %126 = icmp eq i32 %125, 0
+  br i1 %126, label %bb10.i15.i, label %bb8.i13.i
+
+bb8.i13.i:                                        ; preds = %bb7.i12.i
+  %127 = load i32* @Alt_Layer_Value, align 4
+  %128 = sext i32 %127 to i64
+  %129 = getelementptr inbounds [4 x i32]* @Positive_RA_Alt_Thresh, i64 0, i64 %128
+  %130 = load i32* %129, align 4
+  %131 = load i32* @Up_Separation, align 4
+  %132 = icmp sle i32 %130, %131
+  br i1 %132, label %bb9.i14.i, label %bb10.i15.i
+
+bb9.i14.i:                                        ; preds = %bb8.i13.i, %bb6.i11.i
+  br label %bb11.i16.i
+
+bb10.i15.i:                                       ; preds = %bb8.i13.i, %bb7.i12.i
+  br label %bb11.i16.i
+
+bb11.i16.i:                                       ; preds = %bb10.i15.i, %bb9.i14.i
+  %iftmp.14.0.i.i = phi i32 [ 1, %bb9.i14.i ], [ 0, %bb10.i15.i ]
+  br label %Non_Crossing_Biased_Descend.exit.i
+
+Non_Crossing_Biased_Descend.exit.i:               ; preds = %bb11.i16.i, %bb5.i10.i
+  %result.0.i17.i = phi i32 [ %iftmp.11.0.i.i, %bb5.i10.i ], [ %iftmp.14.0.i.i, %bb11.i16.i ]
+  %133 = icmp eq i32 %result.0.i17.i, 0
+  br i1 %133, label %bb19.i, label %bb17.i
+
+bb17.i:                                           ; preds = %Non_Crossing_Biased_Descend.exit.i
+  %134 = load i32* @Other_Tracked_Alt, align 4
+  %135 = load i32* @Own_Tracked_Alt, align 4
+  %136 = icmp slt i32 %134, %135
+  %137 = zext i1 %136 to i32
+  %138 = icmp eq i32 %137, 0
+  br i1 %138, label %bb19.i, label %bb18.i
+
+bb18.i:                                           ; preds = %bb17.i
+  br label %bb20.i
+
+bb19.i:                                           ; preds = %bb17.i, %Non_Crossing_Biased_Descend.exit.i
+  br label %bb20.i
+
+bb20.i:                                           ; preds = %bb19.i, %bb18.i
+  %iftmp.29.0.i = phi i32 [ 0, %bb19.i ], [ 1, %bb18.i ]
+  %139 = icmp eq i32 %iftmp.28.0.i, 0
+  br i1 %139, label %bb23.i, label %bb21.i
+
+bb21.i:                                           ; preds = %bb20.i
+  %140 = icmp eq i32 %iftmp.29.0.i, 0
+  br i1 %140, label %bb23.i, label %bb22.i
+
+bb22.i:                                           ; preds = %bb21.i
+  br label %alt_sep_test.exit
+
+bb23.i:                                           ; preds = %bb21.i, %bb20.i
+  %141 = icmp ne i32 %iftmp.28.0.i, 0
+  br i1 %141, label %bb24.i, label %bb25.i
+
+bb24.i:                                           ; preds = %bb23.i
+  br label %alt_sep_test.exit
+
+bb25.i:                                           ; preds = %bb23.i
+  %142 = icmp ne i32 %iftmp.29.0.i, 0
+  br i1 %142, label %bb26.i, label %bb27.i
+
+bb26.i:                                           ; preds = %bb25.i
+  br label %alt_sep_test.exit
+
+bb27.i:                                           ; preds = %bb25.i
+  br label %alt_sep_test.exit
+
+alt_sep_test.exit:                                ; preds = %bb8.i, %bb11.i, %bb22.i, %bb24.i, %bb26.i, %bb27.i
+  %alt_sep.0.i = phi i32 [ 1, %bb24.i ], [ 2, %bb26.i ], [ 0, %bb27.i ], [ 0, %bb22.i ], [ 0, %bb11.i ], [ 0, %bb8.i ]
+  %143 = load %struct.FILE** @__stdoutp, align 8
+  %144 = call i32 (%struct.FILE*, i8*, ...)* @fprintf(%struct.FILE* %143, i8* getelementptr inbounds ([4 x i8]* @.str5, i64 0, i64 0), i32 %alt_sep.0.i) nounwind
+  call void @exit(i32 0) noreturn nounwind
+  unreachable
+
+return:                                           ; No predecessors!
+  ret i32 undef
+}
+
+declare i64 @"\01_fwrite"(i8*, i64, i64, i8*)
+
+declare void @exit(i32) noreturn nounwind
+
+declare i32 @atoi(...)
+
+declare i32 @fprintf(%struct.FILE*, i8*, ...) nounwind

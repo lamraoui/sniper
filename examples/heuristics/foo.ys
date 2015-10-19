@@ -1,0 +1,13 @@
+;;#  Middle number
+;;#===================
+(set-evidence! true)
+(set-verbosity! 3)
+
+(define entry::bool)
+
+
+
+
+
+
+(max-sat)

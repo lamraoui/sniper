@@ -1,0 +1,339 @@
+08-04-2015
+
+
+[miaou ~/Desktop/NII-13/workspace/examples/tcas_nomain_ret] ./tcas-pftf-time-runall2.sh 
+Running all TCAS versions with time()...
+=== PFTF ===================================
+
+PFTF < v1/tcas.c >
+ACSR: 10.6784%
+54.309 + 0.035
+
+PFTF < v2/tcas.c >
+ACSR: 10.165%
+42.888 + 0.030
+
+PFTF < v3/tcas.c >
+ACSR: 11.2717%
+36.693 + 0.028
+
+PFTF < v4/tcas.c >
+ACSR: 10.8382%
+5.267 + 0.017
+
+PFTF < v5/tcas.c >
+ACSR: 11.4781%
+26.529 + 0.028
+
+PFTF < v6/tcas.c >
+ACSR: 11.1272%
+16.840 + 0.020
+
+PFTF < v7/tcas.c >
+ACSR: 10.2829%
+18.300 + 0.022
+
+PFTF < v8/tcas.c >
+ACSR: 11.5607%
+2.098 + 0.016
+
+PFTF < v9/tcas.c >
+ACSR: 7.80347%
+8.942 + 0.019
+
+PFTF < v10/tcas.c >
+ACSR: 12.1002%
+38.406 + 0.031
+
+PFTF < v11/tcas.c >
+ACSR: 12.6204%
+46.910 + 0.032
+
+PFTF < v12/tcas.c >
+ACSR: 11.7737%
+40.040 + 0.032
+
+PFTF < v13/tcas.c >
+ACSR: 11.1994%
+12.754 + 0.020
+
+PFTF < v14/tcas.c >
+ACSR: 5.58767%
+3.317 + 0.019
+
+PFTF < v15/tcas.c >
+ACSR: 11.4781%
+27.138 + 0.029
+
+PFTF < v16/tcas.c >
+ACSR: 10.9827%
+26.031 + 0.027
+
+PFTF < v17/tcas.c >
+ACSR: 10.2505%
+19.389 + 0.022
+
+PFTF < v18/tcas.c >
+ACSR: 9.94828%
+21.880 + 0.024
+
+PFTF < v19/tcas.c >
+ACSR: 10.1734%
+15.447 + 0.022
+
+PFTF < v20/tcas.c >
+ACSR: 10.5491%
+5.204 + 0.016
+
+PFTF < v21/tcas.c >
+ACSR: 10.9827%
+2.675 + 0.016
+
+PFTF < v22/tcas.c >
+ACSR: 10.1734%
+7.393 + 0.019
+
+PFTF < v23/tcas.c >
+ACSR: 9.24855%
+7.784 + 0.017
+
+PFTF < v24/tcas.c >
+ACSR: 11.1272%
+3.020 + 0.016
+
+PFTF < v25/tcas.c >
+ACSR: 8.67052%
+1.827 + 0.020
+
+PFTF < v26/tcas.c >
+ACSR: 11.403%
+33.146 + 0.029
+
+PFTF < v27/tcas.c >
+ACSR: 11.4781%
+26.784 + 0.027
+
+PFTF < v28/tcas.c >
+ACSR: 11.3351%
+186.113 + 0.082
+
+PFTF < v29/tcas.c >
+ACSR: 11.9653%
+20.343 + 0.022
+
+PFTF < v30/tcas.c >
+ACSR: 11.1929%
+8.133 + 0.018
+
+PFTF < v31/tcas.c >
+ACSR: 11.1368%
+28.218 + 0.026
+
+PFTF < v32/tcas.c >
+ACSR: 9.24855%
+1.667 + 0.016
+
+PFTF < v33/tcas.c >
+ACSR: 10.4769%
+140.489 + 0.067
+
+PFTF < v34/tcas.c >
+ACSR: 10.9184%
+41.580 + 0.036
+
+PFTF < v35/tcas.c >
+ACSR: 11.3351%
+184.707 + 0.086
+
+PFTF < v36/tcas.c >
+ACSR: 10.1156%
+73.316 + 0.045
+
+PFTF < v37/tcas.c >
+ACSR: 11.5607%
+125.931 + 0.060
+
+PFTF < v38/tcas.c >
+ACSR: 10.5545%
+83.957 + 0.046
+
+PFTF < v39/tcas.c >
+ACSR: 8.67052%
+1.793 + 0.016
+
+PFTF < v40/tcas.c >
+ACSR: 13.2948%
+70.843 + 0.045
+
+PFTF < v41/tcas.c >
+ACSR: 10.5491%
+6.232 + 0.017
+ 
+ 
+=== FFTF ===================================
+
+FFTF < v1/tcas.c >
+ACSR: 10.6784%
+53.326 + 0.028
+
+FFTF < v2/tcas.c >
+ACSR: 10.4896%
+140.316 + 0.063
+
+FFTF < v3/tcas.c >
+ACSR: 11.2717%
+36.922 + 0.021
+
+FFTF < v4/tcas.c >
+ACSR: 10.5623%
+17.503 + 0.015
+
+FFTF < v5/tcas.c >
+ACSR: 11.4781%
+25.984 + 0.019
+
+FFTF < v6/tcas.c >
+ACSR: 11.4884%
+32.807 + 0.019
+
+FFTF < v7/tcas.c >
+ACSR: 10.8542%
+44.065 + 0.043
+
+FFTF < v8/tcas.c >
+ACSR: 10.7514%
+32.332 + 0.044
+
+FFTF < v9/tcas.c >
+ACSR: 10.6936%
+129.985 + 0.146
+
+FFTF < v10/tcas.c >
+ACSR: 12.1002%
+39.047 + 0.040
+
+FFTF < v11/tcas.c >
+ACSR: 12.6204%
+47.535 + 0.045
+
+FFTF < v12/tcas.c >
+ACSR: 11.7737%
+40.726 + 0.046
+
+FFTF < v13/tcas.c >
+ACSR: 11.1994%
+30.432 + 0.037
+
+FFTF < v14/tcas.c >
+ACSR: 9.50546%
+33.726 + 0.048
+
+FFTF < v15/tcas.c >
+ACSR: 11.4781%
+26.738 + 0.047
+
+FFTF < v16/tcas.c >
+ACSR: 11.4781%
+48.369 + 0.053
+
+FFTF < v17/tcas.c >
+ACSR: 10.9104%
+40.967 + 0.050
+
+FFTF < v18/tcas.c >
+ACSR: 10.5331%
+60.664 + 0.072
+
+FFTF < v19/tcas.c >
+ACSR: 10.5491%
+35.827 + 0.040
+
+FFTF < v20/tcas.c >
+ACSR: 10.4459%
+28.904 + 0.033
+
+FFTF < v21/tcas.c >
+ACSR: 10.0893%
+6.219 + 0.013
+
+FFTF < v22/tcas.c >
+ACSR: 10.0193%
+191.931 + 0.182
+
+FFTF < v23/tcas.c >
+ACSR: 11.0652%
+144.177 + 0.138
+
+FFTF < v24/tcas.c >
+ACSR: 10.6358%
+18.829 + 0.021
+
+FFTF < v25/tcas.c >
+ACSR: 9.73025%
+34.469 + 0.045
+
+FFTF < v26/tcas.c >
+ACSR: 11.403%
+33.004 + 0.035
+
+FFTF < v27/tcas.c >
+ACSR: 11.4781%
+26.664 + 0.028
+
+FFTF < v28/tcas.c >
+ACSR: 11.3351%
+189.062 + 0.171
+
+FFTF < v29/tcas.c >
+ACSR: 11.0983%
+142.326 + 0.142
+
+FFTF < v30/tcas.c >
+ACSR: 11.2717%
+59.685 + 0.070
+
+FFTF < v31/tcas.c >
+ACSR: 9.65318%
+39.901 + 0.053
+
+FFTF < v32/tcas.c >
+ACSR: 10.4046%
+16.410 + 0.022
+
+FFTF < v33/tcas.c >
+ACSR: 10.4769%
+143.903 + 0.163
+
+FFTF < v34/tcas.c >
+ACSR: 10.9184%
+42.693 + 0.052
+
+FFTF < v35/tcas.c >
+ACSR: 11.3351%
+187.795 + 0.213
+
+FFTF < v36/tcas.c >
+^C
+
+FFTF < v37/tcas.c >
+ACSR: 11.5607%
+86.749 + 0.060
+
+FFTF < v38/tcas.c >
+ACSR: 10.6455%
+187.731 + 0.119
+
+FFTF < v39/tcas.c >
+ACSR: 9.73025%
+34.303 + 0.029
+
+FFTF < v40/tcas.c >
+ACSR: 13.87% 
+real	29m5.570s
+user	27m29.135s
+sys	0m6.545s
+
+FFTF < v41/tcas.c >
+ACSR: 10.3661%
+36.949 + 0.032
+

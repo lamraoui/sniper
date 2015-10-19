@@ -1,0 +1,1777 @@
+[miaou ~/Desktop/NII-13/workspace/examples/tcas_nomain_ret] ./tcas-pftf-time-runall2.sh 
+Running all TCAS versions with time()...
+=== PFTF ===================================
+
+PFTF < v1/tcas.c >
+Filtering bug free blocks.
+Bug free blocks coverage: 1/51
+EncoderLightPass [activated]
+=================================================
+Running AllDiagnosis algorithm [Push&Pop][FLA][PTF]
+
+   number of hard constraints  107
+   number of soft constraints  56
+   number of error-in. inputs  132
+
+
+[▒                                                 ] 0.00 %
+Combined MCSes size: 1
+Combined MCSes:
+{{50, 51, 52, 53, 58, 63, 72, 73, 75#, 79, 81, 90, 91, 93, 99, 104, 109, 118, 119, 120, 122, 124, 126, 127, 128, 132, 133, 134, 135, 138, 141}}
+==============================================
+
+real	0m54.385s
+user	0m54.261s
+sys	0m0.056s
+
+PFTF < v2/tcas.c >
+Filtering bug free blocks.
+Bug free blocks coverage: 2/51
+EncoderLightPass [activated]
+=================================================
+Running AllDiagnosis algorithm [Push&Pop][FLA][PTF]
+
+   number of hard constraints  105
+   number of soft constraints  55
+   number of error-in. inputs  71
+
+
+[▒                                                 ] 0.00 %
+Combined MCSes size: 1
+Combined MCSes:
+{{50, 51, 52, 53, 58, 63#, 72, 73, 75, 79, 81, 90, 91, 93, 97, 99, 104, 109, 118, 119, 120, 122, 124, 126, 127, 128, 132, 133, 134, 135, 138, 141}}
+==============================================
+
+real	0m42.645s
+user	0m42.554s
+sys	0m0.040s
+
+PFTF < v3/tcas.c >
+Filtering bug free blocks.
+Bug free blocks coverage: 0/51
+EncoderLightPass [activated]
+No safe path segments for constructing PTF.
+=================================================
+Running AllDiagnosis algorithm [Push&Pop][FLA][PTF]
+
+   number of hard constraints  106
+   number of soft constraints  57
+   number of error-in. inputs  24
+
+
+[▒                                                 ] 0.00 %
+Combined MCSes size: 1
+Combined MCSes:
+{{50, 51, 52, 53, 58, 63, 72, 73, 75, 79, 81, 90, 91, 93, 97, 99, 104, 109, 118, 119, 120#, 122, 124, 126, 127, 128, 132, 133, 134, 135, 136, 138, 141}}
+==============================================
+
+real	0m36.610s
+user	0m36.528s
+sys	0m0.036s
+
+PFTF < v4/tcas.c >
+Filtering bug free blocks.
+Bug free blocks coverage: 8/51
+EncoderLightPass [activated]
+=================================================
+Running AllDiagnosis algorithm [Push&Pop][FLA][PTF]
+
+   number of hard constraints  89
+   number of soft constraints  53
+   number of error-in. inputs  25
+
+
+[▒                                                 ] 0.00 %
+Combined MCSes size: 1
+Combined MCSes:
+{{50, 51, 52, 53, 58, 63, 72, 73, 79#, 81, 90, 91, 104, 109, 118, 119, 120, 122, 124, 126, 128, 132, 133, 134, 135, 138, 141}}
+==============================================
+
+real	0m5.263s
+user	0m5.232s
+sys	0m0.023s
+
+PFTF < v5/tcas.c >
+Filtering bug free blocks.
+Bug free blocks coverage: 1/50
+EncoderLightPass [activated]
+=================================================
+Running AllDiagnosis algorithm [Push&Pop][FLA][PTF]
+
+   number of hard constraints  106
+   number of soft constraints  57
+   number of error-in. inputs  11
+
+
+[▒                                                 ] 0.00 %
+Combined MCSes size: 1
+Combined MCSes:
+{{50, 51, 52, 53, 58, 63, 72, 73, 75, 79, 81, 90, 91, 93, 97, 99, 104, 109, 118#, 119, 120, 122, 124, 126, 127, 128, 132, 133, 134, 135, 136, 138, 141}}
+==============================================
+
+real	0m26.692s
+user	0m26.619s
+sys	0m0.031s
+
+PFTF < v6/tcas.c >
+Filtering bug free blocks.
+Bug free blocks coverage: 2/51
+EncoderLightPass [activated]
+=================================================
+Running AllDiagnosis algorithm [Push&Pop][FLA][PTF]
+
+   number of hard constraints  105
+   number of soft constraints  55
+   number of error-in. inputs  13
+
+
+[▒                                                 ] 0.00 %
+Combined MCSes size: 1
+Combined MCSes:
+{{50, 51, 52, 53, 58, 63, 72, 73, 75, 79, 81, 90, 91, 93, 99, 104#, 109, 118, 119, 120, 122, 124, 126, 127, 128, 132, 133, 134, 135, 138, 141}}
+==============================================
+
+real	0m17.034s
+user	0m16.991s
+sys	0m0.024s
+
+PFTF < v7/tcas.c >
+Filtering bug free blocks.
+Bug free blocks coverage: 2/51
+EncoderLightPass [activated]
+=================================================
+Running AllDiagnosis algorithm [Push&Pop][FLA][PTF]
+
+   number of hard constraints  105
+   number of soft constraints  55
+   number of error-in. inputs  37
+
+
+[▒                                                 ] 0.00 %
+Combined MCSes size: 1
+Combined MCSes:
+{{51#, 52, 53, 58, 63, 72, 73, 75, 79, 81, 90, 91, 93, 97, 99, 104, 109, 118, 119, 120, 122, 124, 126, 127, 128, 132, 133, 134, 135, 138, 141}}
+==============================================
+
+real	0m18.556s
+user	0m18.487s
+sys	0m0.028s
+
+PFTF < v8/tcas.c >
+Filtering bug free blocks.
+Bug free blocks coverage: 12/51
+EncoderLightPass [activated]
+=================================================
+Running AllDiagnosis algorithm [Push&Pop][FLA][PTF]
+
+   number of hard constraints  86
+   number of soft constraints  53
+   number of error-in. inputs  2
+
+
+[▒                                                 ] 0.00 %
+Combined MCSes size: 1
+Combined MCSes:
+{{50, 51, 52, 53#, 58, 63, 72, 73, 79, 81, 90, 91, 97, 99, 104, 109, 118, 119, 120, 122, 124, 126, 127, 128, 133, 135, 136, 138, 141}}
+==============================================
+
+real	0m2.240s
+user	0m2.212s
+sys	0m0.019s
+
+PFTF < v9/tcas.c >
+Filtering bug free blocks.
+Bug free blocks coverage: 10/51
+EncoderLightPass [activated]
+=================================================
+Running AllDiagnosis algorithm [Push&Pop][FLA][PTF]
+
+   number of hard constraints  91
+   number of soft constraints  52
+   number of error-in. inputs  10
+
+
+[▒                                                 ] 0.00 %
+Combined MCSes size: 1
+Combined MCSes:
+{{62, 71, 72, 78, 80, 89#, 90, 98, 103, 108, 117, 118, 119, 121, 123, 125, 126, 132, 134, 137, 140}}
+==============================================
+
+real	0m8.902s
+user	0m8.864s
+sys	0m0.023s
+
+PFTF < v10/tcas.c >
+Filtering bug free blocks.
+Bug free blocks coverage: 0/51
+EncoderLightPass [activated]
+No safe path segments for constructing PTF.
+=================================================
+Running AllDiagnosis algorithm [Push&Pop][FLA][PTF]
+
+   number of hard constraints  107
+   number of soft constraints  57
+   number of error-in. inputs  15
+
+
+[▒                                                 ] 0.00 %
+Combined MCSes size: 1
+Combined MCSes:
+{{50, 51, 52, 53, 58, 63, 72, 73, 75, 79, 81, 90, 91, 93, 97, 99, 105#, 111#, 120, 121, 122, 124, 126, 128, 129, 130, 134, 135, 136, 137, 138, 140, 143}}
+==============================================
+
+real	0m38.606s
+user	0m38.525s
+sys	0m0.035s
+
+PFTF < v11/tcas.c >
+Filtering bug free blocks.
+Bug free blocks coverage: 0/47
+EncoderLightPass [activated]
+No safe path segments for constructing PTF.
+=================================================
+Running AllDiagnosis algorithm [Push&Pop][FLA][PTF]
+
+   number of hard constraints  102
+   number of soft constraints  55
+   number of error-in. inputs  15
+
+
+[▒                                                 ] 0.00 %
+Combined MCSes size: 1
+Combined MCSes:
+{{50, 51, 52, 53, 58, 63, 72, 73, 75, 79, 81, 90, 91, 93, 97, 99, 106#, 113#, 122, 123, 124, 126, 128, 130, 131, 136, 140, 141, 142, 144, 147}}
+==============================================
+
+real	0m47.443s
+user	0m47.349s
+sys	0m0.040s
+
+PFTF < v12/tcas.c >
+Filtering bug free blocks.
+Bug free blocks coverage: 0/52
+EncoderLightPass [activated]
+No safe path segments for constructing PTF.
+=================================================
+Running AllDiagnosis algorithm [Push&Pop][FLA][PTF]
+
+   number of hard constraints  109
+   number of soft constraints  57
+   number of error-in. inputs  71
+
+
+[▒                                                 ] 0.00 %
+Combined MCSes size: 1
+Combined MCSes:
+{{50, 51, 52, 53, 58, 63, 72, 73, 75, 79, 81, 90, 91, 93, 97, 99, 104, 109, 118#, 119, 120, 122, 124, 126, 127, 128, 132, 133, 134, 135, 136, 138, 141}}
+==============================================
+
+real	0m40.132s
+user	0m40.041s
+sys	0m0.040s
+
+PFTF < v13/tcas.c >
+Filtering bug free blocks.
+Bug free blocks coverage: 2/51
+EncoderLightPass [activated]
+=================================================
+Running AllDiagnosis algorithm [Push&Pop][FLA][PTF]
+
+   number of hard constraints  106
+   number of soft constraints  57
+   number of error-in. inputs  5
+
+
+[▒                                                 ] 0.00 %
+Combined MCSes size: 1
+Combined MCSes:
+{{50, 51, 52, 53, 58, 63, 72, 73, 75, 79, 81, 90, 91, 93, 97, 99, 104, 109, 118#, 119, 120, 122, 124, 126, 127, 128, 132, 133, 134, 135, 136, 138, 141}}
+==============================================
+
+real	0m13.023s
+user	0m12.983s
+sys	0m0.023s
+
+PFTF < v14/tcas.c >
+Filtering bug free blocks.
+Bug free blocks coverage: 15/51
+EncoderLightPass [activated]
+=================================================
+Running AllDiagnosis algorithm [Push&Pop][FLA][PTF]
+
+   number of hard constraints  81
+   number of soft constraints  50
+   number of error-in. inputs  51
+
+
+[▒                                                 ] 0.00 %
+Combined MCSes size: 1
+Combined MCSes:
+{{63, 72, 73, 79, 81, 90, 91, 109, 118#, 119, 120, 122, 124, 126, 141}}
+==============================================
+
+real	0m3.242s
+user	0m3.215s
+sys	0m0.020s
+
+PFTF < v15/tcas.c >
+Filtering bug free blocks.
+Bug free blocks coverage: 1/50
+EncoderLightPass [activated]
+=================================================
+Running AllDiagnosis algorithm [Push&Pop][FLA][PTF]
+
+   number of hard constraints  106
+   number of soft constraints  57
+   number of error-in. inputs  11
+
+
+[▒                                                 ] 0.00 %
+Combined MCSes size: 1
+Combined MCSes:
+{{50, 51, 52, 53, 58, 63, 72, 73, 75, 79#, 81, 90, 91, 93#, 97, 99, 104, 109, 118#, 119, 120, 122, 124, 126, 127, 128, 132, 133, 134, 135, 136, 138, 141}}
+==============================================
+
+real	0m27.118s
+user	0m27.028s
+sys	0m0.032s
+
+PFTF < v16/tcas.c >
+Filtering bug free blocks.
+Bug free blocks coverage: 2/51
+EncoderLightPass [activated]
+=================================================
+Running AllDiagnosis algorithm [Push&Pop][FLA][PTF]
+
+   number of hard constraints  105
+   number of soft constraints  55
+   number of error-in. inputs  71
+
+
+[▒                                                 ] 0.00 %
+Combined MCSes size: 1
+Combined MCSes:
+{{50#, 51, 52, 53, 58, 63, 72, 73, 75, 79, 81, 90, 91, 93, 99, 104, 109, 118, 119, 120, 122, 124, 126, 127, 128, 132, 133, 134, 135, 138, 141}}
+==============================================
+
+real	0m25.634s
+user	0m25.574s
+sys	0m0.034s
+
+PFTF < v17/tcas.c >
+Filtering bug free blocks.
+Bug free blocks coverage: 2/51
+EncoderLightPass [activated]
+=================================================
+Running AllDiagnosis algorithm [Push&Pop][FLA][PTF]
+
+   number of hard constraints  105
+   number of soft constraints  55
+   number of error-in. inputs  36
+
+
+[▒                                                 ] 0.00 %
+Combined MCSes size: 1
+Combined MCSes:
+{{51#, 52, 53, 58, 63, 72, 73, 75, 79, 81, 90, 91, 93, 97, 99, 104, 109, 118, 119, 120, 122, 124, 126, 127, 128, 132, 133, 134, 135, 138, 141}}
+==============================================
+
+real	0m19.700s
+user	0m19.648s
+sys	0m0.027s
+
+PFTF < v18/tcas.c >
+Filtering bug free blocks.
+Bug free blocks coverage: 2/51
+EncoderLightPass [activated]
+=================================================
+Running AllDiagnosis algorithm [Push&Pop][FLA][PTF]
+
+   number of hard constraints  105
+   number of soft constraints  55
+   number of error-in. inputs  30
+
+
+[▒                                                 ] 0.00 %
+Combined MCSes size: 1
+Combined MCSes:
+{{52#, 53, 58, 63, 72, 73, 75, 79, 81, 90, 91, 93, 97, 99, 104, 109, 118, 119, 120, 122, 124, 126, 127, 128, 132, 133, 134, 135, 138, 141}}
+==============================================
+
+real	0m21.697s
+user	0m21.644s
+sys	0m0.029s
+
+PFTF < v19/tcas.c >
+Filtering bug free blocks.
+Bug free blocks coverage: 2/51
+EncoderLightPass [activated]
+=================================================
+Running AllDiagnosis algorithm [Push&Pop][FLA][PTF]
+
+   number of hard constraints  105
+   number of soft constraints  55
+   number of error-in. inputs  20
+
+
+[▒                                                 ] 0.00 %
+Combined MCSes size: 1
+Combined MCSes:
+{{53#, 58, 63, 72, 73, 75, 79, 81, 90, 91, 93, 97, 99, 104, 109, 118, 119, 120, 122, 124, 126, 127, 128, 132, 133, 134, 135, 138, 141}}
+==============================================
+
+real	0m15.702s
+user	0m15.657s
+sys	0m0.024s
+
+PFTF < v20/tcas.c >
+Filtering bug free blocks.
+Bug free blocks coverage: 4/51
+EncoderLightPass [activated]
+=================================================
+Running AllDiagnosis algorithm [Push&Pop][FLA][PTF]
+
+   number of hard constraints  100
+   number of soft constraints  54
+   number of error-in. inputs  19
+
+
+[▒                                                 ] 0.00 %
+Combined MCSes size: 1
+Combined MCSes:
+{{50, 51, 52, 53, 58, 63, 72#, 73, 75, 79, 81, 90, 91, 104, 109, 118, 119, 120, 122, 124, 126, 128, 132, 133, 134, 135, 138, 141}}
+==============================================
+
+real	0m5.240s
+user	0m5.211s
+sys	0m0.022s
+
+PFTF < v21/tcas.c >
+Filtering bug free blocks.
+Bug free blocks coverage: 8/48
+EncoderLightPass [activated]
+=================================================
+Running AllDiagnosis algorithm [Push&Pop][FLA][PTF]
+
+   number of hard constraints  88
+   number of soft constraints  51
+   number of error-in. inputs  17
+
+
+[▒                                                 ] 0.00 %
+Combined MCSes size: 1
+Combined MCSes:
+{{50, 51, 52, 53, 58, 63, 72#, 73, 75, 81, 90, 91, 104, 109, 118, 119, 120, 122, 124, 126, 128, 132, 133, 134, 135, 138, 141}}
+==============================================
+
+real	0m2.702s
+user	0m2.675s
+sys	0m0.020s
+
+PFTF < v22/tcas.c >
+Filtering bug free blocks.
+Bug free blocks coverage: 9/48
+EncoderLightPass [activated]
+=================================================
+Running AllDiagnosis algorithm [Push&Pop][FLA][PTF]
+
+   number of hard constraints  87
+   number of soft constraints  51
+   number of error-in. inputs  12
+
+
+[▒                                                 ] 0.00 %
+Combined MCSes size: 1
+Combined MCSes:
+{{50, 51, 52, 53, 58, 63, 72#, 73, 79, 81, 90, 91, 93, 99, 109, 118, 119, 120, 122, 124, 126, 127, 133, 135, 138, 141}}
+==============================================
+
+real	0m7.324s
+user	0m7.291s
+sys	0m0.021s
+
+PFTF < v23/tcas.c >
+Filtering bug free blocks.
+Bug free blocks coverage: 15/48
+EncoderLightPass [activated]
+=================================================
+Running AllDiagnosis algorithm [Push&Pop][FLA][PTF]
+
+   number of hard constraints  76
+   number of soft constraints  50
+   number of error-in. inputs  42
+
+
+[▒                                                 ] 0.00 %
+Combined MCSes size: 1
+Combined MCSes:
+{{63, 72, 73, 79, 81, 90#, 91, 99, 104, 109, 118, 119, 120, 122, 124, 126, 127, 133, 135, 138, 141}}
+==============================================
+
+real	0m7.864s
+user	0m7.830s
+sys	0m0.022s
+
+PFTF < v24/tcas.c >
+Filtering bug free blocks.
+Bug free blocks coverage: 8/48
+EncoderLightPass [activated]
+=================================================
+Running AllDiagnosis algorithm [Push&Pop][FLA][PTF]
+
+   number of hard constraints  90
+   number of soft constraints  53
+   number of error-in. inputs  8
+
+
+[▒                                                 ] 0.00 %
+Combined MCSes size: 1
+Combined MCSes:
+{{50, 51, 52, 53, 58, 63, 72, 73, 79, 81, 90#, 91, 97, 99, 104, 109, 118, 119, 120, 122, 124, 126, 127, 128, 133, 135, 136, 138, 141}}
+==============================================
+
+real	0m3.242s
+user	0m3.211s
+sys	0m0.022s
+
+PFTF < v25/tcas.c >
+Filtering bug free blocks.
+Bug free blocks coverage: 12/51
+EncoderLightPass [activated]
+=================================================
+Running AllDiagnosis algorithm [Push&Pop][FLA][PTF]
+
+   number of hard constraints  85
+   number of soft constraints  51
+   number of error-in. inputs  4
+
+
+[▒                                                 ] 0.00 %
+Combined MCSes size: 1
+Combined MCSes:
+{{51, 52, 53, 58, 63, 72, 73, 79, 90, 91, 97#, 99, 104, 109, 118, 119, 120, 122, 124, 127, 133, 135, 138, 141}}
+==============================================
+
+real	0m1.860s
+user	0m1.833s
+sys	0m0.021s
+
+PFTF < v26/tcas.c >
+Filtering bug free blocks.
+Bug free blocks coverage: 0/50
+EncoderLightPass [activated]
+No safe path segments for constructing PTF.
+=================================================
+Running AllDiagnosis algorithm [Push&Pop][FLA][PTF]
+
+   number of hard constraints  106
+   number of soft constraints  57
+   number of error-in. inputs  12
+
+
+[▒                                                 ] 0.00 %
+Combined MCSes size: 1
+Combined MCSes:
+{{50, 51, 52, 53, 58, 63, 72, 73, 75, 79, 81, 90, 91, 93, 97, 99, 104, 109, 118#, 119, 120, 122, 124, 126, 127, 128, 132, 133, 134, 135, 136, 138, 141}}
+==============================================
+
+real	0m32.595s
+user	0m32.530s
+sys	0m0.030s
+
+PFTF < v27/tcas.c >
+Filtering bug free blocks.
+Bug free blocks coverage: 1/50
+EncoderLightPass [activated]
+=================================================
+Running AllDiagnosis algorithm [Push&Pop][FLA][PTF]
+
+   number of hard constraints  106
+   number of soft constraints  57
+   number of error-in. inputs  11
+
+
+[▒                                                 ] 0.00 %
+Combined MCSes size: 1
+Combined MCSes:
+{{50, 51, 52, 53, 58, 63, 72, 73, 75, 79, 81, 90, 91, 93, 97, 99, 104, 109, 118#, 119, 120, 122, 124, 126, 127, 128, 132, 133, 134, 135, 136, 138, 141}}
+==============================================
+
+real	0m26.892s
+user	0m26.806s
+sys	0m0.031s
+
+PFTF < v28/tcas.c >
+Filtering bug free blocks.
+Bug free blocks coverage: 0/51
+EncoderLightPass [activated]
+No safe path segments for constructing PTF.
+=================================================
+Running AllDiagnosis algorithm [Push&Pop][FLA][PTF]
+
+   number of hard constraints  107
+   number of soft constraints  57
+   number of error-in. inputs  76
+
+
+[▒                                                 ] 0.00 %
+Combined MCSes size: 1
+Combined MCSes:
+{{50, 51, 52, 53, 58, 63#, 72, 73, 75, 79, 81, 90, 91, 93, 97, 99, 104, 109, 118, 119, 120, 122, 124, 126, 127, 128, 132, 133, 134, 135, 136, 138, 141}}
+==============================================
+
+real	3m5.764s
+user	3m5.439s
+sys	0m0.102s
+
+PFTF < v29/tcas.c >
+Filtering bug free blocks.
+Bug free blocks coverage: 9/45
+EncoderLightPass [activated]
+=================================================
+Running AllDiagnosis algorithm [Push&Pop][FLA][PTF]
+
+   number of hard constraints  81
+   number of soft constraints  53
+   number of error-in. inputs  19
+
+
+[▒                                                 ] 0.00 %
+Combined MCSes size: 1
+Combined MCSes:
+{{50, 51, 52, 53, 58, 63#, 72, 73, 79, 81, 90, 91, 97, 99, 104, 109, 118, 119, 120, 122, 124, 126, 127, 128, 133, 135, 136, 138, 141}}
+==============================================
+
+real	0m20.319s
+user	0m20.266s
+sys	0m0.028s
+
+PFTF < v30/tcas.c >
+Filtering bug free blocks.
+Bug free blocks coverage: 9/45
+EncoderLightPass [activated]
+=================================================
+Running AllDiagnosis algorithm [Push&Pop][FLA][PTF]
+
+   number of hard constraints  80
+   number of soft constraints  52
+   number of error-in. inputs  58
+
+
+[▒                                                 ] 0.00 %
+Combined MCSes size: 1
+Combined MCSes:
+{{50, 51, 52, 53, 58, 63#, 72, 73, 75, 81, 90, 91, 93, 99, 104, 118, 119, 120, 122, 124, 126, 127, 128, 132, 133, 134, 135, 138, 141}}
+==============================================
+
+real	0m8.183s
+user	0m8.147s
+sys	0m0.025s
+
+PFTF < v31/tcas.c >
+Filtering bug free blocks.
+Bug free blocks coverage: 6/53
+EncoderLightPass [activated]
+=================================================
+Running AllDiagnosis algorithm [Push&Pop][FLA][PTF]
+
+   number of hard constraints  103
+   number of soft constraints  55
+   number of error-in. inputs  15
+
+
+[▒                                                 ] 0.00 %
+Combined MCSes size: 1
+Combined MCSes:
+{{63, 72, 73, 76, 80, 81#, 83, 92, 93, 101, 106, 111, 120, 121, 122, 124, 126, 128#, 129, 130, 134, 135, 136, 137, 140, 143}}
+==============================================
+
+real	0m28.267s
+user	0m28.205s
+sys	0m0.030s
+
+PFTF < v32/tcas.c >
+Filtering bug free blocks.
+Bug free blocks coverage: 13/53
+EncoderLightPass [activated]
+=================================================
+Running AllDiagnosis algorithm [Push&Pop][FLA][PTF]
+
+   number of hard constraints  85
+   number of soft constraints  52
+   number of error-in. inputs  3
+
+
+[▒                                                 ] 0.00 %
+Combined MCSes size: 1
+Combined MCSes:
+{{52, 53, 58, 63, 72, 73, 79, 81, 90, 91, 99#, 101, 111, 120, 121, 122, 124, 126, 128, 129#, 130, 135, 137, 138, 143}}
+==============================================
+
+real	0m1.709s
+user	0m1.687s
+sys	0m0.019s
+
+PFTF < v33/tcas.c >
+Filtering bug free blocks.
+Bug free blocks coverage: 0/51
+EncoderLightPass [activated]
+No safe path segments for constructing PTF.
+=================================================
+Running AllDiagnosis algorithm [Push&Pop][FLA][PTF]
+
+   number of hard constraints  107
+   number of soft constraints  57
+   number of error-in. inputs  187
+
+
+Empty MCS!                                         ] 0.00 %
+Empty MCS!                                         ] 0.00 %
+Empty MCS!                                         ] 0.00 %
+Empty MCS!                                         ] 0.00 %
+Empty MCS!                                         ] 0.00 %
+Empty MCS!                                         ] 0.00 %
+Empty MCS!                                         ] 0.00 %
+Empty MCS!                                         ] 0.00 %
+Empty MCS!                                         ] 0.00 %
+Empty MCS!                                         ] 0.00 %
+Empty MCS!                                         ] 0.00 %
+Empty MCS!                                         ] 0.00 %
+Empty MCS!                                         ] 0.00 %
+Empty MCS!                                         ] 0.00 %
+Empty MCS!                                         ] 0.00 %
+Empty MCS!                                         ] 0.00 %
+Empty MCS!                                         ] 0.00 %
+Empty MCS!                                         ] 0.00 %
+Empty MCS!                                         ] 0.00 %
+Empty MCS!                                         ] 0.00 %
+[▒                                                 ] 0.00 %
+Combined MCSes size: 1
+Combined MCSes:
+{{50#, 51#, 52#, 53#, 58, 63, 72, 73, 75, 79, 81, 90, 91, 93, 97, 99, 104, 109, 118, 119, 120, 122, 124, 126, 127, 128, 132, 133, 134, 135, 136, 138, 141}}
+==============================================
+
+real	2m19.995s
+user	2m19.772s
+sys	0m0.085s
+
+PFTF < v34/tcas.c >
+Filtering bug free blocks.
+Bug free blocks coverage: 1/51
+EncoderLightPass [activated]
+=================================================
+Running AllDiagnosis algorithm [Push&Pop][FLA][PTF]
+
+   number of hard constraints  107
+   number of soft constraints  57
+   number of error-in. inputs  78
+
+
+[▒                                                 ] 0.00 %
+Combined MCSes size: 1
+Combined MCSes:
+{{50, 51, 52, 53, 58, 63, 72, 73, 75, 79, 81, 90, 91, 93, 97, 99, 104, 109, 118, 119, 120, 122, 124, 126, 127, 128, 132, 133, 134, 135, 136, 138, 141}}
+========#======================================
+
+real	0m41.998s
+user	0m41.907s
+sys	0m0.041s
+
+PFTF < v35/tcas.c >
+Filtering bug free blocks.
+Bug free blocks coverage: 0/51
+EncoderLightPass [activated]
+No safe path segments for constructing PTF.
+=================================================
+Running AllDiagnosis algorithm [Push&Pop][FLA][PTF]
+
+   number of hard constraints  107
+   number of soft constraints  57
+   number of error-in. inputs  76
+
+
+[▒                                                 ] 0.00 %
+Combined MCSes size: 1
+Combined MCSes:
+{{50, 51, 52, 53, 58, 63#, 72, 73, 75, 79, 81, 90, 91, 93, 97, 99, 104, 109, 118, 119, 120, 122, 124, 126, 127, 128, 132, 133, 134, 135, 136, 138, 141}}
+==============================================
+
+real	3m4.657s
+user	3m4.346s
+sys	0m0.095s
+
+PFTF < v36/tcas.c >
+Filtering bug free blocks.
+Bug free blocks coverage: 9/51
+EncoderLightPass [activated]
+=================================================
+Running AllDiagnosis algorithm [Push&Pop][FLA][PTF]
+
+   number of hard constraints  89
+   number of soft constraints  53
+   number of error-in. inputs  126
+
+
+[▒                                                 ] 0.00 %
+Combined MCSes size: 1
+Combined MCSes:
+{{50, 51, 52, 53, 58, 63, 72, 73, 79, 81, 90, 91, 97, 99, 104, 109, 118, 119, 120, 122, 124, 126, 127, 128, 133, 135, 136#, 138, 141}}
+==============================================
+
+real	1m13.667s
+user	1m13.526s
+sys	0m0.061s
+
+PFTF < v37/tcas.c >
+Filtering bug free blocks.
+Bug free blocks coverage: 2/51
+EncoderLightPass [activated]
+=================================================
+Running AllDiagnosis algorithm [Push&Pop][FLA][PTF]
+
+   number of hard constraints  102
+   number of soft constraints  56
+   number of error-in. inputs  92
+
+
+[▒                                                 ] 0.00 %
+Combined MCSes size: 1
+Combined MCSes:
+{{50, 51, 52, 53, 58#, 63, 72, 73, 75, 79, 81, 90, 91, 97, 99, 104, 109, 118, 119, 120, 122, 124, 126, 127, 128, 133, 135, 136, 138, 141}}
+==============================================
+
+real	2m5.289s
+user	2m5.079s
+sys	0m0.072s
+
+PFTF < v38/tcas.c >
+Filtering bug free blocks.
+Bug free blocks coverage: 2/51
+EncoderLightPass [activated]
+=================================================
+Running AllDiagnosis algorithm [Push&Pop][FLA][PTF]
+
+   number of hard constraints  105
+   number of soft constraints  55
+   number of error-in. inputs  6
+
+
+[▒                                                 ] 0.00 %
+Combined MCSes size: 1
+Combined MCSes:
+{{51, 52, 53#, 58#, 63, 72, 73, 75, 79, 81, 90, 91, 93, 97, 99, 104, 109, 118, 119, 120, 122, 124, 126, 127, 128, 132, 133, 134, 135, 138, 141}}
+==============================================
+
+real	1m24.332s
+user	1m24.190s
+sys	0m0.055s
+
+PFTF < v39/tcas.c >
+Filtering bug free blocks.
+Bug free blocks coverage: 12/51
+EncoderLightPass [activated]
+=================================================
+Running AllDiagnosis algorithm [Push&Pop][FLA][PTF]
+
+   number of hard constraints  85
+   number of soft constraints  51
+   number of error-in. inputs  4
+
+
+[▒                                                 ] 0.00 %
+Combined MCSes size: 1
+Combined MCSes:
+{{51, 52, 53, 58, 63, 72, 73, 79, 90, 91, 97#, 99, 104, 109, 118, 119, 120, 122, 124, 127, 133, 135, 138, 141}}
+==============================================
+
+real	0m1.875s
+user	0m1.851s
+sys	0m0.019s
+
+PFTF < v40/tcas.c >
+Filtering bug free blocks.
+Bug free blocks coverage: 6/47
+EncoderLightPass [activated]
+=================================================
+Running AllDiagnosis algorithm [Push&Pop][FLA][PTF]
+
+   number of hard constraints  84
+   number of soft constraints  52
+   number of error-in. inputs  126
+
+
+[▒                                                 ] 0.00 %
+Combined MCSes size: 1
+Combined MCSes:
+{{50, 51, 52, 53, 58, 63, 72, 73, 79, 81, 90, 91, 97, 99, 109, 118, 119, 120, 122, 124, 126#, 127, 128, 132, 133, 135, 138, 141}}
+==============================================
+
+real	1m11.576s
+user	1m11.404s
+sys	0m0.062s
+
+PFTF < v41/tcas.c >
+Filtering bug free blocks.
+Bug free blocks coverage: 8/50
+EncoderLightPass [activated]
+=================================================
+Running AllDiagnosis algorithm [Push&Pop][FLA][PTF]
+
+   number of hard constraints  88
+   number of soft constraints  52
+   number of error-in. inputs  25
+
+
+[▒                                                 ] 0.00 %
+Combined MCSes size: 1
+Combined MCSes:
+{{50, 51, 52, 53, 58, 63, 72, 73, 79#, 81, 90, 91, 104, 109, 118, 119, 120, 122, 124, 126, 128, 132, 133, 134, 135, 138, 141}}
+==============================================
+
+real	0m6.186s
+user	0m6.155s
+sys	0m0.020s
+ 
+ 
+
+
+
+
+
+=== FFTF ===================================
+
+FFTF < v1/tcas.c >
+EncoderLightPass [activated]
+=================================================
+Running AllDiagnosis algorithm [Push&Pop][FLA]
+
+   number of hard constraints  107
+   number of soft constraints  57
+   number of error-in. inputs  132
+
+
+[▒                                                 ] 0.00 %
+Combined MCSes size: 1
+Combined MCSes:
+{{50, 51, 52, 53, 58, 63, 72, 73, 75#, 79, 81, 90, 91, 93, 99, 104, 109, 118, 119, 120, 122, 124, 126, 127, 128, 132, 133, 134, 135, 138, 141}}
+==============================================
+
+real	0m52.907s
+user	0m52.804s
+sys	0m0.039s
+
+FFTF < v2/tcas.c >
+EncoderLightPass [activated]
+=================================================
+Running AllDiagnosis algorithm [Push&Pop][FLA]
+
+   number of hard constraints  107
+   number of soft constraints  57
+   number of error-in. inputs  71
+
+
+[▒                                                 ] 0.00 %
+Combined MCSes size: 1
+Combined MCSes:
+{{50, 51, 52, 53, 58, 63#, 72, 73, 75, 79, 81, 90, 91, 93, 97, 99, 104, 109, 118, 119, 120, 122, 124, 126, 127, 128, 132, 133, 134, 135, 138, 141}}
+==============================================
+
+real	2m19.903s
+user	2m19.664s
+sys	0m0.070s
+
+FFTF < v3/tcas.c >
+EncoderLightPass [activated]
+=================================================
+Running AllDiagnosis algorithm [Push&Pop][FLA]
+
+   number of hard constraints  106
+   number of soft constraints  57
+   number of error-in. inputs  24
+
+
+[▒                                                 ] 0.00 %
+Combined MCSes size: 1
+Combined MCSes:
+{{50, 51, 52, 53, 58, 63, 72, 73, 75, 79, 81, 90, 91, 93, 97, 99, 104, 109, 118, 119, 120#, 122, 124, 126, 127, 128, 132, 133, 134, 135, 136, 138, 141}}
+==============================================
+
+real	0m36.922s
+user	0m36.856s
+sys	0m0.026s
+
+FFTF < v4/tcas.c >
+EncoderLightPass [activated]
+=================================================
+Running AllDiagnosis algorithm [Push&Pop][FLA]
+
+   number of hard constraints  106
+   number of soft constraints  57
+   number of error-in. inputs  25
+
+
+[▒                                                 ] 0.00 %
+Combined MCSes size: 1
+Combined MCSes:
+{{50, 51, 52, 53, 58, 63, 72, 73, 79#, 81, 90, 91, 93, 99, 104, 109, 118, 119, 120, 122, 124, 126, 127, 128, 132, 133, 134, 135, 138, 141}}
+==============================================
+
+real	0m17.772s
+user	0m17.733s
+sys	0m0.017s
+
+FFTF < v5/tcas.c >
+EncoderLightPass [activated]
+=================================================
+Running AllDiagnosis algorithm [Push&Pop][FLA]
+
+   number of hard constraints  106
+   number of soft constraints  57
+   number of error-in. inputs  11
+
+
+[▒                                                 ] 0.00 %
+Combined MCSes size: 1
+Combined MCSes:
+{{50, 51, 52, 53, 58, 63, 72, 73, 75, 79, 81, 90, 91, 93, 97, 99, 104, 109, 118#, 119, 120, 122, 124, 126, 127, 128, 132, 133, 134, 135, 136, 138, 141}}
+==============================================
+
+real	0m26.082s
+user	0m26.028s
+sys	0m0.021s
+
+FFTF < v6/tcas.c >
+EncoderLightPass [activated]
+=================================================
+Running AllDiagnosis algorithm [Push&Pop][FLA]
+
+   number of hard constraints  107
+   number of soft constraints  57
+   number of error-in. inputs  13
+
+
+[▒                                                 ] 0.00 %
+Combined MCSes size: 1
+Combined MCSes:
+{{50, 51, 52, 53, 58, 63, 72, 73, 75, 79, 81, 90, 91, 93, 99, 104#, 109, 118, 119, 120, 122, 124, 126, 127, 128, 132, 133, 134, 135, 138, 141}}
+==============================================
+
+real	0m32.990s
+user	0m32.927s
+sys	0m0.023s
+
+FFTF < v7/tcas.c >
+EncoderLightPass [activated]
+=================================================
+Running AllDiagnosis algorithm [Push&Pop][FLA]
+
+   number of hard constraints  107
+   number of soft constraints  57
+   number of error-in. inputs  37
+
+
+[▒                                                 ] 0.00 %
+Combined MCSes size: 1
+Combined MCSes:
+{{51#, 52, 53, 58, 63, 72, 73, 75, 79, 81, 90, 91, 93, 97, 99, 104, 109, 118, 119, 120, 122, 124, 126, 127, 128, 132, 133, 134, 135, 138, 141}}
+==============================================
+
+real	0m44.003s
+user	0m43.916s
+sys	0m0.031s
+
+FFTF < v8/tcas.c >
+EncoderLightPass [activated]
+=================================================
+Running AllDiagnosis algorithm [Push&Pop][FLA]
+
+   number of hard constraints  107
+   number of soft constraints  57
+   number of error-in. inputs  2
+
+
+[▒                                                 ] 0.00 %
+Combined MCSes size: 1
+Combined MCSes:
+{{50, 51, 52, 53#, 58, 63, 72, 73, 79, 81, 90, 91, 93, 97, 99, 104, 109, 118, 119, 120, 122, 124, 126, 127, 128, 132, 133, 134, 135, 136, 138, 141}}
+==============================================
+
+real	0m31.478s
+user	0m31.428s
+sys	0m0.022s
+
+FFTF < v9/tcas.c >
+EncoderLightPass [activated]
+=================================================
+Running AllDiagnosis algorithm [Push&Pop][FLA]
+
+   number of hard constraints  107
+   number of soft constraints  57
+   number of error-in. inputs  10
+
+
+[▒                                                 ] 0.00 %
+Combined MCSes size: 1
+Combined MCSes:
+{{49, 50, 51, 52, 57, 62, 71, 72, 74, 78, 80, 89#, 90, 92, 96, 98, 103, 108, 117, 118, 119, 121, 123, 125, 126, 127, 131, 132, 133, 134, 137, 140}}
+==============================================
+
+real	2m7.725s
+user	2m7.507s
+sys	0m0.066s
+
+FFTF < v10/tcas.c >
+EncoderLightPass [activated]
+=================================================
+Running AllDiagnosis algorithm [Push&Pop][FLA]
+
+   number of hard constraints  107
+   number of soft constraints  57
+   number of error-in. inputs  15
+
+
+[▒                                                 ] 0.00 %
+Combined MCSes size: 1
+Combined MCSes:
+{{50, 51, 52, 53, 58, 63, 72, 73, 75, 79, 81, 90, 91, 93, 97, 99, 105#, 111#, 120, 121, 122, 124, 126, 128, 129, 130, 134, 135, 136, 137, 138, 140, 143}}
+==============================================
+
+real	0m38.761s
+user	0m38.690s
+sys	0m0.027s
+
+FFTF < v11/tcas.c >
+EncoderLightPass [activated]
+=================================================
+Running AllDiagnosis algorithm [Push&Pop][FLA]
+
+   number of hard constraints  102
+   number of soft constraints  55
+   number of error-in. inputs  15
+
+
+[▒                                                 ] 0.00 %
+Combined MCSes size: 1
+Combined MCSes:
+{{50, 51, 52, 53, 58, 63, 72, 73, 75, 79, 81, 90, 91, 93, 97, 99, 106#, 113#, 122, 123, 124, 126, 128, 130, 131, 136, 140, 141, 142, 144, 147}}
+==============================================
+
+real	0m47.354s
+user	0m47.269s
+sys	0m0.032s
+
+FFTF < v12/tcas.c >
+EncoderLightPass [activated]
+=================================================
+Running AllDiagnosis algorithm [Push&Pop][FLA]
+
+   number of hard constraints  109
+   number of soft constraints  57
+   number of error-in. inputs  71
+
+
+[▒                                                 ] 0.00 %
+Combined MCSes size: 1
+Combined MCSes:
+{{50, 51, 52, 53, 58, 63, 72, 73, 75, 79, 81, 90, 91, 93, 97, 99, 104, 109, 118#, 119, 120, 122, 124, 126, 127, 128, 132, 133, 134, 135, 136, 138, 141}}
+==============================================
+
+real	0m40.126s
+user	0m40.052s
+sys	0m0.031s
+
+FFTF < v13/tcas.c >
+EncoderLightPass [activated]
+=================================================
+Running AllDiagnosis algorithm [Push&Pop][FLA]
+
+   number of hard constraints  107
+   number of soft constraints  57
+   number of error-in. inputs  5
+
+
+[▒                                                 ] 0.00 %
+Combined MCSes size: 1
+Combined MCSes:
+{{50, 51, 52, 53, 58, 63, 72, 73, 75, 79, 81, 90, 91, 93, 97, 99, 104, 109, 118#, 119, 120, 122, 124, 126, 127, 128, 132, 133, 134, 135, 136, 138, 141}}
+==============================================
+
+real	0m30.432s
+user	0m30.376s
+sys	0m0.022s
+
+FFTF < v14/tcas.c >
+EncoderLightPass [activated]
+=================================================
+Running AllDiagnosis algorithm [Push&Pop][FLA]
+
+   number of hard constraints  107
+   number of soft constraints  57
+   number of error-in. inputs  51
+
+
+[▒                                                 ] 0.00 %
+Combined MCSes size: 1
+Combined MCSes:
+{{63, 72, 73, 79, 81, 90, 91, 93, 99, 104, 109, 118#, 119, 120, 122, 124, 126, 127, 128, 132, 133, 134, 135, 138, 141}}
+==============================================
+
+real	0m32.515s
+user	0m32.454s
+sys	0m0.024s
+
+FFTF < v15/tcas.c >
+EncoderLightPass [activated]
+=================================================
+Running AllDiagnosis algorithm [Push&Pop][FLA]
+
+   number of hard constraints  106
+   number of soft constraints  57
+   number of error-in. inputs  11
+
+
+[▒                                                 ] 0.00 %
+Combined MCSes size: 1
+Combined MCSes:
+{{50, 51, 52, 53, 58, 63, 72, 73, 75, 79#, 81, 90, 91, 93#, 97, 99, 104, 109, 118#, 119, 120, 122, 124, 126, 127, 128, 132, 133, 134, 135, 136, 138, 141}}
+==============================================
+
+real	0m26.330s
+user	0m26.273s
+sys	0m0.020s
+
+FFTF < v16/tcas.c >
+EncoderLightPass [activated]
+=================================================
+Running AllDiagnosis algorithm [Push&Pop][FLA]
+
+   number of hard constraints  107
+   number of soft constraints  57
+   number of error-in. inputs  71
+
+
+[▒                                                 ] 0.00 %
+Combined MCSes size: 1
+Combined MCSes:
+{{50#, 51, 52, 53, 58, 63, 72, 73, 75, 79, 81, 90, 91, 93, 99, 104, 109, 118, 119, 120, 122, 124, 126, 127, 128, 132, 133, 134, 135, 138, 141}}
+==============================================
+
+real	0m47.862s
+user	0m47.759s
+sys	0m0.035s
+
+FFTF < v17/tcas.c >
+EncoderLightPass [activated]
+=================================================
+Running AllDiagnosis algorithm [Push&Pop][FLA]
+
+   number of hard constraints  107
+   number of soft constraints  57
+   number of error-in. inputs  36
+
+
+[▒                                                 ] 0.00 %
+Combined MCSes size: 1
+Combined MCSes:
+{{51#, 52, 53, 58, 63, 72, 73, 75, 79, 81, 90, 91, 93, 97, 99, 104, 109, 118, 119, 120, 122, 124, 126, 127, 128, 132, 133, 134, 135, 138, 141}}
+==============================================
+
+real	0m40.377s
+user	0m40.305s
+sys	0m0.026s
+
+FFTF < v18/tcas.c >
+EncoderLightPass [activated]
+=================================================
+Running AllDiagnosis algorithm [Push&Pop][FLA]
+
+   number of hard constraints  107
+   number of soft constraints  57
+   number of error-in. inputs  30
+
+
+[▒                                                 ] 0.00 %
+Combined MCSes size: 1
+Combined MCSes:
+{{52#, 53, 58, 63, 72, 73, 75, 79, 81, 90, 91, 93, 97, 99, 104, 109, 118, 119, 120, 122, 124, 126, 127, 128, 132, 133, 134, 135, 138, 141}}
+==============================================
+
+real	0m59.238s
+user	0m59.134s
+sys	0m0.034s
+
+FFTF < v19/tcas.c >
+EncoderLightPass [activated]
+=================================================
+Running AllDiagnosis algorithm [Push&Pop][FLA]
+
+   number of hard constraints  107
+   number of soft constraints  57
+   number of error-in. inputs  20
+
+
+[▒                                                 ] 0.00 %
+Combined MCSes size: 1
+Combined MCSes:
+{{53#, 58, 63, 72, 73, 75, 79, 81, 90, 91, 93, 97, 99, 104, 109, 118, 119, 120, 122, 124, 126, 127, 128, 132, 133, 134, 135, 138, 141}}
+==============================================
+
+real	0m35.450s
+user	0m35.383s
+sys	0m0.025s
+
+FFTF < v20/tcas.c >
+EncoderLightPass [activated]
+=================================================
+Running AllDiagnosis algorithm [Push&Pop][FLA]
+
+   number of hard constraints  107
+   number of soft constraints  57
+   number of error-in. inputs  19
+
+
+[▒                                                 ] 0.00 %
+Combined MCSes size: 1
+Combined MCSes:
+{{50, 51, 52, 53, 58, 63, 72#, 73, 75, 79, 81, 90, 91, 93, 99, 104, 109, 118, 119, 120, 122, 124, 126, 127, 128, 132, 133, 134, 135, 138, 141}}
+==============================================
+
+real	0m28.720s
+user	0m28.665s
+sys	0m0.023s
+
+FFTF < v21/tcas.c >
+EncoderLightPass [activated]
+=================================================
+Running AllDiagnosis algorithm [Push&Pop][FLA]
+
+   number of hard constraints  103
+   number of soft constraints  56
+   number of error-in. inputs  17
+
+
+[▒                                                 ] 0.00 %
+Combined MCSes size: 1
+Combined MCSes:
+{{50, 51, 52, 53, 58, 63, 72#, 73, 75, 81, 90, 91, 99, 104, 109, 118, 119, 120, 122, 124, 126, 127, 128, 132, 133, 134, 135, 138, 141}}
+==============================================
+
+real	0m6.298s
+user	0m6.276s
+sys	0m0.012s
+
+FFTF < v22/tcas.c >
+EncoderLightPass [activated]
+=================================================
+Running AllDiagnosis algorithm [Push&Pop][FLA]
+
+   number of hard constraints  103
+   number of soft constraints  56
+   number of error-in. inputs  12
+
+
+[▒                                                 ] 0.00 %
+Combined MCSes size: 1
+Combined MCSes:
+{{50, 51, 52, 53, 58, 63, 72#, 73, 79, 81, 90, 91, 93, 97, 99, 104, 109, 118, 119, 120, 122, 124, 126, 127, 128, 132, 133, 134, 135, 136, 138, 141}}
+==============================================
+
+real	3m7.885s
+user	3m7.595s
+sys	0m0.083s
+
+FFTF < v23/tcas.c >
+EncoderLightPass [activated]
+=================================================
+Running AllDiagnosis algorithm [Push&Pop][FLA]
+
+   number of hard constraints  103
+   number of soft constraints  56
+   number of error-in. inputs  42
+
+
+[▒                                                 ] 0.00 %
+Combined MCSes size: 1
+Combined MCSes:
+{{50, 51, 52, 53, 58, 63, 72, 73, 75, 79, 81, 90#, 91, 93, 97, 99, 104, 109, 118, 119, 120, 122, 124, 126, 127, 128, 132, 133, 134, 135, 138, 141}}
+==============================================
+
+real	2m21.977s
+user	2m21.728s
+sys	0m0.072s
+
+FFTF < v24/tcas.c >
+EncoderLightPass [activated]
+=================================================
+Running AllDiagnosis algorithm [Push&Pop][FLA]
+
+   number of hard constraints  103
+   number of soft constraints  56
+   number of error-in. inputs  8
+
+
+[▒                                                 ] 0.00 %
+Combined MCSes size: 1
+Combined MCSes:
+{{50, 51, 52, 53, 58, 63, 72, 73, 79, 81, 90#, 91, 93, 97, 99, 104, 109, 118, 119, 120, 122, 124, 126, 127, 128, 132, 133, 134, 135, 136, 138, 141}}
+==============================================
+
+real	0m18.616s
+user	0m18.572s
+sys	0m0.017s
+
+FFTF < v25/tcas.c >
+EncoderLightPass [activated]
+=================================================
+Running AllDiagnosis algorithm [Push&Pop][FLA]
+
+   number of hard constraints  107
+   number of soft constraints  57
+   number of error-in. inputs  4
+
+
+[▒                                                 ] 0.00 %
+Combined MCSes size: 1
+Combined MCSes:
+{{51, 52, 53, 58, 63, 72, 73, 75, 79, 81, 90, 91, 93, 97#, 99, 104, 109, 118, 119, 120, 122, 124, 126, 127, 128, 132, 133, 134, 135, 138, 141}}
+==============================================
+
+real	0m34.019s
+user	0m33.953s
+sys	0m0.022s
+
+FFTF < v26/tcas.c >
+EncoderLightPass [activated]
+=================================================
+Running AllDiagnosis algorithm [Push&Pop][FLA]
+
+   number of hard constraints  106
+   number of soft constraints  57
+   number of error-in. inputs  12
+
+
+[▒                                                 ] 0.00 %
+Combined MCSes size: 1
+Combined MCSes:
+{{50, 51, 52, 53, 58, 63, 72, 73, 75, 79, 81, 90, 91, 93, 97, 99, 104, 109, 118#, 119, 120, 122, 124, 126, 127, 128, 132, 133, 134, 135, 136, 138, 141}}
+==============================================
+
+real	0m32.462s
+user	0m32.401s
+sys	0m0.023s
+
+FFTF < v27/tcas.c >
+EncoderLightPass [activated]
+=================================================
+Running AllDiagnosis algorithm [Push&Pop][FLA]
+
+   number of hard constraints  106
+   number of soft constraints  57
+   number of error-in. inputs  11
+
+
+[▒                                                 ] 0.00 %
+Combined MCSes size: 1
+Combined MCSes:
+{{50, 51, 52, 53, 58, 63, 72, 73, 75, 79, 81, 90, 91, 93, 97, 99, 104, 109, 118#, 119, 120, 122, 124, 126, 127, 128, 132, 133, 134, 135, 136, 138, 141}}
+==============================================
+
+real	0m26.538s
+user	0m26.485s
+sys	0m0.020s
+
+FFTF < v28/tcas.c >
+EncoderLightPass [activated]
+=================================================
+Running AllDiagnosis algorithm [Push&Pop][FLA]
+
+   number of hard constraints  107
+   number of soft constraints  57
+   number of error-in. inputs  76
+
+
+[▒                                                 ] 0.00 %
+Combined MCSes size: 1
+Combined MCSes:
+{{50, 51, 52, 53, 58, 63#, 72, 73, 75, 79, 81, 90, 91, 93, 97, 99, 104, 109, 118, 119, 120, 122, 124, 126, 127, 128, 132, 133, 134, 135, 136, 138, 141}}
+==============================================
+
+real	3m6.328s
+user	3m6.042s
+sys	0m0.088s
+
+FFTF < v29/tcas.c >
+EncoderLightPass [activated]
+=================================================
+Running AllDiagnosis algorithm [Push&Pop][FLA]
+
+   number of hard constraints  99
+   number of soft constraints  57
+   number of error-in. inputs  19
+
+
+[▒                                                 ] 0.00 %
+Combined MCSes size: 1
+Combined MCSes:
+{{50, 51, 52, 53, 58, 63#, 72, 73, 79, 81, 90, 91, 93, 97, 99, 104, 109, 118, 119, 120, 122, 124, 126, 127, 128, 132, 133, 134, 135, 136, 138, 141}}
+==============================================
+
+real	2m19.247s
+user	2m19.015s
+sys	0m0.065s
+
+FFTF < v30/tcas.c >
+EncoderLightPass [activated]
+=================================================
+Running AllDiagnosis algorithm [Push&Pop][FLA]
+
+   number of hard constraints  99
+   number of soft constraints  57
+   number of error-in. inputs  58
+
+
+[▒                                                 ] 0.00 %
+Combined MCSes size: 1
+Combined MCSes:
+{{50, 51, 52, 53, 58, 63#, 72, 73, 75, 79, 81, 90, 91, 93, 97, 99, 104, 109, 118, 119, 120, 122, 124, 126, 127, 128, 132, 133, 134, 135, 138, 141}}
+==============================================
+
+real	0m59.133s
+user	0m59.021s
+sys	0m0.037s
+
+FFTF < v31/tcas.c >
+EncoderLightPass [activated]
+=================================================
+Running AllDiagnosis algorithm [Push&Pop][FLA]
+
+   number of hard constraints  111
+   number of soft constraints  58
+   number of error-in. inputs  15
+
+
+[▒                                                 ] 0.00 %
+Combined MCSes size: 1
+Combined MCSes:
+{{50, 51, 52, 53, 58, 63, 72, 73, 76, 80, 81#, 83, 92, 93, 95, 101, 106, 111, 120, 121, 122, 124, 126, 128#, 129, 130, 134, 135, 136, 137, 140, 143}}
+==============================================
+
+real	0m39.208s
+user	0m39.142s
+sys	0m0.025s
+
+FFTF < v32/tcas.c >
+EncoderLightPass [activated]
+=================================================
+Running AllDiagnosis algorithm [Push&Pop][FLA]
+
+   number of hard constraints  111
+   number of soft constraints  58
+   number of error-in. inputs  3
+
+
+[▒                                                 ] 0.00 %
+Combined MCSes size: 1
+Combined MCSes:
+{{52, 53, 58, 63, 72, 73, 79, 81, 90, 91, 94, 99#, 101, 106, 111, 120, 121, 122, 124, 126, 128, 129#, 130, 134, 135, 136, 137, 138, 140, 143}}
+==============================================
+
+real	0m16.304s
+user	0m16.267s
+sys	0m0.016s
+
+FFTF < v33/tcas.c >
+EncoderLightPass [activated]
+=================================================
+Running AllDiagnosis algorithm [Push&Pop][FLA]
+
+   number of hard constraints  107
+   number of soft constraints  57
+   number of error-in. inputs  187
+
+
+Empty MCS!                                         ] 0.00 %
+Empty MCS!                                         ] 0.00 %
+Empty MCS!                                         ] 0.00 %
+Empty MCS!                                         ] 0.00 %
+Empty MCS!                                         ] 0.00 %
+Empty MCS!                                         ] 0.00 %
+Empty MCS!                                         ] 0.00 %
+Empty MCS!                                         ] 0.00 %
+Empty MCS!                                         ] 0.00 %
+Empty MCS!                                         ] 0.00 %
+Empty MCS!                                         ] 0.00 %
+Empty MCS!                                         ] 0.00 %
+Empty MCS!                                         ] 0.00 %
+Empty MCS!                                         ] 0.00 %
+Empty MCS!                                         ] 0.00 %
+Empty MCS!                                         ] 0.00 %
+Empty MCS!                                         ] 0.00 %
+Empty MCS!                                         ] 0.00 %
+Empty MCS!                                         ] 0.00 %
+Empty MCS!                                         ] 0.00 %
+[▒                                                 ] 0.00 %
+Combined MCSes size: 1
+Combined MCSes:
+{{50#, 51#, 52#, 53#, 58, 63, 72, 73, 75, 79, 81, 90, 91, 93, 97, 99, 104, 109, 118, 119, 120, 122, 124, 126, 127, 128, 132, 133, 134, 135, 136, 138, 141}}
+==============================================
+
+real	2m20.720s
+user	2m20.495s
+sys	0m0.074s
+
+FFTF < v34/tcas.c >
+EncoderLightPass [activated]
+=================================================
+Running AllDiagnosis algorithm [Push&Pop][FLA]
+
+   number of hard constraints  107
+   number of soft constraints  57
+   number of error-in. inputs  78
+
+
+[▒                                                 ] 0.00 %
+Combined MCSes size: 1
+Combined MCSes:
+{{50, 51, 52, 53, 58, 63, 72, 73, 75, 79, 81, 90, 91, 93, 97, 99, 104, 109, 118, 119, 120, 122, 124#, 126, 127, 128, 132, 133, 134, 135, 136, 138, 141}}
+==============================================
+
+real	0m42.140s
+user	0m42.038s
+sys	0m0.032s
+
+FFTF < v35/tcas.c >
+EncoderLightPass [activated]
+=================================================
+Running AllDiagnosis algorithm [Push&Pop][FLA]
+
+   number of hard constraints  107
+   number of soft constraints  57
+   number of error-in. inputs  76
+
+
+[▒                                                 ] 0.00 %
+Combined MCSes size: 1
+Combined MCSes:
+{{50, 51, 52, 53, 58, 63#, 72, 73, 75, 79, 81, 90, 91, 93, 97, 99, 104, 109, 118, 119, 120, 122, 124, 126, 127, 128, 132, 133, 134, 135, 136, 138, 141}}
+==============================================
+
+real	3m4.285s
+user	3m3.969s
+sys	0m0.092s
+
+FFTF < v36/tcas.c >
+EncoderLightPass [activated]
+=================================================
+Running AllDiagnosis algorithm [Push&Pop][FLA]
+
+   number of hard constraints  107
+   number of soft constraints  57
+   number of error-in. inputs  126
+
+
+^C                                                 ] 0.00 %
+
+
+FFTF < v37/tcas.c >
+EncoderLightPass [activated]
+=================================================
+Running AllDiagnosis algorithm [Push&Pop][FLA]
+
+   number of hard constraints  103
+   number of soft constraints  57
+   number of error-in. inputs  92
+
+
+[▒                                                 ] 0.00 %
+Combined MCSes size: 1
+Combined MCSes:
+{{50, 51, 52, 53, 58#, 63, 72, 73, 75, 79, 81, 90, 91, 97, 99, 104, 109, 118, 119, 120, 122, 124, 126, 127, 128, 132, 133, 134, 135, 136, 138, 141}}
+==============================================
+
+real	2m16.752s
+user	2m5.839s
+sys	0m0.705s
+
+
+FFTF < v38/tcas.c >
+EncoderLightPass [activated]
+=================================================
+Running AllDiagnosis algorithm [Push&Pop][FLA]
+
+   number of hard constraints  107
+   number of soft constraints  57
+   number of error-in. inputs  6
+
+
+[▒                                                 ] 0.00 %
+Combined MCSes size: 1
+Combined MCSes:
+{{51, 52, 53#, 58#, 63, 72, 73, 75, 79, 81, 90, 91, 93, 97, 99, 104, 109, 118, 119, 120, 122, 124, 126, 127, 128, 132, 133, 134, 135, 138, 141}}
+==============================================
+
+real	4m47.542s
+user	4m23.878s
+sys	0m1.262s
+
+FFTF < v39/tcas.c >
+EncoderLightPass [activated]
+=================================================
+Running AllDiagnosis algorithm [Push&Pop][FLA]
+
+   number of hard constraints  107
+   number of soft constraints  57
+   number of error-in. inputs  4
+
+
+[▒                                                 ] 0.00 %
+Combined MCSes size: 1
+Combined MCSes:
+{{51, 52, 53, 58, 63, 72, 73, 75, 79, 81, 90, 91, 93, 97#, 99, 104, 109, 118, 119, 120, 122, 124, 126, 127, 128, 132, 133, 134, 135, 138, 141}}
+==============================================
+
+real	0m51.312s
+user	0m47.477s
+sys	0m0.243s
+
+
+FFTF < v40/tcas.c >
+EncoderLightPass [activated]
+=================================================
+Running AllDiagnosis algorithm [Push&Pop][FLA]
+
+   number of hard constraints  97
+   number of soft constraints  56
+   number of error-in. inputs  126
+
+
+[▒                                                 ] 0.00 %
+Combined MCSes size: 1
+Combined MCSes:
+{{50, 51, 52, 53, 58, 63, 72, 73, 75#, 79, 81, 90, 91, 93, 97, 99, 104, 109, 118, 119, 120, 122, 124, 126#, 127, 128, 132, 133, 134, 135, 138, 141}}
+==============================================
+
+real	29m37.357s
+user	28m8.223s
+sys	0m7.323s
+
+
+FFTF < v41/tcas.c >
+EncoderLightPass [activated]
+=================================================
+Running AllDiagnosis algorithm [Push&Pop][FLA]
+
+   number of hard constraints  105
+   number of soft constraints  56
+   number of error-in. inputs  25
+
+
+[▒                                                 ] 0.00 %
+Combined MCSes size: 1
+Combined MCSes:
+{{50, 51, 52, 53, 58, 63, 72, 73, 79, 81, 90, 91, 93, 99, 104, 109, 118, 119, 120, 122, 124, 126, 127, 128, 132, 133, 134, 135, 138, 141}}
+==============================================
+
+real	0m46.274s
+user	0m45.207s
+sys	0m0.175s

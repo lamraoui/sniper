@@ -1,0 +1,16 @@
+llvm-gcc -emit-llvm ex0.c -c -o ex0.bc
+
+# Convert into SSA form
+opt -mem2reg test.bc -f -o test.opt.bc
+# Convret into SSA form + name virtual variables
+opt -mem2reg -instnamer if0.bc -f -o if0.opt2.bc
+
+llvm-dis < ex0.bc | less
+llvm-as < if0.ll | opt -mem2reg | llvm-dis
+
+
+# UPDATE
+#
+# llvm-gcc -emit-llvm -S foo.c -o foo.ll
+# llvm-as foo.ll -o foo.bc
+# llc foo.ll -o foo.S

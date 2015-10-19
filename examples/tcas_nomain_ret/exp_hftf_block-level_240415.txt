@@ -1,0 +1,913 @@
+24-04-2015
+
+Formula: HFTF
+Granularity level: basic block
+
+
+
+
+[miaou ~/Desktop/NII-13/workspace/examples/tcas_nomain_ret] ./tcas-htf-time-runall.sh 
+Running all TCAS versions with time()...
+== HFTF vs. FFTF ====================================
+======================================
+
+HFTF < v1/tcas.c >
+H: 109	S: 39
+Nb Call true  : 2418
+Nb Call SAT   : 0
+Nb Call unsat : 132
+Nb Call unknow: 0
+ACSR: 4.81696%
+Time: 12.592 + 0.039
+ 
+ 
+
+FFTF < v1/tcas.c >
+H: 108	S: 40
+Nb Call true  : 2418
+Nb Call SAT   : 0
+Nb Call unsat : 132
+Nb Call unknow: 0
+ACSR: 4.81696%
+Time: 12.217 + 0.037
+======================================
+
+HFTF < v2/tcas.c >
+H: 110	S: 38
+Nb Call true  : 1205
+Nb Call SAT   : 0
+Nb Call unsat : 71
+Nb Call unknow: 0
+ACSR: 4.9711%
+Time: 7.518 + 0.024
+ 
+ 
+
+FFTF < v2/tcas.c >
+H: 108	S: 40
+Nb Call true  : 1335
+Nb Call SAT   : 0
+Nb Call unsat : 71
+Nb Call unknow: 0
+ACSR: 5.20231%
+Time: 9.209 + 0.038
+======================================
+
+HFTF < v3/tcas.c >
+H: 107	S: 40
+Nb Call true  : 602
+Nb Call SAT   : 0
+Nb Call unsat : 24
+Nb Call unknow: 0
+ACSR: 6.26204%
+Time: 4.527 + 0.018
+ 
+ 
+
+FFTF < v3/tcas.c >
+H: 107	S: 40
+Nb Call true  : 602
+Nb Call SAT   : 0
+Nb Call unsat : 24
+Nb Call unknow: 0
+ACSR: 6.26204%
+Time: 4.448 + 0.016
+======================================
+
+HFTF < v4/tcas.c >
+H: 119	S: 34
+Nb Call true  : 418
+Nb Call SAT   : 0
+Nb Call unsat : 25
+Nb Call unknow: 0
+ACSR: 3.3237%
+Time: 2.220 + 0.015
+ 
+ 
+
+FFTF < v4/tcas.c >
+H: 107	S: 41
+Nb Call true  : 466
+Nb Call SAT   : 0
+Nb Call unsat : 25
+Nb Call unknow: 0
+ACSR: 3.46821%
+Time: 2.669 + 0.014
+======================================
+
+HFTF < v5/tcas.c >
+H: 108	S: 38
+Nb Call true  : 297
+Nb Call SAT   : 0
+Nb Call unsat : 11
+Nb Call unknow: 0
+ACSR: 6.86416%
+Time: 2.755 + 0.016
+ 
+ 
+
+FFTF < v5/tcas.c >
+H: 107	S: 39
+Nb Call true  : 297
+Nb Call SAT   : 0
+Nb Call unsat : 11
+Nb Call unknow: 0
+ACSR: 6.86416%
+Time: 3.250 + 0.020
+======================================
+
+HFTF < v6/tcas.c >
+H: 110	S: 38
+Nb Call true  : 304
+Nb Call SAT   : 0
+Nb Call unsat : 13
+Nb Call unknow: 0
+ACSR: 4.62428%
+Time: 2.685 + 0.017
+ 
+ 
+
+FFTF < v6/tcas.c >
+H: 108	S: 40
+Nb Call true  : 352
+Nb Call SAT   : 0
+Nb Call unsat : 13
+Nb Call unknow: 0
+ACSR: 5.63584%
+Time: 3.829 + 0.024
+======================================
+
+HFTF < v7/tcas.c >
+H: 110	S: 38
+Nb Call true  : 712
+Nb Call SAT   : 0
+Nb Call unsat : 37
+Nb Call unknow: 0
+ACSR: 5.99054%
+Time: 6.338 + 0.054
+ 
+ 
+
+FFTF < v7/tcas.c >
+H: 108	S: 40
+Nb Call true  : 848
+Nb Call SAT   : 0
+Nb Call unsat : 37
+Nb Call unknow: 0
+ACSR: 6.21387%
+Time: 8.095 + 0.061
+======================================
+
+HFTF < v8/tcas.c >
+H: 124	S: 29
+Nb Call true  : 75
+Nb Call SAT   : 0
+Nb Call unsat : 2
+Nb Call unknow: 0
+ACSR: 4.81696%
+Time: 1.055 + 0.021
+ 
+ 
+
+FFTF < v8/tcas.c >
+H: 108	S: 40
+Nb Call true  : 124
+Nb Call SAT   : 0
+Nb Call unsat : 2
+Nb Call unknow: 0
+ACSR: 5.63584%
+Time: 2.804 + 0.035
+======================================
+
+HFTF < v9/tcas.c >
+H: 123	S: 30
+Nb Call true  : 192
+Nb Call SAT   : 0
+Nb Call unsat : 10
+Nb Call unknow: 0
+ACSR: 4.04624%
+Time: 1.987 + 0.026
+ 
+ 
+
+FFTF < v9/tcas.c >
+H: 108	S: 40
+Nb Call true  : 300
+Nb Call SAT   : 0
+Nb Call unsat : 10
+Nb Call unknow: 0
+ACSR: 5.10597%
+Time: 5.035 + 0.037
+======================================
+
+HFTF < v10/tcas.c >
+H: 108	S: 40
+Nb Call true  : 434
+Nb Call SAT   : 0
+Nb Call unsat : 15
+Nb Call unknow: 0
+ACSR: 7.77136%
+Time: 4.566 + 0.039
+ 
+ 
+
+FFTF < v10/tcas.c >
+H: 108	S: 40
+Nb Call true  : 434
+Nb Call SAT   : 0
+Nb Call unsat : 15
+Nb Call unknow: 0
+ACSR: 7.77136%
+Time: 4.739 + 0.034
+======================================
+
+HFTF < v11/tcas.c >
+H: 103	S: 37
+Nb Call true  : 332
+Nb Call SAT   : 0
+Nb Call unsat : 15
+Nb Call unknow: 0
+ACSR: 6.21387%
+Time: 2.643 + 0.028
+ 
+ 
+
+FFTF < v11/tcas.c >
+H: 103	S: 37
+Nb Call true  : 332
+Nb Call SAT   : 0
+Nb Call unsat : 15
+Nb Call unknow: 0
+ACSR: 6.21387%
+Time: 2.366 + 0.022
+======================================
+
+HFTF < v12/tcas.c >
+H: 110	S: 40
+Nb Call true  : 1454
+Nb Call SAT   : 0
+Nb Call unsat : 71
+Nb Call unknow: 0
+ACSR: 6.86416%
+Time: 11.557 + 0.075
+ 
+ 
+
+FFTF < v12/tcas.c >
+H: 110	S: 40
+Nb Call true  : 1454
+Nb Call SAT   : 0
+Nb Call unsat : 71
+Nb Call unknow: 0
+ACSR: 6.86416%
+Time: 8.877 + 0.032
+======================================
+
+HFTF < v13/tcas.c >
+H: 110	S: 38
+Nb Call true  : 180
+Nb Call SAT   : 0
+Nb Call unsat : 5
+Nb Call unknow: 0
+ACSR: 6.06936%
+Time: 2.272 + 0.016
+ 
+ 
+
+FFTF < v13/tcas.c >
+H: 108	S: 40
+Nb Call true  : 186
+Nb Call SAT   : 0
+Nb Call unsat : 5
+Nb Call unknow: 0
+ACSR: 6.26204%
+Time: 2.937 + 0.021
+======================================
+
+HFTF < v14/tcas.c >
+H: 127	S: 26
+Nb Call true  : 258
+Nb Call SAT   : 0
+Nb Call unsat : 51
+Nb Call unknow: 0
+ACSR: 2.89017%
+Time: 1.996 + 0.015
+ 
+ 
+
+FFTF < v14/tcas.c >
+H: 108	S: 40
+Nb Call true  : 306
+Nb Call SAT   : 0
+Nb Call unsat : 51
+Nb Call unknow: 0
+ACSR: 2.89017%
+Time: 3.292 + 0.021
+======================================
+
+HFTF < v15/tcas.c >
+H: 111	S: 37
+Nb Call true  : 295
+Nb Call SAT   : 0
+Nb Call unsat : 11
+Nb Call unknow: 0
+ACSR: 6.79191%
+Time: 2.800 + 0.015
+ 
+ 
+
+FFTF < v15/tcas.c >
+H: 107	S: 39
+Nb Call true  : 300
+Nb Call SAT   : 0
+Nb Call unsat : 11
+Nb Call unknow: 0
+ACSR: 6.86416%
+Time: 2.750 + 0.013
+======================================
+
+HFTF < v16/tcas.c >
+H: 110	S: 38
+Nb Call true  : 1275
+Nb Call SAT   : 0
+Nb Call unsat : 71
+Nb Call unknow: 0
+ACSR: 4.62428%
+Time: 7.088 + 0.022
+ 
+ 
+
+FFTF < v16/tcas.c >
+H: 108	S: 40
+Nb Call true  : 1582
+Nb Call SAT   : 0
+Nb Call unsat : 71
+Nb Call unknow: 0
+ACSR: 5.63584%
+Time: 8.841 + 0.028
+======================================
+
+HFTF < v17/tcas.c >
+H: 110	S: 38
+Nb Call true  : 692
+Nb Call SAT   : 0
+Nb Call unsat : 36
+Nb Call unknow: 0
+ACSR: 5.99054%
+Time: 4.435 + 0.018
+ 
+ 
+
+FFTF < v17/tcas.c >
+H: 108	S: 40
+Nb Call true  : 828
+Nb Call SAT   : 0
+Nb Call unsat : 36
+Nb Call unknow: 0
+ACSR: 6.21387%
+Time: 5.607 + 0.016
+======================================
+
+HFTF < v18/tcas.c >
+H: 110	S: 38
+Nb Call true  : 639
+Nb Call SAT   : 0
+Nb Call unsat : 30
+Nb Call unknow: 0
+ACSR: 5.99054%
+Time: 5.605 + 0.019
+ 
+ 
+
+FFTF < v18/tcas.c >
+H: 108	S: 40
+Nb Call true  : 696
+Nb Call SAT   : 0
+Nb Call unsat : 30
+Nb Call unknow: 0
+ACSR: 6.21387%
+Time: 5.948 + 0.016
+======================================
+
+HFTF < v19/tcas.c >
+H: 110	S: 38
+Nb Call true  : 427
+Nb Call SAT   : 0
+Nb Call unsat : 20
+Nb Call unknow: 0
+ACSR: 6.24277%
+Time: 3.408 + 0.014
+ 
+ 
+
+FFTF < v19/tcas.c >
+H: 108	S: 40
+Nb Call true  : 500
+Nb Call SAT   : 0
+Nb Call unsat : 20
+Nb Call unknow: 0
+ACSR: 6.39451%
+Time: 3.879 + 0.014
+======================================
+
+HFTF < v20/tcas.c >
+H: 114	S: 36
+Nb Call true  : 431
+Nb Call SAT   : 0
+Nb Call unsat : 19
+Nb Call unknow: 0
+ACSR: 4.81696%
+Time: 3.060 + 0.015
+ 
+ 
+
+FFTF < v20/tcas.c >
+H: 108	S: 40
+Nb Call true  : 431
+Nb Call SAT   : 0
+Nb Call unsat : 19
+Nb Call unknow: 0
+ACSR: 4.81696%
+Time: 3.152 + 0.012
+======================================
+
+HFTF < v21/tcas.c >
+H: 116	S: 30
+Nb Call true  : 301
+Nb Call SAT   : 0
+Nb Call unsat : 17
+Nb Call unknow: 0
+ACSR: 4.91329%
+Time: 1.291 + 0.012
+ 
+ 
+
+FFTF < v21/tcas.c >
+H: 104	S: 38
+Nb Call true  : 301
+Nb Call SAT   : 0
+Nb Call unsat : 17
+Nb Call unknow: 0
+ACSR: 4.91329%
+Time: 1.491 + 0.010
+======================================
+
+HFTF < v22/tcas.c >
+H: 115	S: 30
+Nb Call true  : 133
+Nb Call SAT   : 0
+Nb Call unsat : 12
+Nb Call unknow: 0
+ACSR: 3.75723%
+Time: 1.047 + 0.010
+ 
+ 
+
+FFTF < v22/tcas.c >
+H: 104	S: 38
+Nb Call true  : 301
+Nb Call SAT   : 0
+Nb Call unsat : 12
+Nb Call unknow: 0
+ACSR: 5.31792%
+Time: 3.210 + 0.014
+======================================
+
+HFTF < v23/tcas.c >
+H: 125	S: 24
+Nb Call true  : 350
+Nb Call SAT   : 0
+Nb Call unsat : 42
+Nb Call unknow: 0
+ACSR: 4.04624%
+Time: 2.193 + 0.015
+ 
+ 
+
+FFTF < v23/tcas.c >
+H: 104	S: 38
+Nb Call true  : 534
+Nb Call SAT   : 0
+Nb Call unsat : 42
+Nb Call unknow: 0
+ACSR: 4.9711%
+Time: 3.682 + 0.020
+======================================
+
+HFTF < v24/tcas.c >
+H: 117	S: 30
+Nb Call true  : 154
+Nb Call SAT   : 0
+Nb Call unsat : 8
+Nb Call unknow: 0
+ACSR: 4.4316%
+Time: 0.967 + 0.011
+ 
+ 
+
+FFTF < v24/tcas.c >
+H: 104	S: 38
+Nb Call true  : 193
+Nb Call SAT   : 0
+Nb Call unsat : 8
+Nb Call unknow: 0
+ACSR: 5.20231%
+Time: 1.894 + 0.011
+======================================
+
+HFTF < v25/tcas.c >
+H: 124	S: 29
+Nb Call true  : 82
+Nb Call SAT   : 0
+Nb Call unsat : 4
+Nb Call unknow: 0
+ACSR: 3.85356%
+Time: 0.842 + 0.013
+ 
+ 
+
+FFTF < v25/tcas.c >
+H: 108	S: 40
+Nb Call true  : 148
+Nb Call SAT   : 0
+Nb Call unsat : 4
+Nb Call unknow: 0
+ACSR: 5.41908%
+Time: 2.296 + 0.012
+======================================
+
+HFTF < v26/tcas.c >
+H: 107	S: 39
+Nb Call true  : 312
+Nb Call SAT   : 0
+Nb Call unsat : 12
+Nb Call unknow: 0
+ACSR: 6.26204%
+Time: 2.867 + 0.027
+ 
+ 
+
+FFTF < v26/tcas.c >
+H: 107	S: 39
+Nb Call true  : 312
+Nb Call SAT   : 0
+Nb Call unsat : 12
+Nb Call unknow: 0
+ACSR: 6.26204%
+Time: 2.801 + 0.019
+======================================
+
+HFTF < v27/tcas.c >
+H: 108	S: 38
+Nb Call true  : 297
+Nb Call SAT   : 0
+Nb Call unsat : 11
+Nb Call unknow: 0
+ACSR: 6.86416%
+Time: 2.665 + 0.013
+ 
+ 
+
+FFTF < v27/tcas.c >
+H: 107	S: 39
+Nb Call true  : 297
+Nb Call SAT   : 0
+Nb Call unsat : 11
+Nb Call unknow: 0
+ACSR: 6.86416%
+Time: 2.715 + 0.012
+======================================
+
+HFTF < v28/tcas.c >
+H: 108	S: 40
+Nb Call true  : 1222
+Nb Call SAT   : 0
+Nb Call unsat : 76
+Nb Call unknow: 0
+ACSR: 5.89595%
+Time: 6.750 + 0.021
+ 
+ 
+
+FFTF < v28/tcas.c >
+H: 108	S: 40
+Nb Call true  : 1222
+Nb Call SAT   : 0
+Nb Call unsat : 76
+Nb Call unknow: 0
+ACSR: 5.89595%
+Time: 6.656 + 0.018
+======================================
+
+HFTF < v29/tcas.c >
+H: 113	S: 28
+Nb Call true  : 266
+Nb Call SAT   : 0
+Nb Call unsat : 19
+Nb Call unknow: 0
+ACSR: 4.62428%
+Time: 1.527 + 0.012
+ 
+ 
+
+FFTF < v29/tcas.c >
+H: 100	S: 36
+Nb Call true  : 308
+Nb Call SAT   : 0
+Nb Call unsat : 19
+Nb Call unknow: 0
+ACSR: 5.14451%
+Time: 2.415 + 0.011
+======================================
+
+HFTF < v30/tcas.c >
+H: 112	S: 28
+Nb Call true  : 756
+Nb Call SAT   : 0
+Nb Call unsat : 58
+Nb Call unknow: 0
+ACSR: 4.88118%
+Time: 3.351 + 0.020
+ 
+ 
+
+FFTF < v30/tcas.c >
+H: 100	S: 36
+Nb Call true  : 805
+Nb Call SAT   : 0
+Nb Call unsat : 58
+Nb Call unknow: 0
+ACSR: 5.29865%
+Time: 4.121 + 0.023
+======================================
+
+HFTF < v31/tcas.c >
+H: 124	S: 35
+Nb Call true  : 320
+Nb Call SAT   : 0
+Nb Call unsat : 15
+Nb Call unknow: 0
+ACSR: 4.4316%
+Time: 2.395 + 0.021
+ 
+ 
+
+FFTF < v31/tcas.c >
+H: 112	S: 42
+Nb Call true  : 379
+Nb Call SAT   : 0
+Nb Call unsat : 15
+Nb Call unknow: 0
+ACSR: 5.20231%
+Time: 2.906 + 0.014
+======================================
+
+HFTF < v32/tcas.c >
+H: 129	S: 30
+Nb Call true  : 92
+Nb Call SAT   : 0
+Nb Call unsat : 3
+Nb Call unknow: 0
+ACSR: 4.4316%
+Time: 0.956 + 0.010
+ 
+ 
+
+FFTF < v32/tcas.c >
+H: 112	S: 42
+Nb Call true  : 146
+Nb Call SAT   : 0
+Nb Call unsat : 3
+Nb Call unknow: 0
+ACSR: 6.06936%
+Time: 2.042 + 0.013
+======================================
+
+HFTF < v33/tcas.c >
+H: 108	S: 40
+Empty MCS!
+Empty MCS!
+Empty MCS!
+Empty MCS!
+Empty MCS!
+Empty MCS!
+Empty MCS!
+Empty MCS!
+Empty MCS!
+Empty MCS!
+Empty MCS!
+Empty MCS!
+Empty MCS!
+Empty MCS!
+Empty MCS!
+Empty MCS!
+Empty MCS!
+Empty MCS!
+Empty MCS!
+Empty MCS!
+Nb Call true  : 3326
+Nb Call SAT   : 20
+Nb Call unsat : 167
+Nb Call unknow: 0
+ACSR: 6.55106%
+Time: 19.069 + 0.045
+ 
+ 
+
+FFTF < v33/tcas.c >
+H: 108	S: 40
+Empty MCS!
+Empty MCS!
+Empty MCS!
+Empty MCS!
+Empty MCS!
+Empty MCS!
+Empty MCS!
+Empty MCS!
+Empty MCS!
+Empty MCS!
+Empty MCS!
+Empty MCS!
+Empty MCS!
+Empty MCS!
+Empty MCS!
+Empty MCS!
+Empty MCS!
+Empty MCS!
+Empty MCS!
+Empty MCS!
+Nb Call true  : 3326
+Nb Call SAT   : 20
+Nb Call unsat : 167
+Nb Call unknow: 0
+ACSR: 6.55106%
+Time: 19.165 + 0.051
+======================================
+
+HFTF < v34/tcas.c >
+H: 109	S: 39
+Nb Call true  : 1396
+Nb Call SAT   : 0
+Nb Call unsat : 78
+Nb Call unknow: 0
+ACSR: 6.86416%
+Time: 8.594 + 0.029
+ 
+ 
+
+FFTF < v34/tcas.c >
+H: 108	S: 40
+Nb Call true  : 1396
+Nb Call SAT   : 0
+Nb Call unsat : 78
+Nb Call unknow: 0
+ACSR: 6.86416%
+Time: 8.730 + 0.036
+======================================
+
+HFTF < v35/tcas.c >
+H: 108	S: 40
+Nb Call true  : 1222
+Nb Call SAT   : 0
+Nb Call unsat : 76
+Nb Call unknow: 0
+ACSR: 5.89595%
+Time: 6.733 + 0.021
+ 
+ 
+
+FFTF < v35/tcas.c >
+H: 108	S: 40
+Nb Call true  : 1222
+Nb Call SAT   : 0
+Nb Call unsat : 76
+Nb Call unknow: 0
+ACSR: 5.89595%
+Time: 6.736 + 0.021
+======================================
+
+HFTF < v36/tcas.c >
+H: 121	S: 32
+Nb Call true  : 3356
+Nb Call SAT   : 0
+Nb Call unsat : 126
+Nb Call unknow: 0
+ACSR: 4.12882%
+Time: 50.237 + 0.106
+ 
+ 
+
+FFTF < v36/tcas.c >
+H: 108	S: 40
+Nb Call true  : 5474
+Nb Call SAT   : 0
+Nb Call unsat : 126
+Nb Call unknow: 0
+ACSR: 5.20231%
+Time: 196.815 + 0.351
+======================================
+
+HFTF < v37/tcas.c >
+H: 106	S: 38
+Nb Call true  : 1434
+Nb Call SAT   : 0
+Nb Call unsat : 92
+Nb Call unknow: 0
+ACSR: 5.9455%
+Time: 7.480 + 0.023
+ 
+ 
+
+FFTF < v37/tcas.c >
+H: 104	S: 40
+Nb Call true  : 1526
+Nb Call SAT   : 0
+Nb Call unsat : 92
+Nb Call unknow: 0
+ACSR: 6.24277%
+Time: 8.245 + 0.021
+======================================
+
+HFTF < v38/tcas.c >
+H: 110	S: 38
+Nb Call true  : 574
+Nb Call SAT   : 0
+Nb Call unsat : 6
+Nb Call unknow: 0
+ACSR: 3.75723%
+Time: 8.990 + 0.027
+ 
+ 
+
+FFTF < v38/tcas.c >
+H: 108	S: 40
+Nb Call true  : 578
+Nb Call SAT   : 0
+Nb Call unsat : 6
+Nb Call unknow: 0
+ACSR: 3.75723%
+Time: 10.351 + 0.027
+======================================
+
+HFTF < v39/tcas.c >
+H: 124	S: 29
+Nb Call true  : 82
+Nb Call SAT   : 0
+Nb Call unsat : 4
+Nb Call unknow: 0
+ACSR: 3.85356%
+Time: 0.866 + 0.013
+ 
+ 
+
+FFTF < v39/tcas.c >
+H: 108	S: 40
+Nb Call true  : 148
+Nb Call SAT   : 0
+Nb Call unsat : 4
+Nb Call unknow: 0
+ACSR: 5.41908%
+Time: 2.361 + 0.013
+======================================
+
+HFTF < v40/tcas.c >
+H: 109	S: 31
+Nb Call true  : 4426
+Nb Call SAT   : 0
+Nb Call unsat : 126
+Nb Call unknow: 0
+ACSR: 4.85549%
+Time: 51.884 + 0.099
+ 
+ 
+
+FFTF < v40/tcas.c >
+H: 98	S: 37
+Nb Call true  : 5681
+Nb Call SAT   : 0
+Nb Call unsat : 126
+Nb Call unknow: 0
+ACSR: 5.08671%
+Time: 79.140 + 0.125
+======================================
+
+HFTF < v41/tcas.c >
+H: 118	S: 32
+Nb Call true  : 447
+Nb Call SAT   : 0
+Nb Call unsat : 25
+Nb Call unknow: 0
+ACSR: 3.3526%
+Time: 2.548 + 0.015
+ 
+ 
+
+FFTF < v41/tcas.c >
+H: 106	S: 39
+Nb Call true  : 495
+Nb Call SAT   : 0
+Nb Call unsat : 25
+Nb Call unknow: 0
+ACSR: 3.46821%
+Time: 3.256 + 0.014
+ 

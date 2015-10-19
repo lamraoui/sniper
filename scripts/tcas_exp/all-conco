@@ -1,0 +1,52 @@
+#!/bin/bash
+
+
+echo "Running SNIPER..."
+
+# version, bug lines
+./conco 1 75
+./conco 2 63
+./conco 3 120
+./conco 4 79
+./conco 5 118
+./conco 6 104
+./conco 7 51
+./conco 8 53
+./conco 9 89
+./conco 10 105 111
+./conco 11 106 113
+./conco 12 118
+./conco 13 118   #define at 10
+./conco 14 118   #define at 11
+./conco 15 79 93 118 #79 and 93define at 12
+./conco 16 50
+./conco 17 51
+./conco 18 52
+./conco 19 53
+./conco 20 72
+./conco 21 72
+./conco 22 72
+./conco 23 90
+./conco 24 90
+./conco 25 97
+./conco 26 118
+./conco 27 118
+./conco 28 63
+./conco 29 63
+./conco 30 63
+./conco 31 81 128
+./conco 32 99 129
+./conco 33 50 51 52 53 
+./conco 34 124
+./conco 35 63
+./conco 36 136  #define at 46
+./conco 37 58
+./conco 38 58   #define at 27
+./conco 39 97
+./conco 40 75 126
+./conco 41 79
+
+
+
+
+

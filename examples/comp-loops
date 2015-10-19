@@ -1,0 +1,2 @@
+opt -loops -loopsimplify -loop-rotate -lcssa -loop-unroll -unroll-count=3 loop0.c.bc -o loop0.u.bc
+

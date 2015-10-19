@@ -1,0 +1,94 @@
+#!/bin/bash
+
+
+echo "Running run..."
+
+./run foo ./examples/concolic_tcas/v1/tcas_noarray.c > ./examples/concolic_tcas/v1/inputs_cute2.txt
+./run foo ./examples/concolic_tcas/v2/tcas_noarray.c > ./examples/concolic_tcas/v2/inputs_cute2.txt
+./run foo ./examples/concolic_tcas/v3/tcas_noarray.c > ./examples/concolic_tcas/v3/inputs_cute2.txt
+./run foo ./examples/concolic_tcas/v4/tcas_noarray.c > ./examples/concolic_tcas/v4/inputs_cute2.txt
+./run foo ./examples/concolic_tcas/v5/tcas_noarray.c > ./examples/concolic_tcas/v5/inputs_cute2.txt
+./run foo ./examples/concolic_tcas/v6/tcas_noarray.c > ./examples/concolic_tcas/v6/inputs_cute2.txt
+./run foo ./examples/concolic_tcas/v7/tcas_noarray.c > ./examples/concolic_tcas/v7/inputs_cute2.txt
+./run foo ./examples/concolic_tcas/v8/tcas_noarray.c > ./examples/concolic_tcas/v8/inputs_cute2.txt
+./run foo ./examples/concolic_tcas/v9/tcas_noarray.c > ./examples/concolic_tcas/v9/inputs_cute2.txt
+./run foo ./examples/concolic_tcas/v10/tcas_noarray.c > ./examples/concolic_tcas/v10/inputs_cute2.txt
+./run foo ./examples/concolic_tcas/v11/tcas_noarray.c > ./examples/concolic_tcas/v11/inputs_cute2.txt
+./run foo ./examples/concolic_tcas/v12/tcas_noarray.c > ./examples/concolic_tcas/v12/inputs_cute2.txt
+./run foo ./examples/concolic_tcas/v13/tcas_noarray.c > ./examples/concolic_tcas/v13/inputs_cute2.txt
+./run foo ./examples/concolic_tcas/v14/tcas_noarray.c > ./examples/concolic_tcas/v14/inputs_cute2.txt
+./run foo ./examples/concolic_tcas/v15/tcas_noarray.c > ./examples/concolic_tcas/v15/inputs_cute2.txt
+./run foo ./examples/concolic_tcas/v16/tcas_noarray.c > ./examples/concolic_tcas/v16/inputs_cute2.txt
+./run foo ./examples/concolic_tcas/v17/tcas_noarray.c > ./examples/concolic_tcas/v17/inputs_cute2.txt
+./run foo ./examples/concolic_tcas/v18/tcas_noarray.c > ./examples/concolic_tcas/v18/inputs_cute2.txt
+./run foo ./examples/concolic_tcas/v19/tcas_noarray.c > ./examples/concolic_tcas/v19/inputs_cute2.txt
+./run foo ./examples/concolic_tcas/v20/tcas_noarray.c > ./examples/concolic_tcas/v20/inputs_cute2.txt
+./run foo ./examples/concolic_tcas/v21/tcas_noarray.c > ./examples/concolic_tcas/v21/inputs_cute2.txt
+./run foo ./examples/concolic_tcas/v22/tcas_noarray.c > ./examples/concolic_tcas/v22/inputs_cute2.txt
+./run foo ./examples/concolic_tcas/v23/tcas_noarray.c > ./examples/concolic_tcas/v23/inputs_cute2.txt
+./run foo ./examples/concolic_tcas/v24/tcas_noarray.c > ./examples/concolic_tcas/v24/inputs_cute2.txt
+./run foo ./examples/concolic_tcas/v25/tcas_noarray.c > ./examples/concolic_tcas/v25/inputs_cute2.txt
+./run foo ./examples/concolic_tcas/v26/tcas_noarray.c > ./examples/concolic_tcas/v26/inputs_cute2.txt
+./run foo ./examples/concolic_tcas/v27/tcas_noarray.c > ./examples/concolic_tcas/v27/inputs_cute2.txt
+./run foo ./examples/concolic_tcas/v28/tcas_noarray.c > ./examples/concolic_tcas/v28/inputs_cute2.txt
+./run foo ./examples/concolic_tcas/v29/tcas_noarray.c > ./examples/concolic_tcas/v29/inputs_cute2.txt
+./run foo ./examples/concolic_tcas/v30/tcas_noarray.c > ./examples/concolic_tcas/v30/inputs_cute2.txt
+./run foo ./examples/concolic_tcas/v31/tcas_noarray.c > ./examples/concolic_tcas/v31/inputs_cute2.txt
+./run foo ./examples/concolic_tcas/v32/tcas_noarray.c > ./examples/concolic_tcas/v32/inputs_cute2.txt
+./run foo ./examples/concolic_tcas/v33/tcas_noarray.c > ./examples/concolic_tcas/v33/inputs_cute2.txt
+./run foo ./examples/concolic_tcas/v34/tcas_noarray.c > ./examples/concolic_tcas/v34/inputs_cute2.txt
+./run foo ./examples/concolic_tcas/v35/tcas_noarray.c > ./examples/concolic_tcas/v35/inputs_cute2.txt
+./run foo ./examples/concolic_tcas/v36/tcas_noarray.c > ./examples/concolic_tcas/v36/inputs_cute2.txt
+./run foo ./examples/concolic_tcas/v37/tcas_noarray.c > ./examples/concolic_tcas/v37/inputs_cute2.txt
+./run foo ./examples/concolic_tcas/v38/tcas_noarray.c > ./examples/concolic_tcas/v38/inputs_cute2.txt
+./run foo ./examples/concolic_tcas/v39/tcas_noarray.c > ./examples/concolic_tcas/v39/inputs_cute2.txt
+./run foo ./examples/concolic_tcas/v40/tcas_noarray.c > ./examples/concolic_tcas/v40/inputs_cute2.txt
+./run foo ./examples/concolic_tcas/v41/tcas_noarray.c > ./examples/concolic_tcas/v41/inputs_cute2.txt
+
+cat ./examples/concolic_tcas/v1/inputs_cute2.txt | xargs -L 1 ./examples/concolic_tcas/tcas > ./examples/concolic_tcas/v1/golden_cute2.txt
+cat ./examples/concolic_tcas/v2/inputs_cute2.txt | xargs -L 1 ./examples/concolic_tcas/tcas > ./examples/concolic_tcas/v2/golden_cute2.txt
+cat ./examples/concolic_tcas/v3/inputs_cute2.txt | xargs -L 1 ./examples/concolic_tcas/tcas > ./examples/concolic_tcas/v3/golden_cute2.txt
+cat ./examples/concolic_tcas/v4/inputs_cute2.txt | xargs -L 1 ./examples/concolic_tcas/tcas > ./examples/concolic_tcas/v4/golden_cute2.txt
+cat ./examples/concolic_tcas/v5/inputs_cute2.txt | xargs -L 1 ./examples/concolic_tcas/tcas > ./examples/concolic_tcas/v5/golden_cute2.txt
+cat ./examples/concolic_tcas/v6/inputs_cute2.txt | xargs -L 1 ./examples/concolic_tcas/tcas > ./examples/concolic_tcas/v6/golden_cute2.txt
+cat ./examples/concolic_tcas/v7/inputs_cute2.txt | xargs -L 1 ./examples/concolic_tcas/tcas > ./examples/concolic_tcas/v7/golden_cute2.txt
+cat ./examples/concolic_tcas/v8/inputs_cute2.txt | xargs -L 1 ./examples/concolic_tcas/tcas > ./examples/concolic_tcas/v8/golden_cute2.txt
+cat ./examples/concolic_tcas/v9/inputs_cute2.txt | xargs -L 1 ./examples/concolic_tcas/tcas > ./examples/concolic_tcas/v9/golden_cute2.txt
+cat ./examples/concolic_tcas/v10/inputs_cute2.txt | xargs -L 1 ./examples/concolic_tcas/tcas > ./examples/concolic_tcas/v10/golden_cute2.txt
+cat ./examples/concolic_tcas/v11/inputs_cute2.txt | xargs -L 1 ./examples/concolic_tcas/tcas > ./examples/concolic_tcas/v11/golden_cute2.txt
+cat ./examples/concolic_tcas/v12/inputs_cute2.txt | xargs -L 1 ./examples/concolic_tcas/tcas > ./examples/concolic_tcas/v12/golden_cute2.txt
+cat ./examples/concolic_tcas/v13/inputs_cute2.txt | xargs -L 1 ./examples/concolic_tcas/tcas > ./examples/concolic_tcas/v13/golden_cute2.txt
+cat ./examples/concolic_tcas/v14/inputs_cute2.txt | xargs -L 1 ./examples/concolic_tcas/tcas > ./examples/concolic_tcas/v14/golden_cute2.txt
+cat ./examples/concolic_tcas/v15/inputs_cute2.txt | xargs -L 1 ./examples/concolic_tcas/tcas > ./examples/concolic_tcas/v15/golden_cute2.txt
+cat ./examples/concolic_tcas/v16/inputs_cute2.txt | xargs -L 1 ./examples/concolic_tcas/tcas > ./examples/concolic_tcas/v16/golden_cute2.txt
+cat ./examples/concolic_tcas/v17/inputs_cute2.txt | xargs -L 1 ./examples/concolic_tcas/tcas > ./examples/concolic_tcas/v17/golden_cute2.txt
+cat ./examples/concolic_tcas/v18/inputs_cute2.txt | xargs -L 1 ./examples/concolic_tcas/tcas > ./examples/concolic_tcas/v18/golden_cute2.txt
+cat ./examples/concolic_tcas/v19/inputs_cute2.txt | xargs -L 1 ./examples/concolic_tcas/tcas > ./examples/concolic_tcas/v19/golden_cute2.txt
+cat ./examples/concolic_tcas/v20/inputs_cute2.txt | xargs -L 1 ./examples/concolic_tcas/tcas > ./examples/concolic_tcas/v20/golden_cute2.txt
+cat ./examples/concolic_tcas/v21/inputs_cute2.txt | xargs -L 1 ./examples/concolic_tcas/tcas > ./examples/concolic_tcas/v21/golden_cute2.txt
+cat ./examples/concolic_tcas/v22/inputs_cute2.txt | xargs -L 1 ./examples/concolic_tcas/tcas > ./examples/concolic_tcas/v22/golden_cute2.txt
+cat ./examples/concolic_tcas/v23/inputs_cute2.txt | xargs -L 1 ./examples/concolic_tcas/tcas > ./examples/concolic_tcas/v23/golden_cute2.txt
+cat ./examples/concolic_tcas/v24/inputs_cute2.txt | xargs -L 1 ./examples/concolic_tcas/tcas > ./examples/concolic_tcas/v24/golden_cute2.txt
+cat ./examples/concolic_tcas/v25/inputs_cute2.txt | xargs -L 1 ./examples/concolic_tcas/tcas > ./examples/concolic_tcas/v25/golden_cute2.txt
+cat ./examples/concolic_tcas/v26/inputs_cute2.txt | xargs -L 1 ./examples/concolic_tcas/tcas > ./examples/concolic_tcas/v26/golden_cute2.txt
+cat ./examples/concolic_tcas/v27/inputs_cute2.txt | xargs -L 1 ./examples/concolic_tcas/tcas > ./examples/concolic_tcas/v27/golden_cute2.txt
+cat ./examples/concolic_tcas/v28/inputs_cute2.txt | xargs -L 1 ./examples/concolic_tcas/tcas > ./examples/concolic_tcas/v28/golden_cute2.txt
+cat ./examples/concolic_tcas/v29/inputs_cute2.txt | xargs -L 1 ./examples/concolic_tcas/tcas > ./examples/concolic_tcas/v29/golden_cute2.txt
+cat ./examples/concolic_tcas/v30/inputs_cute2.txt | xargs -L 1 ./examples/concolic_tcas/tcas > ./examples/concolic_tcas/v30/golden_cute2.txt
+cat ./examples/concolic_tcas/v31/inputs_cute2.txt | xargs -L 1 ./examples/concolic_tcas/tcas > ./examples/concolic_tcas/v31/golden_cute2.txt
+cat ./examples/concolic_tcas/v32/inputs_cute2.txt | xargs -L 1 ./examples/concolic_tcas/tcas > ./examples/concolic_tcas/v32/golden_cute2.txt
+cat ./examples/concolic_tcas/v33/inputs_cute2.txt | xargs -L 1 ./examples/concolic_tcas/tcas > ./examples/concolic_tcas/v33/golden_cute2.txt
+cat ./examples/concolic_tcas/v34/inputs_cute2.txt | xargs -L 1 ./examples/concolic_tcas/tcas > ./examples/concolic_tcas/v34/golden_cute2.txt
+cat ./examples/concolic_tcas/v35/inputs_cute2.txt | xargs -L 1 ./examples/concolic_tcas/tcas > ./examples/concolic_tcas/v35/golden_cute2.txt
+cat ./examples/concolic_tcas/v36/inputs_cute2.txt | xargs -L 1 ./examples/concolic_tcas/tcas > ./examples/concolic_tcas/v36/golden_cute2.txt
+cat ./examples/concolic_tcas/v37/inputs_cute2.txt | xargs -L 1 ./examples/concolic_tcas/tcas > ./examples/concolic_tcas/v37/golden_cute2.txt
+cat ./examples/concolic_tcas/v38/inputs_cute2.txt | xargs -L 1 ./examples/concolic_tcas/tcas > ./examples/concolic_tcas/v38/golden_cute2.txt
+cat ./examples/concolic_tcas/v39/inputs_cute2.txt | xargs -L 1 ./examples/concolic_tcas/tcas > ./examples/concolic_tcas/v39/golden_cute2.txt
+cat ./examples/concolic_tcas/v40/inputs_cute2.txt | xargs -L 1 ./examples/concolic_tcas/tcas > ./examples/concolic_tcas/v40/golden_cute2.txt
+cat ./examples/concolic_tcas/v41/inputs_cute2.txt | xargs -L 1 ./examples/concolic_tcas/tcas > ./examples/concolic_tcas/v41/golden_cute2.txt
+
+
+
+
+
+

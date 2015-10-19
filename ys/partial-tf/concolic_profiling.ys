@@ -1,0 +1,36 @@
+(set-evidence! true)
+(set-verbosity! 3)
+
+(define g0::bool)
+(define y0::int)
+(define y1::int)
+(define y2::int)
+(define y3::int)
+(define x0::int)
+
+;;# foo(int x) {
+;;# y = 0;
+;;# if(x>0)
+;;#	    y = y + 1;
+;;# else
+;;# 	y = y + 2;
+;;# assert(y==1);
+;;# }
+
+;;# EI
+(assert (= x0 0))
+
+(assert+ (= y0 0) 1)
+(assert+ (= g0 (> x0 0)) 1)
+
+;;#(assert+ (= y1 (+ y0 1)) 1)
+(assert (= y1 1))
+
+(assert+ (= y2 (+ y0 2)) 1)
+(assert (= y3 (ite g0 y1 y2)))
+
+;;# Post-cond
+(assert (= y3 1))
+
+
+(max-sat)

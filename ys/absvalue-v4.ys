@@ -1,0 +1,213 @@
+(set-evidence! true)
+(set-verbosity! 3)
+
+(define bb10_bb11::bool)
+(define bb10_bb13::bool)
+(define bb11_bb12::bool)
+(define bb11_bb13::bool)
+(define bb12_bb14::bool)
+(define bb13_bb14::bool)
+(define bb14_bb15::bool)
+(define bb15_return::bool)
+(define bb1_bb2::bool)
+(define bb1_bb3::bool)
+(define bb2_bb4::bool)
+(define bb3_bb4::bool)
+(define bb4_bb5::bool)
+(define bb4_bb6::bool)
+(define bb5_bb7::bool)
+(define bb6_bb7::bool)
+(define bb7_bb13::bool)
+(define bb7_bb8::bool)
+(define bb8_bb10::bool)
+(define bb8_bb9::bool)
+(define bb9_bb10::bool)
+(define bb9_bb12::bool)
+(define bb_bb15::bool)
+(define entry_bb::bool)
+(define entry_bb1::bool)
+(define input::int)
+(define _abs::int)
+(define .0::int)
+(define _::int)
+(define tmp::bool)
+(define _sign::int)
+(define tmp5::bool)
+(define _sign1::int)
+(define _sign2::int)
+(define tmp8::bool)
+(define tmp9::int)
+(define _abs3::int)
+(define _4::int)
+(define tmp10::bool)
+(define tmp11::bool)
+(define tmp12::bool)
+(define tmp13::bool)
+(define tmp14::bool)
+(define _retval::int)
+(define iftmp.0.0::int)
+(define sign.0::int)
+(define abs.0::int)
+(define sign.1::int)
+(define entry::bool)
+(define bb::bool)
+(define bb1::bool)
+(define bb2::bool)
+(define bb3::bool)
+(define bb4::bool)
+(define bb5::bool)
+(define bb6::bool)
+(define bb7::bool)
+(define bb8::bool)
+(define bb9::bool)
+(define bb10::bool)
+(define bb11::bool)
+(define bb12::bool)
+(define bb13::bool)
+(define bb14::bool)
+(define bb15::bool)
+(define return::bool)
+
+(assert (= entry true))
+(assert (= bb (and entry entry_bb)))
+(assert (= bb1 (and entry entry_bb1)))
+(assert (= bb2 (and bb1 bb1_bb2)))
+(assert (= bb3 (and bb1 bb1_bb3)))
+(assert (= bb4
+   (or (and (and bb3 bb3_bb4) (not (and bb2 bb2_bb4)))
+       (and (not (and bb3 bb3_bb4)) (and bb2 bb2_bb4)))))
+(assert (= bb5 (and bb4 bb4_bb5)))
+(assert (= bb6 (and bb4 bb4_bb6)))
+(assert (= bb7
+   (or (and (and bb6 bb6_bb7) (not (and bb5 bb5_bb7)))
+       (and (not (and bb6 bb6_bb7)) (and bb5 bb5_bb7)))))
+(assert (= bb8 (and bb7 bb7_bb8)))
+(assert (= bb9 (and bb8 bb8_bb9)))
+(assert (= bb10
+   (or (and (and bb9 bb9_bb10) (not (and bb8 bb8_bb10)))
+       (and (not (and bb9 bb9_bb10)) (and bb8 bb8_bb10)))))
+(assert (= bb11 (and bb10 bb10_bb11)))
+(assert (= bb12
+   (or (and (and bb11 bb11_bb12) (not (and bb9 bb9_bb12)))
+       (and (not (and bb11 bb11_bb12)) (and bb9 bb9_bb12)))))
+(assert (= bb13
+   (or (and (and bb11 bb11_bb13)
+            (not (and bb10 bb10_bb13))
+            (not (and bb7 bb7_bb13)))
+       (and (not (and bb11 bb11_bb13))
+            (and bb10 bb10_bb13)
+            (not (and bb7 bb7_bb13)))
+       (and (not (and bb11 bb11_bb13))
+            (not (and bb10 bb10_bb13))
+            (and bb7 bb7_bb13)))))
+(assert (= bb14
+   (or (and (and bb13 bb13_bb14) (not (and bb12 bb12_bb14)))
+       (and (not (and bb13 bb13_bb14)) (and bb12 bb12_bb14)))))
+(assert (= bb15
+   (or (and (and bb14 bb14_bb15) (not (and bb bb_bb15)))
+       (and (not (and bb14 bb14_bb15)) (and bb bb_bb15)))))
+(assert (= return (and bb15 bb15_return)))
+(assert (and (= entry_bb tmp) (= entry_bb1 (not tmp))))
+
+(assert (= bb bb_bb15))
+(assert (and (= bb1_bb2 tmp5) (= bb1_bb3 (not tmp5))))
+(assert (= bb2 bb2_bb4))
+(assert (= bb3 bb3_bb4))
+(assert (= sign.0 (ite (and bb2 bb2_bb4) _sign _sign1))) ;;#PHI
+(assert (and (= bb4_bb5 tmp8) (= bb4_bb6 (not tmp8))))
+(assert (= bb5 bb5_bb7))
+(assert (= bb6 bb6_bb7))
+(assert (= sign.1 (ite (and bb5 bb5_bb7) _sign2 sign.0))) ;;#PHI
+(assert (= abs.0 (ite (and bb5 bb5_bb7) _abs _abs3))) ;;#PHI
+
+(assert (= tmp10 (< abs.0 0)))
+(assert (and (= bb7_bb13 tmp10) (= bb7_bb8 (not tmp10))))
+(assert (= tmp11 (>= input 0)))
+(assert (and (= bb8_bb10 tmp11) (= bb8_bb9 (not tmp11))))
+(assert (= tmp12 (= sign.1 -1)))
+(assert (and (= bb9_bb12 tmp12) (= bb9_bb10 (not tmp12))))
+(assert (= tmp13 (< input 0)))
+(assert (and (= bb10_bb13 tmp13) (= bb10_bb11 (not tmp13))))
+(assert (= tmp14 (= sign.1 1)))
+(assert (and (= bb11_bb12 tmp14) (= bb11_bb13 (not tmp14))))
+(assert (= bb12 bb12_bb14))
+(assert (= bb13 bb13_bb14))
+(assert (= iftmp.0.0 (ite (and bb13 bb13_bb14) 0 1)))
+(assert (= bb14 bb14_bb15))
+(assert (= .0 (ite (and bb bb_bb15) _ _4)))
+(assert (= bb15 bb15_return))
+
+
+;;# 4:  abs = input;  
+(assert+ (= _abs input)          20)
+;;# 5:  if(input==0)
+(assert+ (= tmp (= input 0))     1)
+;;# 6:  return 0;
+(assert+ (= _ 0)                 1)  ;;#Wl
+;;# 8:  if(input<0)
+(assert+ (= tmp5 (< input 0))    1)
+;;# 9:  sign = -1;
+(assert+ (= _sign -1)            1)   ;;#Wm
+;;# 11: sign = 1;
+(assert+ (= _sign1 1)            1)  ;;#Wl
+;;# 13: if(sign==-1)
+(assert+ (= tmp8 (= sign.0 -1))  20)
+;;# 14: sign = input * -1;//BUG
+(assert+ (= tmp9 (- 0 input))    20)  ;;#Wm
+(assert+ (= _sign2 tmp9)         20)  ;;#Wm
+;;# 16: abs = input;
+(assert+ (= _abs3 input)         20)  ;;#Wl
+
+(assert+ (= _4 abs.0)            1)
+(assert+ (= _retval .0)          1)
+
+;;# ce
+(assert (= input -2))
+
+;;# Q
+(assert (or (and bb14 (= iftmp.0.0 1))
+			;;#(and (not bb14) return)
+		)
+)
+
+
+
+;;# PATH (input==0) - SUC
+;;# STATM = {4, 5, 6}
+;;#(assert (and entry bb (not bb1) (not bb2) (not bb3) (not bb4) (not bb5) (not bb6)
+;;#     (not bb7) (not bb8) (not bb9) (not bb10) (not bb11) (not bb12)
+;;#     (not bb13) (not bb14)  bb15 return))
+
+;;# PATH (input<0) - FAIL
+;;# STATM = {4, 5, 8, 9, 13, 14}
+;;#(assert (and entry (not bb) bb1 bb2 (not bb3) bb4 bb5 (not bb6)
+;;#     bb7 (not bb8) (not bb9) (not bb10) (not bb11) (not bb12)
+;;#     bb13 bb14 bb15 return))
+
+;;# PATH (input>0) - SUC
+;;# STATM = {4, 5, 8, 11, 13, 16}
+;;#(assert (and entry (not bb) bb1 (not bb2) bb3 bb4 (not bb5) bb6
+;;#     bb7 bb8 (not bb9) bb10 bb11 bb12
+;;#     (not bb13) bb14 bb15 return))
+
+;;# Cok\Cfail = {6, 11, 16}
+;;# Wl = sum/2
+;;# Wf = sum = 32
+
+;;# -------
+;;# Root causes:
+;;#   5:  if(input==0)
+;;#   (assert+ (= tmp (= input 0)) 1)
+
+;;# 4:  abs = input;  
+;;#(assert+ (= _abs input) 1)
+;;# 14: sign = input * -1;          //BUG
+;;#(assert+ (= _sign2 tmp9) 1)
+
+;;# 16: abs = input;
+;;#(assert+ (= _abs3 input) 6)
+;;# 13: if(sign==-1)
+;;#(assert+ (= tmp8 (= sign.0 -1)) 32)
+
+;;(check)
+(max-sat)

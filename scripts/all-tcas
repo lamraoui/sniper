@@ -1,0 +1,51 @@
+#!/bin/bash
+
+
+echo "Running SNIPER without heuristics..."
+
+# version, bug lines
+./tcas 1 75
+./tcas 2 63
+./tcas 3 120
+./tcas 4 89
+./tcas 5 118
+./tcas 6 68
+./tcas 7 51
+./tcas 8 53
+./tcas 9 99
+./tcas 10 69 75
+./tcas 11 70 77
+./tcas 12 118
+./tcas 13 10
+./tcas 14 11
+./tcas 15 12
+./tcas 16 50
+./tcas 17 51
+./tcas 18 52
+./tcas 19 53
+./tcas 20 82
+./tcas 21 82
+./tcas 22 82
+./tcas 23 100
+./tcas 24 100
+./tcas 25 107
+./tcas 26 118
+./tcas 27 118
+./tcas 28 63
+./tcas 29 73
+./tcas 30 73
+./tcas 31 86 91
+./tcas 32 104 109
+
+# 50 51 52 53 
+./tcas 33 50 51 52 
+./tcas 33 50 51 53
+
+./tcas 34 124
+./tcas 35 73
+./tcas 36 46
+./tcas 37 58
+./tcas 38 27
+./tcas 39 107
+./tcas 40 85 126
+./tcas 41 89

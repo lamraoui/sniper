@@ -1,0 +1,52 @@
+#!/bin/bash
+
+
+echo "Running SNIPER..."
+
+# version, bug lines
+./tcas 1 75
+./tcas 2 63
+./tcas 3 120
+./tcas 4 79
+./tcas 5 118
+./tcas 6 104
+./tcas 7 51
+./tcas 8 53
+./tcas 9 89
+./tcas 10 105 111
+./tcas 11 106 113
+./tcas 12 118
+./tcas 13 118   #define at 10
+./tcas 14 118   #define at 11
+./tcas 15 79 93 118 #79 and 93define at 12
+./tcas 16 50
+./tcas 17 51
+./tcas 18 52
+./tcas 19 53
+./tcas 20 72
+./tcas 21 72
+./tcas 22 72
+./tcas 23 90
+./tcas 24 90
+./tcas 25 97
+./tcas 26 118
+./tcas 27 118
+./tcas 28 63
+./tcas 29 63
+./tcas 30 63
+./tcas 31 81 128
+./tcas 32 99 129
+./tcas 33 50 51 52 53 
+./tcas 34 124
+./tcas 35 63
+./tcas 36 136  #define at 46
+./tcas 37 58
+./tcas 38 58   #define at 27
+./tcas 39 97
+./tcas 40 75 126
+./tcas 41 79
+
+
+
+
+

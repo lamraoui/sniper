@@ -1,0 +1,23 @@
+MinmaxKO.c : 30
+
+AbsMinusKO.c  : 25
+AbsMinusKO2.c : 18
+AbsMinusKO3.c : 22
+
+TritypeKO.c    : 64
+TritypeKO2.c   : 64
+TritypeKO2V2.c : 41
+TritypeKO3.c   : 63
+TritypeKO4.c   : 56
+TritypeKO5.c   : 42,55
+
+TriPerimetreKO.c   : 69
+TriPerimetreKOV2.c : 45
+TriPerimetreKO2.c  : 69
+TriPerimetreKO3.c  : 66
+
+Maxmin6varKO.c  : 38
+Maxmin6varKO2.c : 25
+Maxmin6varKO3.c : 24,26
+Maxmin6varKO4.c : 22,25,29
+

@@ -1,0 +1,63 @@
+(set-evidence! true)
+(set-verbosity! 3)
+
+(define bb::bool)
+(define bb3::bool)
+(define bb4::bool)
+(define bb_bb3::bool)
+(define bb3_bb4::bool)
+(define bb_bb4::bool)
+
+(define x::int)
+(define _x::int)
+(define _y::int)
+(define tmp::int)
+(define input::int)
+(define _x1::int)
+(define x.0::int)
+(define tmp6::int)
+
+(define tmp2::bool)
+(define tmp5::bool)
+
+(define a1::bool)
+(define a2::bool)
+(define a3::bool)
+(define a4::bool)
+(define a5::bool)
+
+
+;;# TF:
+;;# nb hard expressions: 8
+;;# nb soft expressions: 5
+ 
+ 
+;;# EI:
+(assert (= input 0))
+ 
+ 
+(assert (= bb true))
+(assert (or (and bb3 bb_bb3 ) (and (not bb3) (not bb_bb3) ) ))
+(assert (or (and bb4 bb3_bb4 (not bb_bb4) ) (and bb4 (not bb3_bb4) bb_bb4 ) (and (not bb4) (not bb3_bb4) (not bb_bb4) ) ))
+(assert (or a1 (= _x 1)))
+(assert (or a2 (= tmp (- input 42 ))))
+(assert (or a3 (= _y tmp)))
+(assert (or a4 (= tmp2 (< _y 0))))
+(assert (or (and tmp2 bb_bb3 (not bb_bb4) ) (and (not tmp2) bb_bb4 (not bb_bb3) ) (and (not bb) (not bb_bb3) (not bb_bb4) ) ))
+(assert (or a5 (= _x1 0)))
+(assert (= bb3 bb3_bb4))
+(assert (= x.0 (ite bb3_bb4 _x1 _x)))
+(assert (= tmp5 (/= x.0 0)))
+(assert (= tmp6 (ite tmp5 1 0)))
+
+(assert+ (not a1) 1) 
+(assert+ (not a2) 1) 
+(assert+ (not a3) 1) 
+(assert+ (not a4) 1) 
+(assert+ (not a5) 1) 
+
+
+;# POST-COND
+(assert (= tmp6 1)) 
+
+(max-sat)

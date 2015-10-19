@@ -1,0 +1,427 @@
+; ModuleID = './examples/tcas/tcas_unrolled.c.bc'
+target datalayout = "e-p:64:64:64-i1:8:8-i8:8:8-i16:16:16-i32:32:32-i64:64:64-f32:32:32-f64:64:64-v64:64:64-v128:128:128-a0:0:64-s0:64:64-f80:128:128-n8:16:32:64"
+target triple = "x86_64-apple-darwin10.8"
+
+define i32 @run(i32 %Cur_Vertical_Sep, i32 %High_Confidence, i32 %Two_of_Three_Reports_Valid, i32 %Own_Tracked_Alt, i32 %Own_Tracked_Alt_Rate, i32 %Other_Tracked_Alt, i32 %Alt_Layer_Value, i32 %Up_Separation, i32 %Down_Separation, i32 %Other_RAC, i32 %Other_Capability, i32 %Climb_Inhibit) nounwind ssp {
+entry:
+  %Positive_RA_Alt_Thresh = alloca [4 x i32]
+  %"alloca point" = bitcast i32 0 to i32
+  %0 = getelementptr inbounds [4 x i32]* %Positive_RA_Alt_Thresh, i64 0, i64 0
+  store i32 400, i32* %0, align 4
+  %1 = getelementptr inbounds [4 x i32]* %Positive_RA_Alt_Thresh, i64 0, i64 1
+  store i32 500, i32* %1, align 4
+  %2 = getelementptr inbounds [4 x i32]* %Positive_RA_Alt_Thresh, i64 0, i64 2
+  store i32 640, i32* %2, align 4
+  %3 = getelementptr inbounds [4 x i32]* %Positive_RA_Alt_Thresh, i64 0, i64 3
+  store i32 740, i32* %3, align 4
+  %4 = icmp eq i32 %High_Confidence, 0
+  br i1 %4, label %bb3, label %bb
+
+bb:                                               ; preds = %entry
+  %5 = icmp sgt i32 %Own_Tracked_Alt_Rate, 600
+  br i1 %5, label %bb3, label %bb1
+
+bb1:                                              ; preds = %bb
+  %6 = icmp sle i32 %Cur_Vertical_Sep, 600
+  br i1 %6, label %bb3, label %bb2
+
+bb2:                                              ; preds = %bb1
+  br label %bb4
+
+bb3:                                              ; preds = %bb1, %bb, %entry
+  br label %bb4
+
+bb4:                                              ; preds = %bb3, %bb2
+  %iftmp.0.0 = phi i32 [ 0, %bb3 ], [ 1, %bb2 ]
+  %7 = icmp eq i32 %Other_Capability, 1
+  %8 = zext i1 %7 to i32
+  %9 = icmp eq i32 %Two_of_Three_Reports_Valid, 0
+  br i1 %9, label %bb7, label %bb5
+
+bb5:                                              ; preds = %bb4
+  %10 = icmp ne i32 %Other_RAC, 0
+  br i1 %10, label %bb7, label %bb6
+
+bb6:                                              ; preds = %bb5
+  br label %bb8
+
+bb7:                                              ; preds = %bb5, %bb4
+  br label %bb8
+
+bb8:                                              ; preds = %bb7, %bb6
+  %iftmp.1.0 = phi i32 [ 0, %bb7 ], [ 1, %bb6 ]
+  %11 = icmp ne i32 %iftmp.0.0, 0
+  br i1 %11, label %bb9, label %bb60
+
+bb9:                                              ; preds = %bb8
+  %12 = icmp eq i32 %8, 0
+  br i1 %12, label %bb11, label %bb10
+
+bb10:                                             ; preds = %bb9
+  %13 = icmp ne i32 %iftmp.1.0, 0
+  br i1 %13, label %bb12, label %bb11
+
+bb11:                                             ; preds = %bb10, %bb9
+  %14 = icmp eq i32 %8, 0
+  br i1 %14, label %bb12, label %bb60
+
+bb12:                                             ; preds = %bb11, %bb10
+  %15 = icmp ne i32 %Climb_Inhibit, 0
+  br i1 %15, label %bb13, label %bb14
+
+bb13:                                             ; preds = %bb12
+  %16 = add nsw i32 %Up_Separation, 100
+  br label %bb15
+
+bb14:                                             ; preds = %bb12
+  br label %bb15
+
+bb15:                                             ; preds = %bb14, %bb13
+  %iftmp.2.0 = phi i32 [ %16, %bb13 ], [ %Up_Separation, %bb14 ]
+  %17 = icmp sgt i32 %iftmp.2.0, %Down_Separation
+  %18 = zext i1 %17 to i32
+  %19 = icmp ne i32 %18, 0
+  br i1 %19, label %bb16, label %bb22
+
+bb16:                                             ; preds = %bb15
+  %20 = icmp sge i32 %Own_Tracked_Alt, %Other_Tracked_Alt
+  br i1 %20, label %bb19, label %bb17
+
+bb17:                                             ; preds = %bb16
+  %21 = icmp sge i32 %Own_Tracked_Alt, %Other_Tracked_Alt
+  br i1 %21, label %bb20, label %bb18
+
+bb18:                                             ; preds = %bb17
+  %22 = sext i32 %Alt_Layer_Value to i64
+  %23 = getelementptr inbounds [4 x i32]* %Positive_RA_Alt_Thresh, i64 0, i64 %22
+  %24 = load i32* %23, align 4
+  %25 = icmp sge i32 %24, %Down_Separation
+  br i1 %25, label %bb19, label %bb20
+
+bb19:                                             ; preds = %bb18, %bb16
+  br label %bb21
+
+bb20:                                             ; preds = %bb18, %bb17
+  br label %bb21
+
+bb21:                                             ; preds = %bb20, %bb19
+  %iftmp.3.0 = phi i32 [ 1, %bb19 ], [ 0, %bb20 ]
+  br label %bb28
+
+bb22:                                             ; preds = %bb15
+  %26 = icmp sge i32 %Other_Tracked_Alt, %Own_Tracked_Alt
+  br i1 %26, label %bb26, label %bb23
+
+bb23:                                             ; preds = %bb22
+  %27 = icmp sle i32 %Cur_Vertical_Sep, 299
+  br i1 %27, label %bb26, label %bb24
+
+bb24:                                             ; preds = %bb23
+  %28 = sext i32 %Alt_Layer_Value to i64
+  %29 = getelementptr inbounds [4 x i32]* %Positive_RA_Alt_Thresh, i64 0, i64 %28
+  %30 = load i32* %29, align 4
+  %31 = icmp sgt i32 %30, %Up_Separation
+  br i1 %31, label %bb26, label %bb25
+
+bb25:                                             ; preds = %bb24
+  br label %bb27
+
+bb26:                                             ; preds = %bb24, %bb23, %bb22
+  br label %bb27
+
+bb27:                                             ; preds = %bb26, %bb25
+  %iftmp.5.0 = phi i32 [ 0, %bb26 ], [ 1, %bb25 ]
+  br label %bb28
+
+bb28:                                             ; preds = %bb27, %bb21
+  %Non_Crossing_Biased_Climb.0 = phi i32 [ %iftmp.3.0, %bb21 ], [ %iftmp.5.0, %bb27 ]
+  %32 = icmp ne i32 %Climb_Inhibit, 0
+  br i1 %32, label %bb29, label %bb30
+
+bb29:                                             ; preds = %bb28
+  %33 = add nsw i32 %Up_Separation, 100
+  br label %bb31
+
+bb30:                                             ; preds = %bb28
+  br label %bb31
+
+bb31:                                             ; preds = %bb30, %bb29
+  %iftmp.7.0 = phi i32 [ %33, %bb29 ], [ %Up_Separation, %bb30 ]
+  %34 = icmp sgt i32 %iftmp.7.0, %Down_Separation
+  %35 = zext i1 %34 to i32
+  %36 = icmp ne i32 %35, 0
+  br i1 %36, label %bb32, label %bb38
+
+bb32:                                             ; preds = %bb31
+  %37 = icmp sge i32 %Own_Tracked_Alt, %Other_Tracked_Alt
+  br i1 %37, label %bb36, label %bb33
+
+bb33:                                             ; preds = %bb32
+  %38 = icmp sle i32 %Cur_Vertical_Sep, 299
+  br i1 %38, label %bb36, label %bb34
+
+bb34:                                             ; preds = %bb33
+  %39 = sext i32 %Alt_Layer_Value to i64
+  %40 = getelementptr inbounds [4 x i32]* %Positive_RA_Alt_Thresh, i64 0, i64 %39
+  %41 = load i32* %40, align 4
+  %42 = icmp sgt i32 %41, %Down_Separation
+  br i1 %42, label %bb36, label %bb35
+
+bb35:                                             ; preds = %bb34
+  br label %bb37
+
+bb36:                                             ; preds = %bb34, %bb33, %bb32
+  br label %bb37
+
+bb37:                                             ; preds = %bb36, %bb35
+  %iftmp.8.0 = phi i32 [ 0, %bb36 ], [ 1, %bb35 ]
+  br label %bb44
+
+bb38:                                             ; preds = %bb31
+  %43 = icmp sge i32 %Other_Tracked_Alt, %Own_Tracked_Alt
+  br i1 %43, label %bb41, label %bb39
+
+bb39:                                             ; preds = %bb38
+  %44 = icmp sge i32 %Other_Tracked_Alt, %Own_Tracked_Alt
+  br i1 %44, label %bb42, label %bb40
+
+bb40:                                             ; preds = %bb39
+  %45 = sext i32 %Alt_Layer_Value to i64
+  %46 = getelementptr inbounds [4 x i32]* %Positive_RA_Alt_Thresh, i64 0, i64 %45
+  %47 = load i32* %46, align 4
+  %48 = icmp sle i32 %47, %Up_Separation
+  br i1 %48, label %bb41, label %bb42
+
+bb41:                                             ; preds = %bb40, %bb38
+  br label %bb43
+
+bb42:                                             ; preds = %bb40, %bb39
+  br label %bb43
+
+bb43:                                             ; preds = %bb42, %bb41
+  %iftmp.10.0 = phi i32 [ 1, %bb41 ], [ 0, %bb42 ]
+  br label %bb44
+
+bb44:                                             ; preds = %bb43, %bb37
+  %Non_Crossing_Biased_Descend.0 = phi i32 [ %iftmp.8.0, %bb37 ], [ %iftmp.10.0, %bb43 ]
+  %49 = icmp eq i32 %Non_Crossing_Biased_Climb.0, 0
+  br i1 %49, label %bb47, label %bb45
+
+bb45:                                             ; preds = %bb44
+  %50 = icmp sge i32 %Own_Tracked_Alt, %Other_Tracked_Alt
+  br i1 %50, label %bb47, label %bb46
+
+bb46:                                             ; preds = %bb45
+  br label %bb48
+
+bb47:                                             ; preds = %bb45, %bb44
+  br label %bb48
+
+bb48:                                             ; preds = %bb47, %bb46
+  %iftmp.12.0 = phi i32 [ 0, %bb47 ], [ 1, %bb46 ]
+  %51 = icmp eq i32 %Non_Crossing_Biased_Descend.0, 0
+  br i1 %51, label %bb51, label %bb49
+
+bb49:                                             ; preds = %bb48
+  %52 = icmp sge i32 %Other_Tracked_Alt, %Own_Tracked_Alt
+  br i1 %52, label %bb51, label %bb50
+
+bb50:                                             ; preds = %bb49
+  br label %bb52
+
+bb51:                                             ; preds = %bb49, %bb48
+  br label %bb52
+
+bb52:                                             ; preds = %bb51, %bb50
+  %iftmp.13.0 = phi i32 [ 0, %bb51 ], [ 1, %bb50 ]
+  %53 = icmp eq i32 %iftmp.12.0, 0
+  br i1 %53, label %bb55, label %bb53
+
+bb53:                                             ; preds = %bb52
+  %54 = icmp eq i32 %iftmp.13.0, 0
+  br i1 %54, label %bb55, label %bb54
+
+bb54:                                             ; preds = %bb53
+  br label %bb60
+
+bb55:                                             ; preds = %bb53, %bb52
+  %55 = icmp ne i32 %iftmp.12.0, 0
+  br i1 %55, label %bb56, label %bb57
+
+bb56:                                             ; preds = %bb55
+  br label %bb60
+
+bb57:                                             ; preds = %bb55
+  %56 = icmp ne i32 %iftmp.13.0, 0
+  br i1 %56, label %bb58, label %bb59
+
+bb58:                                             ; preds = %bb57
+  br label %bb60
+
+bb59:                                             ; preds = %bb57
+  br label %bb60
+
+bb60:                                             ; preds = %bb59, %bb58, %bb56, %bb54, %bb11, %bb8
+  %alt_sep.0 = phi i32 [ 1, %bb56 ], [ 2, %bb58 ], [ 0, %bb59 ], [ 0, %bb54 ], [ 0, %bb11 ], [ 0, %bb8 ]
+  %57 = icmp eq i32 %alt_sep.0, 1
+  %58 = zext i1 %57 to i32
+  %59 = call i32 (...)* @assert(i32 %58) nounwind
+  br label %return
+
+return:                                           ; preds = %bb60
+  ret i32 %alt_sep.0
+}
+
+declare i32 @assert(...)
+
+define i32 @main() nounwind ssp {
+entry:
+  %Positive_RA_Alt_Thresh.i = alloca [4 x i32]
+  %"alloca point" = bitcast i32 0 to i32
+  %0 = getelementptr inbounds [4 x i32]* %Positive_RA_Alt_Thresh.i, i64 0, i64 0
+  store i32 400, i32* %0, align 4
+  %1 = getelementptr inbounds [4 x i32]* %Positive_RA_Alt_Thresh.i, i64 0, i64 1
+  store i32 500, i32* %1, align 4
+  %2 = getelementptr inbounds [4 x i32]* %Positive_RA_Alt_Thresh.i, i64 0, i64 2
+  store i32 640, i32* %2, align 4
+  %3 = getelementptr inbounds [4 x i32]* %Positive_RA_Alt_Thresh.i, i64 0, i64 3
+  store i32 740, i32* %3, align 4
+  br label %bb4.i
+
+bb4.i:                                            ; preds = %entry
+  %iftmp.0.0.i = phi i32 [ 1, %entry ]
+  br label %bb8.i
+
+bb8.i:                                            ; preds = %bb4.i
+  %iftmp.1.0.i = phi i32 [ 0, %bb4.i ]
+  %4 = icmp ne i32 %iftmp.0.0.i, 0
+  br i1 %4, label %bb9.i, label %run.exit
+
+bb9.i:                                            ; preds = %bb8.i
+  br label %bb15.i
+
+bb15.i:                                           ; preds = %bb9.i
+  %iftmp.2.0.i = phi i32 [ 729, %bb9.i ]
+  %5 = icmp sgt i32 %iftmp.2.0.i, 500
+  %6 = zext i1 %5 to i32
+  %7 = icmp ne i32 %6, 0
+  br i1 %7, label %bb16.i, label %bb22.i
+
+bb16.i:                                           ; preds = %bb15.i
+  %8 = getelementptr inbounds [4 x i32]* %Positive_RA_Alt_Thresh.i, i64 0, i64 1
+  %9 = load i32* %8, align 4
+  %10 = icmp sge i32 %9, 500
+  br i1 %10, label %bb19.i, label %bb20.i
+
+bb19.i:                                           ; preds = %bb16.i
+  br label %bb21.i
+
+bb20.i:                                           ; preds = %bb16.i
+  br label %bb21.i
+
+bb21.i:                                           ; preds = %bb20.i, %bb19.i
+  %iftmp.3.0.i = phi i32 [ 1, %bb19.i ], [ 0, %bb20.i ]
+  br label %bb28.i
+
+bb22.i:                                           ; preds = %bb15.i
+  br label %bb27.i
+
+bb27.i:                                           ; preds = %bb22.i
+  %iftmp.5.0.i = phi i32 [ 0, %bb22.i ]
+  br label %bb28.i
+
+bb28.i:                                           ; preds = %bb27.i, %bb21.i
+  %Non_Crossing_Biased_Climb.0.i = phi i32 [ %iftmp.3.0.i, %bb21.i ], [ %iftmp.5.0.i, %bb27.i ]
+  br label %bb31.i
+
+bb31.i:                                           ; preds = %bb28.i
+  %iftmp.7.0.i = phi i32 [ 729, %bb28.i ]
+  %11 = icmp sgt i32 %iftmp.7.0.i, 500
+  %12 = zext i1 %11 to i32
+  %13 = icmp ne i32 %12, 0
+  br i1 %13, label %bb32.i, label %bb38.i
+
+bb32.i:                                           ; preds = %bb31.i
+  %14 = getelementptr inbounds [4 x i32]* %Positive_RA_Alt_Thresh.i, i64 0, i64 1
+  %15 = load i32* %14, align 4
+  %16 = icmp sgt i32 %15, 500
+  br i1 %16, label %bb36.i, label %bb35.i
+
+bb35.i:                                           ; preds = %bb32.i
+  br label %bb37.i
+
+bb36.i:                                           ; preds = %bb32.i
+  br label %bb37.i
+
+bb37.i:                                           ; preds = %bb36.i, %bb35.i
+  %iftmp.8.0.i = phi i32 [ 0, %bb36.i ], [ 1, %bb35.i ]
+  br label %bb44.i
+
+bb38.i:                                           ; preds = %bb31.i
+  br label %bb43.i
+
+bb43.i:                                           ; preds = %bb38.i
+  %iftmp.10.0.i = phi i32 [ 1, %bb38.i ]
+  br label %bb44.i
+
+bb44.i:                                           ; preds = %bb43.i, %bb37.i
+  %Non_Crossing_Biased_Descend.0.i = phi i32 [ %iftmp.8.0.i, %bb37.i ], [ %iftmp.10.0.i, %bb43.i ]
+  %17 = icmp eq i32 %Non_Crossing_Biased_Climb.0.i, 0
+  br i1 %17, label %bb47.i, label %bb45.i
+
+bb45.i:                                           ; preds = %bb44.i
+  br label %bb48.i
+
+bb47.i:                                           ; preds = %bb44.i
+  br label %bb48.i
+
+bb48.i:                                           ; preds = %bb47.i, %bb45.i
+  %iftmp.12.0.i = phi i32 [ 0, %bb47.i ], [ 1, %bb45.i ]
+  %18 = icmp eq i32 %Non_Crossing_Biased_Descend.0.i, 0
+  br i1 %18, label %bb51.i, label %bb49.i
+
+bb49.i:                                           ; preds = %bb48.i
+  br label %bb51.i
+
+bb51.i:                                           ; preds = %bb49.i, %bb48.i
+  br label %bb52.i
+
+bb52.i:                                           ; preds = %bb51.i
+  %iftmp.13.0.i = phi i32 [ 0, %bb51.i ]
+  %19 = icmp eq i32 %iftmp.12.0.i, 0
+  br i1 %19, label %bb55.i, label %bb53.i
+
+bb53.i:                                           ; preds = %bb52.i
+  %20 = icmp eq i32 %iftmp.13.0.i, 0
+  br i1 %20, label %bb55.i, label %bb54.i
+
+bb54.i:                                           ; preds = %bb53.i
+  br label %run.exit
+
+bb55.i:                                           ; preds = %bb53.i, %bb52.i
+  %21 = icmp ne i32 %iftmp.12.0.i, 0
+  br i1 %21, label %bb56.i, label %bb57.i
+
+bb56.i:                                           ; preds = %bb55.i
+  br label %run.exit
+
+bb57.i:                                           ; preds = %bb55.i
+  %22 = icmp ne i32 %iftmp.13.0.i, 0
+  br i1 %22, label %bb58.i, label %bb59.i
+
+bb58.i:                                           ; preds = %bb57.i
+  br label %run.exit
+
+bb59.i:                                           ; preds = %bb57.i
+  br label %run.exit
+
+run.exit:                                         ; preds = %bb8.i, %bb54.i, %bb56.i, %bb58.i, %bb59.i
+  %alt_sep.0.i = phi i32 [ 1, %bb56.i ], [ 2, %bb58.i ], [ 0, %bb59.i ], [ 0, %bb54.i ], [ 0, %bb8.i ]
+  %23 = icmp eq i32 %alt_sep.0.i, 1
+  %24 = zext i1 %23 to i32
+  %25 = call i32 (...)* @assert(i32 %24) nounwind
+  br label %return
+
+return:                                           ; preds = %run.exit
+  ret i32 0
+}

@@ -1,0 +1,194 @@
+(set-evidence! true)
+(set-verbosity! 3)
+
+(define bb::bool)
+(define bb5::bool)
+(define bb6::bool)
+(define bb8::bool)
+(define bb9::bool)
+(define bb10::bool)
+(define bb12::bool)
+(define bb14::bool)
+(define bb15::bool)
+(define bb17::bool)
+(define bb19::bool)
+(define bb21::bool)
+(define bb23::bool)
+(define bb25::bool)
+(define bb27::bool)
+(define bb29::bool)
+(define bb33::bool)
+
+(define bb_bb5::bool)
+(define bb_bb6::bool)
+(define bb5_bb33::bool)
+(define bb6_bb8::bool)
+(define bb6_bb9::bool)
+(define bb8_bb10::bool)
+(define bb9_bb10::bool)
+(define bb10_bb12::bool)
+(define bb10_bb14::bool)
+(define bb12_bb15::bool)
+(define bb14_bb15::bool)
+(define bb15_bb17::bool)
+(define bb15_bb29::bool)
+(define bb17_bb19::bool)
+(define bb17_bb21::bool)
+(define bb19_bb27::bool)
+(define bb19_bb21::bool)
+(define bb21_bb23::bool)
+(define bb21_bb25::bool)
+(define bb23_bb25::bool)
+(define bb25_bb27::bool)
+(define bb27_bb29::bool)
+(define bb29_bb33::bool)
+
+(define _abs::int)
+(define input::int)
+(define _::int)
+(define _sign::int)
+(define _sign1::int)
+(define sign.0::int)
+(define tmp13::int)
+(define _sign2::int)
+(define _abs3::int)
+(define sign.1::int)
+(define abs.0::int)
+(define tmp31::int)
+(define _4::int)
+(define .0::int)
+(define _ret::int)
+
+(define tmp::bool)
+(define tmp7::bool)
+(define tmp11::bool)
+(define tmp16::bool)
+(define tmp18::bool)
+(define tmp20::bool)
+(define tmp22::bool)
+(define tmp24::bool)
+(define tmp26::bool)
+(define tmp28::bool)
+(define tmp30::bool)
+
+
+(define a1::bool)
+(define a2::bool)
+(define a3::bool)
+(define a4::bool)
+(define a5::bool)
+(define a6::bool)
+(define a7::bool)
+(define a8::bool)
+(define a9::bool)
+(define a10::bool)
+
+;;# TF:
+;;# nb hard expressions: 46
+;;# nb soft expressions: 12
+;;# PTF:
+;;# nb hard expressions: 46+3
+;;# nb soft expressions: 12-3
+
+
+;;# EI: (= input -1)
+;;# MCS = {{5, 17}, {6}, {16}}
+;;# MUS = {{6, 16, 17}, {5, 6, 16}}
+;;# MCSes = {{6}, {16}, {5, 17}}
+
+
+
+;# EI: 
+(assert (= input -1))
+
+
+(assert (= bb true))
+(assert (or (and bb5 bb_bb5 ) (and (not bb5) (not bb_bb5) ) ))
+(assert (or (and bb6 bb_bb6 ) (and (not bb6) (not bb_bb6) ) ))
+(assert (or (and bb8 bb6_bb8 ) (and (not bb8) (not bb6_bb8) ) ))
+(assert (or (and bb9 bb6_bb9 ) (and (not bb9) (not bb6_bb9) ) ))
+(assert (or (and bb10 bb9_bb10 (not bb8_bb10) ) (and bb10 (not bb9_bb10) bb8_bb10 ) (and (not bb10) (not bb9_bb10) (not bb8_bb10) ) ))
+(assert (or (and bb12 bb10_bb12 ) (and (not bb12) (not bb10_bb12) ) ))
+(assert (or (and bb14 bb10_bb14 ) (and (not bb14) (not bb10_bb14) ) ))
+(assert (or (and bb15 bb14_bb15 (not bb12_bb15) ) (and bb15 (not bb14_bb15) bb12_bb15 ) (and (not bb15) (not bb14_bb15) (not bb12_bb15) ) ))
+(assert (or (and bb17 bb15_bb17 ) (and (not bb17) (not bb15_bb17) ) ))
+(assert (or (and bb19 bb17_bb19 ) (and (not bb19) (not bb17_bb19) ) ))
+(assert (or (and bb21 bb19_bb21 (not bb17_bb21) ) (and bb21 (not bb19_bb21) bb17_bb21 ) (and (not bb21) (not bb19_bb21) (not bb17_bb21) ) ))
+(assert (or (and bb23 bb21_bb23 ) (and (not bb23) (not bb21_bb23) ) ))
+(assert (or (and bb25 bb23_bb25 (not bb21_bb25) ) (and bb25 (not bb23_bb25) bb21_bb25 ) (and (not bb25) (not bb23_bb25) (not bb21_bb25) ) ))
+(assert (or (and bb27 bb25_bb27 (not bb19_bb27) ) (and bb27 (not bb25_bb27) bb19_bb27 ) (and (not bb27) (not bb25_bb27) (not bb19_bb27) ) ))
+(assert (or (and bb29 bb27_bb29 (not bb15_bb29) ) (and bb29 (not bb27_bb29) bb15_bb29 ) (and (not bb29) (not bb27_bb29) (not bb15_bb29) ) ))
+(assert (or (and bb33 bb29_bb33 (not bb5_bb33) ) (and bb33 (not bb29_bb33) bb5_bb33 ) (and (not bb33) (not bb29_bb33) (not bb5_bb33) ) ))
+
+(assert (or a1 (= _abs input)))
+(assert (or a2 (= tmp (= input 0))))
+(assert (or (and tmp bb_bb5 (not bb_bb6) ) (and (not tmp) bb_bb6 (not bb_bb5) ) (and (not bb) (not bb_bb5) (not bb_bb6) ) ))
+(assert (= tmp7 (< input 0)))
+(assert (or (and tmp7 bb6_bb8 (not bb6_bb9) ) (and (not tmp7) bb6_bb9 (not bb6_bb8) ) (and (not bb6) (not bb6_bb8) (not bb6_bb9) ) ))
+
+;;#(assert (or a3 (= _sign1 1)))
+(assert (= _sign1 1))
+
+(assert (= bb9 bb9_bb10))
+(assert (or a4 (= _sign -1)))
+(assert (= bb8 bb8_bb10))
+(assert (= sign.0 (ite bb8_bb10 _sign _sign1)))
+(assert (or a5 (= tmp11 (= sign.0 -1))))
+(assert (or (and tmp11 bb10_bb12 (not bb10_bb14) ) (and (not tmp11) bb10_bb14 (not bb10_bb12) ) (and (not bb10) (not bb10_bb12) (not bb10_bb14) ) ))
+
+;;#(assert (or a6 (= _abs3 input)))
+(assert (= _abs3 1))
+
+(assert (= bb14 bb14_bb15))
+(assert (or a7 (= tmp13 (* input -1 ))))
+(assert (or a8 (= _sign2 tmp13)))
+(assert (= bb12 bb12_bb15))
+(assert (= sign.1 (ite bb12_bb15 _sign2 sign.0)))
+(assert (= abs.0 (ite bb12_bb15 _abs _abs3)))
+(assert (= tmp16 (>= abs.0 0)))
+(assert (or (and tmp16 bb15_bb17 (not bb15_bb29) ) (and (not tmp16) bb15_bb29 (not bb15_bb17) ) (and (not bb15) (not bb15_bb17) (not bb15_bb29) ) ))
+(assert (= tmp18 (< input 0)))
+(assert (or (and tmp18 bb17_bb19 (not bb17_bb21) ) (and (not tmp18) bb17_bb21 (not bb17_bb19) ) (and (not bb17) (not bb17_bb19) (not bb17_bb21) ) ))
+(assert (= tmp20 (= sign.1 -1)))
+(assert (or (and tmp20 bb19_bb27 (not bb19_bb21) ) (and (not tmp20) bb19_bb21 (not bb19_bb27) ) (and (not bb19) (not bb19_bb27) (not bb19_bb21) ) ))
+(assert (= tmp22 (>= input 0)))
+(assert (or (and tmp22 bb21_bb23 (not bb21_bb25) ) (and (not tmp22) bb21_bb25 (not bb21_bb23) ) (and (not bb21) (not bb21_bb23) (not bb21_bb25) ) ))
+(assert (= tmp24 (/= sign.1 -1)))
+(assert (= bb23 bb23_bb25))
+(assert (= tmp26 (ite bb21_bb25 false tmp24)))
+(assert (= bb25 bb25_bb27))
+(assert (= tmp28 (ite bb19_bb27 true tmp26)))
+(assert (= bb27 bb27_bb29))
+(assert (= tmp30 (ite bb15_bb29 false tmp28)))
+(assert (= tmp31 (ite tmp30 1 0)))
+(assert (or a9 (= _4 abs.0)))
+(assert (= bb29 bb29_bb33))
+
+;;#(assert (or a10 (= _ 0)))
+(assert (= _ 0))
+
+(assert (= bb5 bb5_bb33))
+(assert (= .0 (ite bb5_bb33 _ _4)))
+
+;# POST-COND
+(assert (= tmp31 1)) 
+
+
+
+(assert+ (not a1) 1) 
+(assert+ (not a2) 1) 
+;;#(assert+ (not a3) 1) 
+(assert+ (not a4) 1) 
+(assert+ (not a5) 1) 
+;;#(assert+ (not a6) 1) 
+(assert+ (not a7) 1) 
+(assert+ (not a8) 1) 
+(assert+ (not a9) 1) 
+;;#(assert+ (not a10) 1)
+
+(assert (not a2))
+(assert (not a5))
+(assert (or (not a1) (not a7)))
+(assert (or (not a1) (not a8)))
+
+(max-sat)

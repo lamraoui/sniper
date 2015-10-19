@@ -1,0 +1,19 @@
+#!/bin/bash
+
+if [ $# -lt 1 ]
+then 
+  echo "error (x_X)"
+  exit 0
+fi
+echo "TCAS version: $1"
+path=./examples/tcas2/v$1/tcas.c
+
+x=0
+while [ $x -le 30 ]
+do	
+	clang $path -S -emit-llvm -O0 -g -o $path.bc >error 2>&1
+	./tool -print-dura -tcas $1 -function main -cfile $path $path.bc 
+ 	x=$(( $x + 1 ))
+done
+
+echo ""

@@ -1,0 +1,30 @@
+(set-evidence! true)
+(set-verbosity! 3)
+
+(define x::int)
+(define y::int)
+(define a0::bool)
+(define a1::bool)
+(define a2::bool)
+(define a3::bool)
+(define a4::bool)
+
+(assert (or (>= x 1)              a0))
+(assert (or (< x 1)               a1))
+(assert (or (or (< x 1) (< y 1)) a2))
+(assert (or (< y 1)               a3))
+(assert (or (>= y 1)              a4))
+
+(assert+ (not a0) 10)
+(assert+ (not a1) 10)
+(assert+ (not a2) 10)
+(assert+ (not a3) 10)
+(assert+ (not a4) 10)
+
+
+(assert (or (not a1) (not a4)  ))
+(assert (or (not a0) (not a4)  ))
+(assert (or (not a0) (not a3)  ))
+(assert (or (not a1) (not a2) (not a3)))
+
+(max-sat)

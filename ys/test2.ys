@@ -1,0 +1,11 @@
+(set-evidence! true)
+(set-verbosity! 3)
+
+(define x_foo::int)
+
+
+(assert (not (= x_foo 0)) )
+(assert (ite (= (- x_foo 42) 42) 1 0))
+
+
+(max-sat)

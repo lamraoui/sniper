@@ -1,0 +1,93 @@
+(set-evidence! true)
+(set-verbosity! 3)
+
+(define g0::bool)
+(define g1::bool)
+(define g2::bool)
+(define g3::bool)
+(define g4::bool)
+(define g5::bool)
+(define y0::int)
+(define y1::int)
+(define y2::int)
+(define y3::int)
+(define y4::int)
+(define y5::int)
+(define y6::int)
+(define y7::int)
+(define x0::int)
+(define i0::int)
+(define i1::int)
+(define i2::int)
+(define i3::int)
+(define i4::int)
+(define i5::int)
+
+;;# int foo2(int x) { 
+;;# 	int y = 0; 
+;;# 	if(x>0) {;;# 		y = 42;;;# 	} else { 
+;;#			for(int i=0; i<5; i++) {;;# 			y = y + 1; // BUG;;# 		}
+;;#		};;# 	assert (y<=5); 
+;;# 	return	y;
+;;# }
+
+;;# int foo2(int x) { 
+;;# 	int y = 0; 
+;;# 	if(x>0) {;;# 		y = 42;;;# 	} else { 
+;;#			int i=0; 
+;;#			if(i<5) {;;# 			y = y + 1;
+;;#				i++;
+;;#				...;;# 		}
+;;#		};;# 	assert (y<=5); 
+;;# 	return	y;
+;;# }
+
+
+;;# EI
+(assert (= x0 1))
+
+(assert+ (= y0 0) 1)
+(assert+ (= g0 (> x0 0)) 3)
+(assert+ (= y1 42) 2)
+
+(assert 
+ (or 
+   (and (= y0 0) (= y6 0))
+   (and (= y0 0) (= y6 1))
+   (and (= y0 0) (= y6 2))
+   (and (= y0 0) (= y6 3))
+   (and (= y0 0) (= y6 4))
+   (and (= y0 0) (= y6 5))
+ ) 
+)
+
+(assert+ (= i0 0) 1)
+
+(assert+ (= g1 (< i0 5)) 1)
+(assert+ (= y2 (+ y0 1)) 1)
+(assert+ (= i1 (+ i0 1)) 1)
+
+(assert+ (= g2 (< i1 5)) 1)
+(assert+ (= y3 (+ y2 1)) 1)
+(assert+ (= i2 (+ i1 1)) 1)
+
+(assert+ (= g3 (< i2 5)) 1)
+(assert+ (= y4 (+ y3 1)) 1)
+(assert+ (= i3 (+ i2 1)) 1)
+
+(assert+ (= g4 (< i3 5)) 1)
+(assert+ (= y5 (+ y4 1)) 1)
+(assert+ (= i4 (+ i3 1)) 1)
+
+(assert+ (= g5 (< i4 5)) 1)
+(assert+ (= y6 (+ y5 1)) 1)
+(assert+ (= i5 (+ i4 1)) 1)
+
+
+(assert (= y7 (ite g0 y1 y6)))
+
+;;# Post-cond
+(assert (<= y7 5))
+
+
+(max-sat)

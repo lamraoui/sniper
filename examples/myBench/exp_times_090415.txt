@@ -1,0 +1,233 @@
+09-04-2015
+
+=== PFTF BG ===================================
+
+
+< MinmaxKO.c >
+0.024 0.005
+
+< absminus/AbsMinusKO.c >
+0.018 0.005
+
+< absminus/AbsMinusKO2.c >
+0.025 0.005
+
+< absminus/AbsMinusKO3.c >
+0.013 0.004
+
+< tritype/TritypeKO.c >
+0.147 0.005
+
+< tritype/TritypeKO2.c >
+0.187 0.006
+
+< tritype/TritypeKO2V2.c >
+0.175 0.008
+
+< tritype/TritypeKO3.c >
+0.172 0.006
+
+< tritype/TritypeKO4.c >
+0.129 0.006
+
+< tritype/TritypeKO5.c >
+0.432 0.005
+
+< triperim/TriPerimetreKO.c >
+0.167 0.006
+
+< triperim/TriPerimetreKOV2.c >
+0.156 0.006
+
+< triperim/TriPerimetreKO2.c >
+0.166 0.006
+
+< triperim/TriPerimetreKO3.c >
+0.200 0.005
+
+< maxmin/Maxmin6varKO.c >
+5.918 0.030
+
+< maxmin/Maxmin6varKO2.c >
+12.578 0.030
+
+< maxmin/Maxmin6varKO3.c >
+12.655 0.032
+
+< maxmin/Maxmin6varKO4.c >
+151.394 0.084
+
+
+=== TF BG ===================================
+
+
+< MinmaxKO.c >
+0.025 0.006
+
+< absminus/AbsMinusKO.c >
+0.017 0.004
+
+< absminus/AbsMinusKO2.c >
+0.026 0.005
+
+< absminus/AbsMinusKO3.c >
+0.015 0.006
+
+< tritype/TritypeKO.c >
+0.302 0.005
+
+< tritype/TritypeKO2.c >
+0.264 0.006
+
+< tritype/TritypeKO2V2.c >
+0.226 0.005
+
+< tritype/TritypeKO3.c >
+0.381 0.007
+
+< tritype/TritypeKO4.c >
+0.149 0.005
+
+< tritype/TritypeKO5.c >
+0.522 0.005
+
+< triperim/TriPerimetreKO.c >
+0.364 0.005
+
+< triperim/TriPerimetreKOV2.c >
+0.368 0.005
+
+< triperim/TriPerimetreKO2.c >
+0.227 0.005
+
+< triperim/TriPerimetreKO3.c >
+0.487 0.006
+
+< maxmin/Maxmin6varKO.c >
+52.395 0.051
+
+< maxmin/Maxmin6varKO2.c >
+18.340 0.030
+
+< maxmin/Maxmin6varKO3.c >
+57.199 0.053
+
+< maxmin/Maxmin6varKO4.c >
+545.856 0.292
+
+=== PFTF SG ===================================
+
+
+< MinmaxKO.c >
+0.025 0.005
+
+< absminus/AbsMinusKO.c >
+0.015 0.004
+
+< absminus/AbsMinusKO2.c >
+0.027 0.005
+
+< absminus/AbsMinusKO3.c >
+0.013 0.004
+
+< tritype/TritypeKO.c >
+0.149 0.005
+
+< tritype/TritypeKO2.c >
+0.179 0.006
+
+< tritype/TritypeKO2V2.c >
+0.185 0.007
+
+< tritype/TritypeKO3.c >
+0.179 0.005
+
+< tritype/TritypeKO4.c >
+0.131 0.006
+
+< tritype/TritypeKO5.c >
+0.522 0.006
+
+< triperim/TriPerimetreKO.c >
+0.202 0.006
+
+< triperim/TriPerimetreKOV2.c >
+0.167 0.006
+
+< triperim/TriPerimetreKO2.c >
+0.166 0.006
+
+< triperim/TriPerimetreKO3.c >
+0.209 0.007
+
+< maxmin/Maxmin6varKO.c >
+6.333 0.027
+
+< maxmin/Maxmin6varKO2.c >
+15.425 0.031
+
+< maxmin/Maxmin6varKO3.c >
+15.695 0.033
+
+< maxmin/Maxmin6varKO4.c >
+158.920 0.084
+
+
+=== TF SG ===================================
+
+
+< MinmaxKO.c >
+0.026 0.006
+
+< absminus/AbsMinusKO.c >
+0.018 0.004
+
+< absminus/AbsMinusKO2.c >
+0.026 0.004
+
+< absminus/AbsMinusKO3.c >
+0.013 0.004
+
+< tritype/TritypeKO.c >
+0.340 0.005
+
+< tritype/TritypeKO2.c >
+0.301 0.005
+
+< tritype/TritypeKO2V2.c >
+0.351 0.006
+
+< tritype/TritypeKO3.c >
+0.820 0.006
+
+< tritype/TritypeKO4.c >
+0.157 0.006
+
+< tritype/TritypeKO5.c >
+0.602 0.005
+
+< triperim/TriPerimetreKO.c >
+0.385 0.005
+
+< triperim/TriPerimetreKOV2.c >
+0.382 0.006
+
+< triperim/TriPerimetreKO2.c >
+0.212 0.005
+
+< triperim/TriPerimetreKO3.c >
+1.535 0.007
+
+< maxmin/Maxmin6varKO.c >
+194.872 0.116
+
+< maxmin/Maxmin6varKO2.c >
+65.570 0.053
+
+< maxmin/Maxmin6varKO3.c >
+104.597 0.073
+
+< maxmin/Maxmin6varKO4.c >
+648.589 0.478
+
+

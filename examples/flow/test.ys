@@ -1,0 +1,50 @@
+;; xZero
+
+(set-evidence! true)
+(set-verbosity! 3)
+
+
+(define bb1_return::bool)
+(define bb_bb1::bool)
+(define entry_bb::bool)
+(define entry_bb1::bool)
+(define _y::int)
+(define tmp4::int)
+(define _x1::int)
+(define input::int)
+(define x.0::int)
+(define tmp2::int)
+(define tmp5::bool)
+(define tmp6::bool)
+(define tmp7::int)
+(define _x::int)
+(define entry::bool)
+(define bb::bool)
+(define bb1::bool)
+(define return::bool)
+
+
+(assert (= entry true) )
+(assert (= bb (and entry entry_bb)) )
+(assert (= bb1
+   (or (and (and bb bb_bb1) (not (and entry entry_bb1)))
+       (and (not (and bb bb_bb1)) (and entry entry_bb1)))) )
+(assert (= return (and bb1 bb1_return)) )
+;;---------------------------------------------
+
+(assert entry_bb1)
+
+(assert (= _x 1))
+(assert (= tmp4 (- input 42)) )
+(assert (= _y tmp4) )
+(assert (= tmp5 (< _y 0)) )
+(assert (and (= entry_bb tmp5) (= entry_bb1 (not tmp5))) )
+(assert (= _x1 0) )
+(assert (= bb bb_bb1) )
+(assert (= x.0 (ite (and bb bb_bb1) _x1 _x)) )
+(assert (= tmp6 (/= x.0 0)) )
+(assert (= tmp7 (ite tmp6 1 0)) )
+(assert (and bb1 (= tmp7 0)) ) ;;not POST
+(assert (= bb1 bb1_return) )
+
+(check)

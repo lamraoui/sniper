@@ -1,0 +1,101 @@
+[miaou ~/Desktop/NII-13/workspace/examples/myBench] ./time-runall.sh 
+=== PFTF SG ===================================
+
+< MinmaxKO.c >
+total = 20
+
+< absminus/AbsMinusKO.c >
+total = 14
+
+< absminus/AbsMinusKO2.c >
+total = 23
+
+< absminus/AbsMinusKO3.c >
+total = 12
+
+< tritype/TritypeKO.c >
+total = 153
+
+< tritype/TritypeKO2.c >
+total = 193
+
+< tritype/TritypeKO2V2.c >
+total = 206
+
+< tritype/TritypeKO3.c >
+total = 205
+
+< tritype/TritypeKO4.c >
+total = 134
+
+< tritype/TritypeKO5.c >
+total = 487
+
+< triperim/TriPerimetreKO.c >
+total = 166
+
+< triperim/TriPerimetreKOV2.c >
+total = 172
+
+< triperim/TriPerimetreKO2.c >
+total = 177
+
+< triperim/TriPerimetreKO3.c >
+total = 234
+
+< maxmin/Maxmin6varKO.c >
+total = 6224
+
+< maxmin/Maxmin6varKO2.c >
+total = 15142
+
+< maxmin/Maxmin6varKO3.c >
+total = 15147
+
+< maxmin/Maxmin6varKO4.c >
+total = 20415
+
+
+=== TF SG ===================================
+
+< MinmaxKO.c >
+total = 20
+
+< absminus/AbsMinusKO.c >
+total = 15
+
+< absminus/AbsMinusKO2.c >
+total = 22
+
+< absminus/AbsMinusKO3.c >
+total = 12
+
+< tritype/TritypeKO.c >
+total = 305
+
+< tritype/TritypeKO2.c >
+total = 291
+
+< tritype/TritypeKO2V2.c >
+total = 302
+
+< tritype/TritypeKO3.c >
+total = 767
+
+< tritype/TritypeKO4.c >
+total = 140
+
+< tritype/TritypeKO5.c >
+total = 532
+
+< triperim/TriPerimetreKO.c >
+total = 333
+
+< triperim/TriPerimetreKOV2.c >
+total = 345
+
+< triperim/TriPerimetreKO2.c >
+total = 215
+
+< triperim/TriPerimetreKO3.c >
+total = 1391

@@ -1,0 +1,153 @@
+(set-evidence! true)
+(set-verbosity! 3)
+
+(define bb1_bb2::bool)
+(define bb2_bb3::bool)
+(define bb2_bb4::bool)
+(define bb3_bb4::bool)
+(define bb4_bb5::bool)
+(define bb4_bb6::bool)
+(define bb5_bb8::bool)
+(define bb6_bb7::bool)
+(define bb6_bb8::bool)
+(define bb7_bb8::bool)
+(define bb8_return::bool)
+(define bb_bb1::bool)
+(define bb_bb2::bool)
+(define entry_bb::bool)
+(define entry_bb2::bool)
+(define _z::int)
+(define tmp7::bool)
+(define _z2::int)
+(define x::int)
+(define y::int)
+(define lock.0::int)
+(define z.1::int)
+(define _lock::int)
+(define _z1::int)
+(define tmp::bool)
+(define tmp8::bool)
+(define z.0::int)
+(define _z3::int)
+(define tmp9::bool)
+(define _lock4::int)
+(define _z5::int)
+(define tmp10::bool)
+(define _lock6::int)
+(define tmp11::bool)
+(define tmp12::int)
+(define entry::bool)
+(define bb::bool)
+(define bb1::bool)
+(define bb2::bool)
+(define bb3::bool)
+(define bb4::bool)
+(define bb5::bool)
+(define bb6::bool)
+(define bb7::bool)
+(define bb8::bool)
+(define return::bool)
+
+(assert (= entry true))
+(assert (= bb (and entry entry_bb)))
+(assert (= bb1 (and bb bb_bb1)))
+(assert (= bb2
+   (or (and (and bb1 bb1_bb2)
+            (not (and bb bb_bb2))
+            (not (and entry entry_bb2)))
+       (and (not (and bb1 bb1_bb2))
+            (and bb bb_bb2)
+            (not (and entry entry_bb2)))
+       (and (not (and bb1 bb1_bb2))
+            (not (and bb bb_bb2))
+            (and entry entry_bb2)))))
+(assert (= bb3 (and bb2 bb2_bb3)))
+(assert (= bb4
+   (or (and (and bb3 bb3_bb4) (not (and bb2 bb2_bb4)))
+       (and (not (and bb3 bb3_bb4)) (and bb2 bb2_bb4)))))
+(assert (= bb5 (and bb4 bb4_bb5)))
+(assert (= bb6 (and bb4 bb4_bb6)))
+(assert (= bb7 (and bb6 bb6_bb7)))
+(assert (= bb8
+   (or (and (and bb7 bb7_bb8)
+            (not (and bb6 bb6_bb8))
+            (not (and bb5 bb5_bb8)))
+       (and (not (and bb7 bb7_bb8))
+            (and bb6 bb6_bb8)
+            (not (and bb5 bb5_bb8)))
+       (and (not (and bb7 bb7_bb8))
+            (not (and bb6 bb6_bb8))
+            (and bb5 bb5_bb8)))))
+(assert (= return (and bb8 bb8_return)))
+(assert (and (= entry_bb tmp) (= entry_bb2 (not tmp))))
+(assert (and (= bb_bb1 tmp7) (= bb_bb2 (not tmp7))))
+(assert (= bb1 bb1_bb2))
+(assert (= z.0
+   (ite (and bb1 bb1_bb2) _z1 (ite (and bb bb_bb2) _z _z))))
+(assert (and (= bb2_bb3 tmp8) (= bb2_bb4 (not tmp8))))
+(assert (= bb3 bb3_bb4))
+(assert (= z.1 (ite (and bb3 bb3_bb4) _z2 z.0)))
+(assert (and (= bb4_bb5 tmp9) (= bb4_bb6 (not tmp9))))
+(assert (= bb5 bb5_bb8))
+(assert (and (= bb6_bb7 tmp10) (= bb6_bb8 (not tmp10))))
+(assert (= bb7 bb7_bb8))
+(assert (= lock.0
+   (ite (and bb5 bb5_bb8)
+        _lock4
+        (ite (and bb7 bb7_bb8) _lock6 _lock))))
+(assert (= tmp11 (= lock.0 0)))
+(assert (= tmp12 (ite tmp11 1 0)))
+(assert (= bb8 bb8_return))
+
+
+(assert (= _z 0)             	10)
+(assert (= _lock 1)          	10)
+(assert+ (= tmp (= x 0))      	10)
+(assert+ (= tmp7 (= y 0))     	10)
+(assert+ (= _z1 1)              10)  ;#Wl
+(assert (= tmp8 (/= y 0))    )
+(assert (= _z2 y)             )  ;#Wl
+(assert (= tmp9 (/= x 0))    )
+(assert+ (= _z3 2)              10)  ;#Wl
+(assert+ (= _lock4 0)           10)  ;#Wl
+(assert (= tmp10 (> z.1 0)) )
+(assert+ (= _z5 3)              10)  ;#Wl
+(assert+ (= _lock6 0)           10)  ;#Wl
+
+
+;;# CE
+(assert (and (= x 0) (= y -1)))
+;;# POST
+(assert (and bb8 (= tmp12 1)))
+
+;;# Wf = 520
+;;# Wl = 130
+;;# Wa = 80
+;;# Wm = 10
+
+
+;;# ROOT CAUSES:
+;;#13, 16, 11, 4, (3, 10)
+;;#(assert+ (= tmp9 (/= x 0))    1)
+;;#(assert+ (= tmp10 (> z.1 0))  1)
+;;#(assert+ (= _z2 y)            1)
+;;#(assert+ (= _lock 1)          1)
+;;#(assert+ (= _z 0)             1)    and    (assert+ (= tmp8 (/= y 0))    1)
+
+;;# HEU - ROOT CAUSES
+;;#13, 16, 4, 11, (6, 10)
+;;#(assert+ (= tmp9 (/= x 0))    80)
+;;#(assert+ (= tmp10 (> z.1 0))  80)
+;;#(assert+ (= _lock 1)          80)
+;;#(assert+ (= _z2 y)            130)  ;#Wl
+;;#(assert+ (= tmp7 (= y 0))     80)     (assert+ (= tmp8 (/= y 0))    80)
+
+;;# FLAT - ROOT CAUSES:
+;;#13, 16, 11, 4, (3, 10)
+;;#(assert+ (= tmp9 (/= x 0))    1)
+;;#(assert+ (= tmp10 (> z.1 0))  1)
+;;#(assert+ (= _z2 y)            1)
+;;#(assert+ (= _lock 1)          1)
+;;#(assert+ (= _z 0)             1)   (assert+ (= tmp8 (/= y 0))    1)
+
+(max-sat)

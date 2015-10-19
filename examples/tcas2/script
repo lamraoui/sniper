@@ -1,0 +1,5 @@
+#!/bin/bash
+
+gcc ./$1/tcas.c -o ./$1/tcas
+cat testcases-argok.txt | xargs -L 1 ./$1/tcas > ./$1/outputs.txt
+

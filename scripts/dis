@@ -1,0 +1,11 @@
+#!/bin/bash
+
+clang -c -emit-llvm -g test.c -o test.bc
+llvm-dis < test.bc | less
+
+// OLD
+//llvm-gcc -emit-llvm -O0 $1 -c -o $1.bc
+//opt -inline-threshold=99999 -inline -mem2reg -S $1.bc -o $1.opt
+//cat $1.opt
+
+

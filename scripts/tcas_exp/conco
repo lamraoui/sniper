@@ -1,0 +1,32 @@
+#!/bin/bash
+
+
+if [ $# -lt 2 ]
+then 
+  echo "error (x_X)"
+  exit 0
+fi
+
+
+path=./examples/tcas2/v$1/tcas.c
+#path=./examples/concolic_tcas/v$1/tcas.c
+#llvm-gcc -emit-llvm -O0 -g $path -c -o $path.bc >error 2>&1
+clang $path -S -emit-llvm -O0 -g -o $path.bc >error 2>&1
+
+#echo " "
+#echo "--- TCAS n°$1 ---"
+echo "$1"
+if [ $# -lt 3 ]
+then 
+  ./sniper -print-dura -pp -tcas $1 -function main -cfile $path $path.bc -tl1 $2 
+elif [ $# -lt 4 ]
+then 
+  ./sniper -print-dura -pp -tcas $1 -function main -cfile $path $path.bc -tl1 $2 -tl2 $3
+elif [ $# -lt 5 ]
+then 
+  ./sniper -print-dura -pp -tcas $1 -function main -cfile $path $path.bc -tl1 $2 -tl2 $3 -tl3 $4
+elif [ $# -lt 6 ]
+then 
+  ./sniper -print-dura -pp -tcas $1 -function main -cfile $path $path.bc -tl1 $2 -tl2 $3 -tl3 $4 -tl4 $5
+fi
+
