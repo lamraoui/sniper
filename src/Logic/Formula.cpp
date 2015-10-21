@@ -11,20 +11,10 @@
 
 #include "Formula.h"
 
-
-Formula::Formula() {
-    this->nbHardExpressions = 0;
-    this->nbSoftExpressions = 0;
-    this->totalWeight = 0;
-    this->currentPushPopId = 0;
-    this->lock = false;
-}
-
 // Clone
 Formula::Formula(Formula *f) {
     this->nbHardExpressions = f->getNbHardExpr();
     this->nbSoftExpressions = f->getNbSoftExpr();
-    this->totalWeight = f->getTotalWeight();
     this->exprs = f->getExprs();
     this->notPostConditions = f->getNotPostConditions();
     this->postConditions = f->getPostConditions();
@@ -35,10 +25,10 @@ Formula::Formula(Formula *f) {
     // currentPushPopId
 }
 
-Formula::~Formula() {
-    
+// Alloc a new empty formula
+FormulaPtr Formula::make() {
+    return std::make_shared<Formula>();
 }
-
 
 void Formula::assertHard(ExprPtr e) {
     e->setHard();
@@ -53,11 +43,6 @@ void Formula::assertHard(ExprPtr e) {
 void Formula::assertSoft(ExprPtr e) {
     e->setSoft();
     nbSoftExpressions++;
-    if (e->getWeight()<=0) {
-        std::cout << "error: negative or null weight!\n";
-        exit(1);
-    }
-    totalWeight = totalWeight + e->getWeight();
     if (e && e->getInstruction()) {
         if (llvm::MDNode *N = e->getInstruction()->getMetadata("dbg")) { 
             llvm::DILocation Loc(N); 
@@ -79,7 +64,6 @@ void Formula::assertSoft(ExprPtr e) {
 void Formula::setHard(ExprPtr e) {
     nbHardExpressions++;
     nbSoftExpressions--;
-    totalWeight = totalWeight - e->getWeight();
     e->setHard();
     // TODO : multi push/pop compliant
     oldSoftExprs.push_back(e);
@@ -96,7 +80,6 @@ void Formula::setHard(std::set<ExprPtr> es) {
 void Formula::remove(ExprPtr e) {
     if (e->isSoft()) {
         nbSoftExpressions--;
-        totalWeight = totalWeight - e->getWeight();
     } else {
         nbHardExpressions--;
     }
@@ -147,22 +130,17 @@ std::vector<ExprPtr> Formula::getSoftExprs(llvm::BasicBlock *bb) {
     return bbExpr;
 }
 
-
 std::vector<ExprPtr> Formula::getExprs() {
     return this->exprs;
 }
 
-// TODO
-std::vector<ExprPtr> Formula::changeWeights(std::vector<ExprPtr> es, 
-                                                    unsigned w) {
-    std::cout << "Formula: changeWeights!\n";
-    exit(1);
-}
-
-// TODO
-ExprPtr Formula::changeWeight(ExprPtr e, unsigned w) {
-    std::cout << "Formula: changeWeight!\n";
-    exit(1);
+// Merge the formula f into this one
+void Formula::add(FormulaPtr f) {
+    std::vector<ExprPtr> E = f->getExprs();
+    this->exprs.insert(exprs.end(), E.begin(), E.end());
+    this->nbSoftExpressions += f->getNbSoftExpr();
+    this->nbHardExpressions += f->getNbHardExpr();
+    // TODO: Push/pop
 }
 
 void Formula::push() {
@@ -188,27 +166,24 @@ void Formula::pop() {
             nbHardExpressions--;
         } else {
             nbSoftExpressions--;
-            totalWeight = totalWeight - e->getWeight();
         }     
         exprs.pop_back();
     }
     std::vector<ExprPtr>::iterator it;
-    for(it = oldSoftExprs.begin(); it != oldSoftExprs.end(); ++it) {
-        ExprPtr e = *it;
+    for(ExprPtr e : oldSoftExprs) {
         nbHardExpressions--;
         nbSoftExpressions++;
-        totalWeight = totalWeight + e->getWeight();
         e->setSoft();
     }
     oldSoftExprs.clear();
 }
+
 
 void Formula::dump() {
     std::cout << "--------------------------------------------\n";
     std::cout << "Formula dump\n";
     std::cout << " nb hard expressions: " << nbHardExpressions << std::endl;
     std::cout << " nb soft expressions: " << nbSoftExpressions << std::endl;
-    std::cout << " total weight       : " << totalWeight << std::endl;
     for (ExprPtr e : exprs) {
         e->dump();
         if (e->isHard()) {
@@ -219,4 +194,192 @@ void Formula::dump() {
         std::cout << std::endl;
     }
     std::cout << "--------------------------------------------\n";
+}
+
+void Formula::lightDump() {
+    std::cout << "{ ";
+    for (ExprPtr e : exprs) {
+        e->dump();
+        std::cout << " ";
+    }
+    std::cout << "}";
+}
+
+// Insert an expression
+void Formula::add(ExprPtr e) {
+    exprs.push_back(e);
+}
+
+unsigned Formula::size() {
+    return exprs.size();
+}
+
+// Return true if the MCS contains expressions, false otherwise
+bool Formula::empty() {
+    return exprs.empty();
+}
+
+std::vector<unsigned> Formula::getLineNumbers() {
+    std::vector<unsigned> lines;
+    for(ExprPtr e : exprs) {
+        lines.push_back(e->getLine());
+    }
+    return lines;
+}
+
+void Formula::dumpLineNumber() {
+    std::cout << "{";
+    std::vector<ExprPtr>::iterator it;
+    for (it=exprs.begin(); it!=exprs.end(); ++it) {
+        ExprPtr e = *it;
+        std::cout << e->getLine();
+        if ((it+1)!=exprs.end()) {
+            std::cout << ", ";
+        }
+    }
+    std::cout << "}";
+}
+
+
+//============================================================================
+// SetOfFormulas
+//============================================================================
+
+
+// Alloc a new empty set of formulas
+SetOfFormulasPtr SetOfFormulas::make() {
+    return std::make_shared<SetOfFormulas>();
+}
+
+// Insert a formula
+void SetOfFormulas::add(FormulaPtr f) {
+    this->formulas.push_back(f);
+}
+
+void SetOfFormulas::add(std::vector<FormulaPtr> F) {
+    this->formulas.insert(formulas.end(), F.begin(), F.end());
+}
+
+void SetOfFormulas::add(SetOfFormulasPtr F) {
+    std::vector<FormulaPtr> formulas2 = F->getFormulas();
+    this->formulas.insert(formulas.end(), formulas2.begin(), formulas2.end());
+}
+
+std::vector<FormulaPtr> SetOfFormulas::getFormulas() {
+    return this->formulas;
+}
+
+FormulaPtr SetOfFormulas::getAt(unsigned i) {
+    assert((i<0 || i>=Formulas.size()) && "Out of bound");
+    return this->formulas[i];
+}
+
+unsigned SetOfFormulas::size() {
+    return this->formulas.size();
+}
+
+// Return true if it contains Formulas, false otherwise
+bool SetOfFormulas::empty() {
+    return this->formulas.empty();
+}
+
+double SetOfFormulas::getCodeSizeReduction(unsigned totalNbLine) {
+    
+    std::vector<double> CSR(formulas.size());
+    unsigned i = 0;
+    for (FormulaPtr MCS : formulas) {
+        CSR[i] = ((100.0*(double)MCS->size())/(double)totalNbLine);
+        i++;
+    }
+    double sum = 0;
+    std::vector<double>::const_iterator it2;
+    for (it2=CSR.begin(); it2!=CSR.end(); ++it2) {
+        double crs_i = *it2;
+        sum = sum + crs_i;
+    }
+    return sum/(double)CSR.size();
+}
+
+// Transform a vector of expressions (MCS)
+// into a set of expressions (MCS).
+// Copy vv to M
+/*void copy(std::vector<std::vector<unsigned> > &vv, MCSesPtr M) {
+ UVVec::const_iterator itv;
+ for (itv=vv.begin(); itv!=vv.end(); ++itv) {
+ // Copy the MCS (vector) into a MCS (set)
+ std::set<unsigned> subset((*itv).begin(), (*itv).end());
+ M.add(subset);
+ }
+ }*/
+
+
+// Remove all subset doublons
+// {{x,y}, {a,b}, {x,y}} -> {{a,b}}
+void SetOfFormulas::removeDoublons() {
+    //std::sort(exprs.begin(), exprs.end());
+    //exprs.erase(std::unique(exprs.begin(),
+    //exprs.end()), exprs.end());
+}
+
+// Remove all subsets of subsets
+// {{x}, {a,b}, {x,y}} -> {{a,b},{x,y}}
+void SetOfFormulas::removeSubsets() {
+    /*std::vector<std::set<unsigned> >::iterator itm;
+    for (itm=exprs.begin(); itm!=exprs.end();) {
+        std::set<unsigned> s(*itm);
+        unsigned i = 0;
+        bool isIn = false;
+        while (i<v.size()) {
+            if (s!=v[i]) {
+                isIn = std::includes(v[i].begin(), v[i].end(), s.begin(),s.end());
+                if (isIn) {
+                    break;
+                }
+            }
+            i++;
+        }
+        if (isIn) {
+            itm = exprs.erase(itm);
+        } else {
+            ++itm;
+        }
+    }*/
+}
+
+std::ostream& operator<<(std::ostream& os, const FormulaPtr f) {
+    os << "{";
+    const std::vector<ExprPtr> E = f->getExprs();
+    for(std::vector<ExprPtr>::const_iterator it = E.begin(); it != E.end(); it++) {
+        os << *it;
+        if (std::distance(it, E.end())>1) {
+            os << ", ";
+        }
+    }
+    os << "}";
+    return os;
+}
+
+std::ostream& operator<<(std::ostream& os, const SetOfFormulasPtr f) {
+    os << "{";
+    const std::vector<FormulaPtr> F = f->getFormulas();
+    for(std::vector<FormulaPtr>::const_iterator it = F.begin(); it != F.end(); it++) {
+        os << *it;
+        if (std::distance(it, F.end())>1) {
+            os << ", ";
+        }
+    }
+    os << "}";
+    return os;
+}
+
+std::ostream& operator<<(std::ostream& os, const std::vector<SetOfFormulasPtr> f) {
+    os << "{";
+    for(std::vector<SetOfFormulasPtr>::const_iterator it = f.begin(); it != f.end(); it++) {
+        os << *it;
+        if (std::distance(it, f.end())>1) {
+            os << ", ";
+        }
+    }
+    os << "}";
+    return os;
 }

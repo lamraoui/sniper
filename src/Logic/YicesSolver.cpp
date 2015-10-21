@@ -29,7 +29,7 @@ void YicesSolver::addToContext(ExprPtr e) {
     // Soft assert (with weight)
     else {
         assertion_id i = 
-        yices_assert_weighted(ctx, expr, e->getWeight());
+        yices_assert_weighted(ctx, expr, 1 /*e->getWeight()*/);
         expr2ids[e] = i;
         expr2yexpr[e] = expr;
     }
@@ -105,7 +105,7 @@ int YicesSolver::maxSat(Formula *formula) {
         // Soft assert (with weight)
         else {
             assertion_id i = 
-            yices_assert_weighted(ctx, expr, e->getWeight());
+            yices_assert_weighted(ctx, expr, 1 /*e->getWeight()*/);
             expr2ids[e] = i;
             expr2yexpr[e] = expr;
         }

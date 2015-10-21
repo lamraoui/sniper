@@ -13,7 +13,6 @@ sniper_LDADD = $(LLVM_LDADD) -lyices
 bin_PROGRAMS = sniper
 sniper_SOURCES = Main.cpp \
 		Options.cpp \
-		Backends/SniperBackend/DynamicDiagnosesEnum.cpp \
 		Backends/SniperBackend/EncoderLightPass.cpp \
 		Backends/SniperBackend/EncoderPass.cpp \
 		Backends/SniperBackend/IterationAlgorithm.cpp \
@@ -36,11 +35,10 @@ sniper_SOURCES = Main.cpp \
 		Frontend/LocalVariables.cpp \
 		Frontend/LoopInfoPass.cpp \
 		Logic/BMC.cpp \
+		Logic/Combine.cpp \
 		Logic/Expression.cpp \
 		Logic/Formula.cpp \
 		Logic/GenPath.cpp \
-		Logic/MCS.cpp \
-		Logic/Weight.cpp \
 		Logic/YicesSolver.cpp \
 		Profile/ProgramProfile.cpp \
 		Profile/ProgramTrace.cpp \

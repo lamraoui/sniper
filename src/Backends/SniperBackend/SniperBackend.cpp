@@ -113,7 +113,7 @@ void SniperBackend::run() {
     IWPMaxSATSolver *solver = new YicesSolver();
     
     // TCAS
-    if (options->getTCASVersion()>0) {
+    /*if (options->getTCASVersion()>0) {
         // Profiling object for TCAS Benchmark
         TCAS *tcas = new TCAS(options, "./examples/tcas2", C->getTCASAssertVarName());
         // Load test cases
@@ -131,7 +131,7 @@ void SniperBackend::run() {
         delete C;
         delete tcas;
         return;
-    }
+    }*/
     delete C;
     
     // Generate program executions
@@ -173,21 +173,19 @@ void SniperBackend::run() {
     if (!options->pushPopUsed()) {
         error("use push & pop optimization!");
     }
+    
+    IterationAlgorithm *IA =
+    new IterationAlgorithm(targetFun, solver, hasArgv, options);
+    
+    //Combine::NONE
+    //Combine::FLA
+    //Combine::PWU
+    //Combine::MHS
+    Combine::Method CM = Combine::FLA;
+    
     if (options->useDynamicDiagnosesEnum()) {
-        DynamicDiagnosesEnum *DDE
-        = new DynamicDiagnosesEnum(targetFun, solver, formula, hasArgv, options);
-        DDE->run(PP, //IterationAlgorithm::NONE
-                 //IterationAlgorithm::FLA
-                 //IterationAlgorithm::PWU
-                 DynamicDiagnosesEnum::MHS
-                 );
+        IA->run_dynamic(formula, PP, CM);
     } else {
-        IterationAlgorithm *IA =
-        new IterationAlgorithm(targetFun, solver, formula, hasArgv, options);
-        IA->run(PP, //IterationAlgorithm::NONE
-                //IterationAlgorithm::FLA
-                IterationAlgorithm::PWU
-                //IterationAlgorithm::MHS
-                );
+        IA->run(formula, PP, CM);
     }
 }

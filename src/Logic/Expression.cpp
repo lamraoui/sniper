@@ -18,7 +18,6 @@ unsigned Expression::NbBoolVariables = 0;
 Expression::Expression() : currentID(ID++) {
     line = 0;
     soft = false;
-    weight = Weight::NEUTRAL;
     valid = true;
     instruction = NULL;
 }
@@ -643,3 +642,17 @@ bool Expression::equal(ExprPtr e1, ExprPtr e2) {
     return false;
 }
 
+// TODO: add ostream operator to all kind of expressions
+std::ostream& operator<<(std::ostream& os, const ExprPtr e) {
+    // Redirect cout
+    std::streambuf* oldCoutStreamBuf = std::cout.rdbuf();
+    std::ostringstream strCout;
+    std::cout.rdbuf(strCout.rdbuf());
+    // Write to strCout
+    e->dump();
+    // Restore old cout
+    std::cout.rdbuf(oldCoutStreamBuf);
+    // Write to os
+    os << strCout.str();
+    return os;
+}

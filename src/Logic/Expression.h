@@ -23,7 +23,6 @@
 #include "llvm/IR/InstrTypes.h"
 
 #include "../Utils/utils.h"
-#include "Weight.h"
 
 class Expression;
 class SingleExpression;
@@ -89,6 +88,8 @@ typedef std::shared_ptr<DivExpression>          DivExprPtr;
 typedef std::shared_ptr<ModExpression>          ModExprPtr;
 typedef std::shared_ptr<XorExpression>          XorExprPtr;
 
+// Pretty printer for Expression
+std::ostream& operator<<(std::ostream& os, const ExprPtr e);
 
 class Expression {
     
@@ -123,7 +124,6 @@ public:
 private:
     static unsigned ID;
     const unsigned currentID;
-    unsigned weight;
     bool soft;
     bool valid;
     llvm::Instruction *instruction;
@@ -194,9 +194,6 @@ public:
     bool isHard() {
         return !soft;
     }
-    void setWeight(unsigned w) {
-        weight = w;
-    }
     void setLine(unsigned l) {
         line = l;
     }
@@ -205,9 +202,6 @@ public:
     }
     void setSoft() {
         soft = true;
-    }
-    unsigned getWeight() {
-        return weight;
     }
     unsigned getLine() {
         return line;

@@ -13,20 +13,8 @@
 
 unsigned nbCallsToSolver = 0;
 
-IterationAlgorithm::IterationAlgorithm(Function *_targetFun,
-                                       IWPMaxSATSolver *_solver,
-                                       Formula *_formula,
-                                       bool _hasArgv, Options *_options) :
-targetFun(_targetFun), solver(_solver), formula(_formula),
-hasArgv(_hasArgv), options(_options) {
-
-}
-
-IterationAlgorithm::~IterationAlgorithm() {
-
-}
-
-void IterationAlgorithm::run(ProgramProfile *prof, CombMethod combineMethod) {
+void IterationAlgorithm::run(Formula *TF, ProgramProfile *prof,
+                             Combine::Method combineMethod) {
     // Nothing to do
     if (!prof->hasFailingProgramTraces()) {
         return;
@@ -36,19 +24,21 @@ void IterationAlgorithm::run(ProgramProfile *prof, CombMethod combineMethod) {
     if (options->printDuration()) {
         timer.start();
     }
-    std::vector<ProgramTrace*> failingTraces = prof->getFailingProgramTraces(options);
+    std::vector<ProgramTrace*>
+    failingTraces = prof->getFailingProgramTraces(options);
+    
     // Add all the post-conditions to the context
-    std::vector<ExprPtr> postConds = formula->getPostConditions();
+    std::vector<ExprPtr> postConds = TF->getPostConditions();
     for(ExprPtr post_expr : postConds) {
-        formula->assertHard(post_expr);
+        TF->assertHard(post_expr);
     }
     if (options->verbose()) {
         std::cout << "=================================================\n";
         std::cout << "Running AllDiagnosis algorithm ";
         if (options->pushPopUsed())  std::cout << "[Push&Pop]";
-        if (combineMethod==MHS)      std::cout << "[MHS]";
-        else if (combineMethod==PWU) std::cout << "[PWU]";
-        else if (combineMethod==FLA) std::cout << "[FLA]";
+        if (combineMethod==Combine::MHS)      std::cout << "[MHS]";
+        else if (combineMethod==Combine::PWU) std::cout << "[PWU]";
+        else if (combineMethod==Combine::FLA) std::cout << "[FLA]";
         else std::cout << "[NOCOMB]";
         if (options->ptfUsed())      std::cout << "[PFTF]";
         else if (options->htfUsed()) std::cout << "[HFTF]";
@@ -58,49 +48,49 @@ void IterationAlgorithm::run(ProgramProfile *prof, CombMethod combineMethod) {
         else if (options->blockGranularityLevel()) std::cout << "[Block-lvl]";
         std::cout << "\n\n";
         std::cout << "   number of hard constraints  ";
-        std::cout << formula->getNbHardExpr() << std::endl;
+        std::cout << TF->getNbHardExpr() << std::endl;
         std::cout << "   number of soft constraints  ";
-        std::cout << formula->getNbSoftExpr() << std::endl;
+        std::cout << TF->getNbSoftExpr() << std::endl;
         std::cout << "   number of error-in. inputs  ";
         std::cout << failingTraces.size() << std::endl;
         std::cout << "\n\n";
     }
     // Compute the root causes (MCSes)
     YicesSolver *yices = (YicesSolver*) solver;
-    USVVec MCSes = allDiagnosis(failingTraces, yices);
+    std::vector<SetOfFormulasPtr> MCSes = allDiagnosis(TF, failingTraces, yices);
     
     std::cout << "Nb calls solver  : " << nbCallsToSolver << std::endl;
     
     // Combination methods: PWU, MHS, FLA
-    USVec combMCSes;
+    SetOfFormulasPtr combMCSes;
     switch (combineMethod) {
-        case MHS:
+        case Combine::MHS:
             // Minimal-hitting set
-            combMCSes = combineByMHS(MCSes);
+            combMCSes = Combine::combineByMHS(MCSes);
             break;
-        case PWU:
+        case Combine::PWU:
             // Pair-wise union
-            combMCSes = combineByPWU(MCSes);
+            combMCSes = Combine::combineByPWU(MCSes);
             break;
-        case FLA:
+        case Combine::FLA:
             // Just flatten the MCSes
-            combMCSes = combineByFlatten(MCSes);
+            combMCSes = Combine::combineByFlatten(MCSes);
             break;
-        case NONE:
+        case Combine::NONE:
             // Nothing do do
             break;
         default:
             break;
     }
-    if (!combMCSes.empty()) {
+    if (!combMCSes->empty()) {
         if (options->verbose()) {
             std::cout << "\nCombined MCSes size: ";
-            std::cout << combMCSes.size() << std::endl;
+            std::cout << combMCSes->size() << std::endl;
             std::cout << "Combined MCSes:\n";
             std::cout << combMCSes << std::endl;
         }
     } else {
-        if (combineMethod==NONE) {
+        if (combineMethod==Combine::NONE) {
             if (options->verbose()) {
                 std::cout << "\nNo combination method...\n";
             }
@@ -116,16 +106,165 @@ void IterationAlgorithm::run(ProgramProfile *prof, CombMethod combineMethod) {
     }
 }
 
+
+// Dynamic Diagnoses Enumeration
+void IterationAlgorithm::run_dynamic(Formula *TF, ProgramProfile *prof,
+                                     Combine::Method combineMethod) {
+    
+    if (!options->instructionGranularityLevel()) {
+        error("DynamicDiagnosesEnum : set inst granularity level");
+    }
+    if (!prof->hasFailingProgramTraces()) {
+        return; // Nothing to do
+    }
+    std::vector<ProgramTrace*>
+    failingTraces = prof->getFailingProgramTraces(options);
+    
+    //
+    // Create a new trace formula with a block-level granularity
+    //
+    Formula *formula2 = new Formula();
+    std::vector<ExprPtr> tmpClauses;
+    BasicBlock *lastBlock = NULL;
+    Instruction *lastInst = NULL;
+    std::vector<ExprPtr> clauses = TF->getExprs();
+    for (ExprPtr e : clauses) {
+        // Hard clause
+        if (e->isHard()) {
+            formula2->assertHard(e);
+        }
+        // Soft clause
+        else {
+            Instruction *I = e->getInstruction();
+            if (!I) error("DynamicDiagnosesEnum");
+            BasicBlock *currentBlock = I->getParent();
+            if (!currentBlock) error("DynamicDiagnosesEnum");
+            // New block
+            if (currentBlock!=lastBlock && lastBlock!=NULL) {
+                if (tmpClauses.empty()) error("DynamicDiagnosesEnum");
+                ExprPtr blockExpr = Expression::mkAnd(tmpClauses);
+                blockExpr->setInstruction(lastInst);
+                blockExpr->setSoft();
+                formula2->assertSoft(blockExpr);
+                tmpClauses.clear();
+            }
+            tmpClauses.push_back(e);
+            lastInst = I;
+            lastBlock = currentBlock;
+        }
+    }
+    // Remaining clauses?
+    if (!tmpClauses.empty()) {
+        ExprPtr blockExpr = Expression::mkAnd(tmpClauses);
+        blockExpr->setInstruction(lastInst);
+        blockExpr->setSoft();
+        formula2->assertSoft(blockExpr);
+        tmpClauses.clear();
+    }
+    
+    std::cout << "\nFormula 2:\n";
+    std::cout << "   number of hard constraints  ";
+    std::cout << formula2->getNbHardExpr() << std::endl;
+    std::cout << "   number of soft constraints  ";
+    std::cout << formula2->getNbSoftExpr() << std::endl;
+    
+    //
+    // Compute MCSes with formula2 and allDiagnosis (AllMinMCS2)
+    //
+    YicesSolver *yices = (YicesSolver*) solver;
+    std::vector<SetOfFormulasPtr>
+    MCSes = allDiagnosis(formula2, failingTraces, yices);
+    std::cout << "Nb calls solver  : " << nbCallsToSolver << std::endl;
+    nbCallsToSolver = 0;
+    
+    // Flatten
+    // TODO: use std::insert()
+    std::set<ExprPtr> allExprs;
+    for (SetOfFormulasPtr v : MCSes ) {
+        std::vector<FormulaPtr> F = v->getFormulas();
+        for (FormulaPtr f : F) {
+            std::vector<ExprPtr> E = f->getExprs();
+            for (ExprPtr e : E) {
+                allExprs.insert(e);
+            }
+        }
+    }
+    // Collect suspicious blocks
+    std::set<BasicBlock*> suspicousBlocks;
+    for (ExprPtr e : allExprs) {
+        Instruction *I = e->getInstruction();
+        if (!I) error("DynamicDiagnosesEnum");
+        BasicBlock *bb = I->getParent();
+        if (!bb) error("DynamicDiagnosesEnum");
+        suspicousBlocks.insert(bb);
+    }
+    
+    
+    // Debug
+    std::cout << "Suspicous blocks: " << suspicousBlocks.size() << "/"
+    << targetFun->size() << std::endl;
+    
+    
+    //
+    // Create a new trace formula with all block set
+    // as hard except for the suspicous blocks.
+    //
+    Formula *formula3 = new Formula();
+    std::vector<ExprPtr> clauses2 = TF->getExprs();
+    for (ExprPtr e : clauses2) {
+        // Hard clause
+        if (e->isHard()) {
+            formula3->assertHard(e);
+        }
+        // Soft clause
+        else {
+            Instruction *I = e->getInstruction();
+            if (!I) error("DynamicDiagnosesEnum");
+            BasicBlock *bb = I->getParent();
+            if (!bb) error("DynamicDiagnosesEnum");
+            
+            const bool isSuspicous
+            = (suspicousBlocks.find(bb)!=suspicousBlocks.end());
+            if (!isSuspicous) {
+                formula3->assertHard(e);
+            } else {
+                e->setSoft();
+                formula3->assertSoft(e);
+            }
+        }
+    }
+    
+    std::cout << "\nFormula 3:\n";
+    std::cout << "   number of hard constraints  ";
+    std::cout << formula3->getNbHardExpr() << std::endl;
+    std::cout << "   number of soft constraints  ";
+    std::cout << formula3->getNbSoftExpr() << std::endl;
+    
+    //
+    // Compute MCSes with formula3 and allDiagnosis (AllMinMCS2)
+    //
+    std::vector<SetOfFormulasPtr>
+    MCSes2 = allDiagnosis(formula3, failingTraces, yices);
+    std::cout << "Nb calls solver  : " << nbCallsToSolver << std::endl;
+    nbCallsToSolver = 0;
+    
+    
+}
+
+
+
 //
 // Compute the root causes (MCSes)
 //
-USVVec IterationAlgorithm::allDiagnosis(std::vector<ProgramTrace*> traces,
-                                       YicesSolver *yices) {
-    USVVec MCSes;
+std::vector<SetOfFormulasPtr>
+IterationAlgorithm::allDiagnosis(Formula *TF,
+                                 std::vector<ProgramTrace*> traces,
+                                 YicesSolver *yices) {
+    std::vector<SetOfFormulasPtr> MCSes;
     int progress = 0;
     int total = traces.size();
     // Working formula
-    Formula *WF = new Formula(formula);
+    Formula *WF = new Formula(TF);
     // For each E in WF, E tagged as soft do
     unsigned z = 0;
     std::vector<BoolVarExprPtr> AV;
@@ -168,7 +307,7 @@ USVVec IterationAlgorithm::allDiagnosis(std::vector<ProgramTrace*> traces,
         // At this point there is only WF in the context
         yices->push();
         // Assert as hard the error-inducing input formula
-        ExprPtr eiExpr = E->getProgramInputsFormula(formula);
+        ExprPtr eiExpr = E->getProgramInputsFormula(TF);
         eiExpr->setHard();
         yices->addToContext(eiExpr);
         if (options->dbgMsg()) {
@@ -177,13 +316,12 @@ USVVec IterationAlgorithm::allDiagnosis(std::vector<ProgramTrace*> traces,
             std::cout << std::endl;
         }
         // Compute a MCS
-        USVec MCS;
-        MCS = allMinMCS2(yices, AV, AVMap);
-        if (!MCS.empty()) {
+        SetOfFormulasPtr M = allMinMCS2(yices, AV, AVMap);
+        if (!M->empty()) {
             if (options->printMCS()) {
-                std::cout << "\n" << MCS << "\n" << std::endl;
+                std::cout << "\n" << M << "\n" << std::endl;
             }
-            MCSes.push_back(MCS);
+            MCSes.push_back(M);
         } else {
             //if (options->verbose() || options->dbgMsg()) {
                 std::cout << "Empty MCS!\n";
@@ -204,81 +342,12 @@ USVVec IterationAlgorithm::allDiagnosis(std::vector<ProgramTrace*> traces,
     return MCSes;
 }
 
-// Pair-wise union based combination
-USVec IterationAlgorithm::combineByPWU(USVVec &MCSes) {
-    // Compute the MCSes
-    USVVec MCSesNoDoublons;
-    for (USVec MCS : MCSes) {
-        removeDoublons(MCS);
-        MCSesNoDoublons.push_back(MCS);
-        if (options->printMUS()) {
-            USVec MUS;
-            HittingSet::getMinimalHittingSets_LP(MCS, MUS);
-            std::cout << "MUS: " << MUS << "\n\n";
-        }
-    }
-    USVec combMCSes;
-    if (!MCSesNoDoublons.empty()) {
-        //removeDoublons(MCSesNoDoublons);
-        // Pair-wise union of MCSes to obtain the complete diagnosis
-        pairwiseUnion(MCSesNoDoublons, combMCSes);
-        removeDoublons(combMCSes);
-        removeSubsets(combMCSes);
-    }
-    return combMCSes;
-}
-
-// Minimal-hitting set based combination
-USVec IterationAlgorithm::combineByMHS(USVVec &MCSes) {
-    // Compute the MUSes
-    USVec MUSes;
-    for (USVec MCS : MCSes) {
-        removeDoublons(MCS);
-        // Compute a MUS with the MHS of a MCS
-        USVec MUS;
-        HittingSet::getMinimalHittingSets_LP(MCS, MUS);
-        // Print MUS
-        if (options->printMUS()) {
-            std::cout << "MUS: " << MUS << "\n\n";
-        }
-        MUSes.insert(MUSes.end(), MUS.begin(), MUS.end());
-    }
-    // Remove doublons
-    std::sort(MUSes.begin(), MUSes.end());
-    MUSes.erase(std::unique(MUSes.begin(), MUSes.end()), MUSes.end());
-    // ACSR
-    const unsigned loc = options->getNbLOC();
-    if (loc>0) {
-        std::cout << "ACSR: " << getCodeSizeReduction(MUSes, loc) << "%\n";;
-    }
-    // Minimal hitting set of the union of the MUSes
-    USVec combMCSes;
-    HittingSet::getMinimalHittingSets_LP(MUSes, combMCSes);
-    return combMCSes;
-}
-
-// Put all elements in MCSes into a single set
-// {{{x},{x,y}},{{z}}} -> {x,y,z}
-USVec IterationAlgorithm::combineByFlatten(USVVec &MCSes) {
-    USet allElts;
-    for (USVec v : MCSes ) {
-        for (USet s : v) {
-            for (unsigned e : s ) {
-                allElts.insert(e);
-            }
-        }
-    }
-    USVec tmp;
-    tmp.push_back(allElts);
-    return tmp;
-}
-
 // Input:  a weighted formula in CNF
 // Output: a set of minimal MCS
-USVec IterationAlgorithm::allMinMCS2(YicesSolver *yices,
+SetOfFormulasPtr IterationAlgorithm::allMinMCS2(YicesSolver *yices,
                                     std::vector<BoolVarExprPtr> &AV,
                                     std::map<BoolVarExprPtr, ExprPtr> &AVMap) {
-    USVec MCSes;
+    SetOfFormulasPtr MCSes = SetOfFormulas::make();
     bool done = false;
     while (!done) {
         nbCallsToSolver++;
@@ -299,8 +368,13 @@ USVec IterationAlgorithm::allMinMCS2(YicesSolver *yices,
                 ExprPtr blockFormula = Expression::mkOr(U);
                 blockFormula->setHard();
                 yices->addToContext(blockFormula);
+                
+                // Save the MCSes
+                FormulaPtr m = std::make_shared<Formula>(U);
+                MCSes->add(m);
+                
                 // Save the line numbers
-                USet M;
+                /*MCSPtr M;
                 for (ExprPtr notAi : U) {
                     //M.insert(AVMap[ai]->getLine());
                     //M.insert(ai->getLine());
@@ -316,9 +390,9 @@ USVec IterationAlgorithm::allMinMCS2(YicesSolver *yices,
                 if (!M.empty()) {
                     // Bound MCS size
                     if (M.size()<=options->mcsMaxSize()) {
-                         MCSes.push_back(M);
+                         MCSes->add(M);
                     }
-                }
+                }*/
             } break;
             case l_false: // unsatisfiable
                 done = true;
@@ -477,7 +551,7 @@ void IterationAlgorithm::dumpTransValues(YicesSolver *solver) {
 // ## TCAS
 // #####################################
 
-
+/*
 
 
 // =============================================================================
@@ -563,8 +637,8 @@ void IterationAlgorithm::runTCAS_AR(std::vector<ExprPtr> TCExprs,
         yices->retractFromContext(idGOExpr);
     }
     // Clean the MUSes
-    removeDoublons(MUSes);
-    removeSubsets(MUSes);
+    MUSes->removeDoublons();
+    MUSes->removeSubsets();
     // Minimal hitting set the MUSes (conflicts) to obtain the diagnoses
     USVec Diag;
     HittingSet::getMinimalHittingSets_LP(MUSes, Diag);
@@ -668,10 +742,10 @@ void IterationAlgorithm::runTCAS_PP(std::vector<ExprPtr> TCExprs,
         yices->pop();
     }
     // Clean the MUSes
-    removeDoublons(MUSes);
-    removeSubsets(MUSes);
+    MUSes->removeDoublons();
+    MUSes->removeSubsets();
     // Minimal hitting set the MUSes (conflicts) to obtain the diagnoses
-    USVec Diag;
+    SetOfFormulasPtr Diag;
     HittingSet::getMinimalHittingSets_LP(MUSes, Diag);
     
     // Print the result
@@ -1078,161 +1152,4 @@ UVVec IterationAlgorithm::allMinMCS(IWPMaxSATSolver *solver, Formula *WF,
     } 
     return MCSes;
 }
-
-
-// [[[int]]] -> [[int]]
-// [[mcs]]   -> [[mcs]]
-void IterationAlgorithm::pairwiseUnion(USVVec MCSes, USVec &Diag) {
-    // Init
-    int size = MCSes.size();
-    unsigned a[size];
-    for (int i=0; i<size; ++i) {
-        a[i] = 0;
-    }
-    bool done = false;
-    while (!done) {
-        // Unions
-        USet S;
-        for (int i=0; i<size; ++i) {
-            USVec A = MCSes[i];
-            int j = a[i];
-            USet B = A[j];
-            S.insert(B.begin(), B.end());
-        }
-        Diag.push_back(S);
-        // Update indexes
-        a[0]++;
-        for (int i=0; i<size-1; ++i) {
-            USVec A = MCSes[i];
-            if(a[i]>=A.size()) {
-                a[i] = 0;
-                a[i+1]++;
-            }
-        }
-        // Finished?
-        USVec A = MCSes[size-1];
-        if (a[size-1]>=A.size()) {
-            done = true;
-            break;
-        }
-    }
-}
-
-double IterationAlgorithm::getCodeSizeReduction(USVec MCSes, unsigned totalNbLine) {
-
-    std::vector<double> CSR(MCSes.size());
-    unsigned i = 0;
-    USVec::const_iterator it;
-    for (it=MCSes.begin(); it!=MCSes.end(); ++it) {
-        USet mcs = (*it);
-        CSR[i] = ((100.0*(double)mcs.size())/(double)totalNbLine);
-        i++;
-    }
-    double sum = 0;
-    std::vector<double>::const_iterator it2;
-    for (it2=CSR.begin(); it2!=CSR.end(); ++it2) {
-        double crs_i = *it2;
-        sum = sum + crs_i;
-    }
-    return sum/(double)CSR.size();
-}
-
-// Copy vv to sv
-void IterationAlgorithm::copy(UVVec &vv, USVec &sv) {
-    UVVec::const_iterator itv;
-    for (itv=vv.begin(); itv!=vv.end(); ++itv) {
-        // Copy the MCS (vector) into a MCS (set)
-        USet subset((*itv).begin(), (*itv).end());
-        sv.push_back(subset);
-    }
-}
-
-// Remove all subset doublons
-// {{x,y}, {a,b}, {x,y}} -> {{a,b}}
-void IterationAlgorithm::removeDoublons(USVec &v) {
-    std::sort(v.begin(), v.end());
-    v.erase(std::unique(v.begin(), v.end()), v.end());   
-}
-
-// Remove all subsets of subsets
-// {{x}, {a,b}, {x,y}} -> {{a,b},{x,y}}
-void IterationAlgorithm::removeSubsets(USVec &v) {
-    std::vector<std::set<unsigned> >::iterator itm;
-    for (itm=v.begin(); itm!=v.end();) {
-        std::set<unsigned> s(*itm);
-        unsigned i = 0;
-        bool isIn = false;
-        while (i<v.size()) {
-            if (s!=v[i]) {
-                isIn = std::includes(v[i].begin(), v[i].end(), s.begin(),s.end());
-                if (isIn) {
-                    break;
-                }
-            }
-            i++;
-        }
-        if (isIn) {
-            itm = v.erase(itm); 
-        } else {
-            ++itm;
-        }
-    }    
-}
-
-std::ostream& operator<<(std::ostream& os, const UVec& v) {
-    os << "{";
-    for(UVec::const_iterator it = v.begin(); it != v.end(); it++) {
-        os << *it;
-        if (std::distance(it, v.end())>1) {
-            os << ", ";
-        }
-    }
-    os << "}";
-    return os;
-}
-std::ostream& operator<<(std::ostream& os, const UVVec& vv) {
-    os << "{";
-    for(UVVec::const_iterator it = vv.begin(); it != vv.end(); it++) {
-        os << *it;
-        if (std::distance(it, vv.end())>1) {
-            os << ", ";
-        }
-    }
-    os << "}";
-    return os;
-}
-std::ostream& operator<<(std::ostream& os, const UVVVec& vvv) {
-    os << "{";
-    for(UVVVec::const_iterator it = vvv.begin(); it != vvv.end(); it++) {
-        os << *it;
-        if (std::distance(it, vvv.end())>1) {
-            os << ", ";
-        }
-    }
-    os << "}";
-    return os;
-}
-
-std::ostream& operator<<(std::ostream& os, const USet& s) {
-    os << "{";
-    for(USet::const_iterator it = s.begin(); it != s.end(); ++it) {
-        os << *it;
-        if (std::distance(it, s.end())>1) {
-            os << ", ";
-        }
-    }
-    os << "}";
-    return os;
-}
-
-std::ostream& operator<<(std::ostream& os, const USVec& s) {
-    os << "{";
-    for(USVec::const_iterator it = s.begin(); it != s.end(); ++it) {
-        os << *it;
-        if (std::distance(it, s.end())>1) {
-            os << ", ";
-        }
-    }
-    os << "}";
-    return os;
-}
+ */
