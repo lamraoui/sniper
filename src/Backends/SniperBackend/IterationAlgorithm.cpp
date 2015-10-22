@@ -318,10 +318,11 @@ IterationAlgorithm::allDiagnosis(Formula *TF,
         // Compute a MCS
         SetOfFormulasPtr M = allMinMCS2(yices, AV, AVMap);
         if (!M->empty()) {
+            SetOfFormulasPtr M2 = avToClauses(M, AVMap);
+            MCSes.push_back(M2);
             if (options->printMCS()) {
-                std::cout << "\n" << M << "\n" << std::endl;
+                std::cout << "\n" << M2 << "\n" << std::endl;
             }
-            MCSes.push_back(M);
         } else {
             //if (options->verbose() || options->dbgMsg()) {
                 std::cout << "Empty MCS!\n";
@@ -403,6 +404,39 @@ SetOfFormulasPtr IterationAlgorithm::allMinMCS2(YicesSolver *yices,
         }
     }
     return MCSes;
+}
+
+
+// =============================================================================
+// avToClauses
+//
+// From the negated auxiliary variables (not a_i) in M, retreive
+// the corresponding expressions in AVMap and save them in M2.
+// =============================================================================
+SetOfFormulasPtr
+IterationAlgorithm::avToClauses(SetOfFormulasPtr M,
+                                std::map<BoolVarExprPtr, ExprPtr> AVMap) {
+    SetOfFormulasPtr M2 = SetOfFormulas::make();
+    for (FormulaPtr f : M->getFormulas()) {
+        FormulaPtr F2 = Formula::make();
+        for (ExprPtr notai : f->getExprs()) {
+            if (notai->getOpCode()!=Expression::Not) {
+                continue;
+            }
+            NotExprPtr ne =
+            std::static_pointer_cast<NotExpression>(notai);
+            BoolVarExprPtr ai =
+            std::static_pointer_cast<BoolVarExpression>(ne->get());
+            auto it = AVMap.find(ai);
+            if(it != AVMap.end()) { // Element found
+                F2->add(it->second);
+            }
+        }
+        if (!F2->empty()) {
+            M2->add(F2);
+        }
+    }
+    return M2;
 }
 
 

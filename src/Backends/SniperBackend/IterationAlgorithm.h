@@ -78,6 +78,8 @@ public:
     void runTCAS_AR(std::vector<ExprPtr> TCExprs, std::vector<ExprPtr> GOExprs);
     */
 private:
+    SetOfFormulasPtr avToClauses(SetOfFormulasPtr M,
+                                 std::map<BoolVarExprPtr, ExprPtr> AVMap);
     // For debugging
     void checkControlFlow(YicesSolver *solver);
     int  getBlockTransVal(YicesSolver *s, BasicBlock *bb1, BasicBlock *bb2);
