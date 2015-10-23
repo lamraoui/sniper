@@ -64,6 +64,7 @@ public:
     
     void        add(ExprPtr e);
     void        add(FormulaPtr f);
+    void        add(std::set<ExprPtr> E);
     void        remove(ExprPtr e);
     unsigned    size();
     bool        empty();

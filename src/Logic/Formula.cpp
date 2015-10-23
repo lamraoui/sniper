@@ -210,6 +210,11 @@ void Formula::add(ExprPtr e) {
     exprs.push_back(e);
 }
 
+// Insert a set of expressions
+void Formula::add(std::set<ExprPtr> E) {
+    std::copy(E.begin(), E.end(), std::back_inserter(exprs));
+}
+
 unsigned Formula::size() {
     return exprs.size();
 }
@@ -261,8 +266,10 @@ void SetOfFormulas::add(std::vector<FormulaPtr> F) {
 }
 
 void SetOfFormulas::add(SetOfFormulasPtr F) {
+    assert(F.get()==this && "Self copy!");
     std::vector<FormulaPtr> formulas2 = F->getFormulas();
-    this->formulas.insert(formulas.end(), formulas2.begin(), formulas2.end());
+    this->formulas.insert(this->formulas.end(),
+                          formulas2.begin(), formulas2.end());
 }
 
 std::vector<FormulaPtr> SetOfFormulas::getFormulas() {
@@ -270,7 +277,7 @@ std::vector<FormulaPtr> SetOfFormulas::getFormulas() {
 }
 
 FormulaPtr SetOfFormulas::getAt(unsigned i) {
-    assert((i<0 || i>=Formulas.size()) && "Out of bound");
+    assert((i<0 || i>=formulas.size()) && "Out of bound");
     return this->formulas[i];
 }
 
