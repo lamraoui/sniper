@@ -55,28 +55,10 @@ public:
     std::vector<SetOfFormulasPtr> allDiagnosis(Formula *TF,
                                                std::vector<ProgramTrace*> traces,
                                                YicesSolver *yices);
-    SetOfFormulasPtr allMinMCS2(YicesSolver *yices,
-                     std::vector<BoolVarExprPtr> &AV,
-                     std::map<BoolVarExprPtr, ExprPtr> &AVMap);
-    
-    // Diagnosis computation methods
-    SetOfFormulasPtr allMinMCS(IWPMaxSATSolver *solver, Formula *WF,
-                    std::vector<BoolVarExprPtr> &AV,
-                    std::map<BoolVarExprPtr, ExprPtr> &AVMap);
-    SetOfFormulasPtr allMinMCS_PP(YicesSolver *yices,
-                       std::vector<BoolVarExprPtr> &AV,
-                       std::map<BoolVarExprPtr, ExprPtr> &AVMap);
-    SetOfFormulasPtr allMinMCS_AR(YicesSolver *yices,
-                       std::vector<BoolVarExprPtr> &AV,
-                       std::map<BoolVarExprPtr, ExprPtr> &AVMap);
-    
-    // TCAS
-   /* void runTCAS(std::vector<ExprPtr> TCExprs, std::vector<ExprPtr> GOExprs);
-    void runTCAS_PWU(std::vector<ExprPtr> TCExprs, std::vector<ExprPtr> GOExprs);
-    void runTCAS_PP(std::vector<ExprPtr> TCExprs, std::vector<ExprPtr> GOExprs);
-    void runTCAS_PP_PWU(std::vector<ExprPtr> TCExprs,std::vector<ExprPtr> GOExprs);
-    void runTCAS_AR(std::vector<ExprPtr> TCExprs, std::vector<ExprPtr> GOExprs);
-    */
+    SetOfFormulasPtr allMinMCS(YicesSolver *yices,
+                               std::vector<BoolVarExprPtr> &AV,
+                               std::map<BoolVarExprPtr, ExprPtr> &AVMap);
+
 private:
     SetOfFormulasPtr avToClauses(SetOfFormulasPtr M,
                                  std::map<BoolVarExprPtr, ExprPtr> AVMap);

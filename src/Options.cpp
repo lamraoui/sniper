@@ -90,23 +90,6 @@ MaxDepth("max-depth", cl::desc("Maximum depth"),
 static cl::opt <bool>
 WithoutWeights("ww", cl::desc("Without weights"));
 
-
-static cl::opt <unsigned>
-TCASVersion("tcas", cl::desc("Use TCAS algorithm"),
-          cl::init(0), cl::value_desc("version"));
-static cl::opt <unsigned>
-TCASline1("tl1", cl::desc("TCAS Bug Line 1"),
-          cl::init(0), cl::value_desc("line"));
-static cl::opt <unsigned>
-TCASline2("tl2", cl::desc("TCAS Bug Line 2"),
-          cl::init(0), cl::value_desc("line"));
-static cl::opt <unsigned>
-TCASline3("tl3", cl::desc("TCAS Bug Line 3"),
-          cl::init(0), cl::value_desc("line"));
-static cl::opt <unsigned>
-TCASline4("tl4", cl::desc("TCAS Bug Line 4"),
-          cl::init(0), cl::value_desc("line"));
-
 static cl::opt <bool>
 NoPushPop("nopp", cl::desc("Do not use push-pop optimization"));
 
@@ -246,26 +229,6 @@ unsigned Options::getUnrollCount() {
 
 unsigned Options::getMaxDepth() {
     return MaxDepth;
-}
-
-unsigned Options::getTCASVersion() {
-    return TCASVersion;
-}
-
-unsigned Options::getTCASline1() {
-    return TCASline1;
-}
-
-unsigned Options::getTCASline2() {
-    return TCASline2;
-}
-
-unsigned Options::getTCASline3() {
-    return TCASline3;   
-}
-
-unsigned Options::getTCASline4() {
-    return TCASline4;   
 }
 
 bool Options::pushPopUsed() {

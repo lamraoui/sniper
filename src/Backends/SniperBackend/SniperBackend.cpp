@@ -105,34 +105,14 @@ void SniperBackend::run() {
     EncoderPass *EP    = new EncoderPass(targetFun, C, LIP, PP, options);
     Formula     *formula = EP->makeFormula();
     delete EP;
+    delete C;
     
     if (options->printTF()) {
         formula->dump();
     }
+    
     // Create a partial weighted MaxSMT solver
     IWPMaxSATSolver *solver = new YicesSolver();
-    
-    // TCAS
-    /*if (options->getTCASVersion()>0) {
-        // Profiling object for TCAS Benchmark
-        TCAS *tcas = new TCAS(options, "./examples/tcas2", C->getTCASAssertVarName());
-        // Load test cases
-        std::vector<ExprPtr> TCExprs;
-        std::vector<ExprPtr> GOExprs;
-        tcas->load(TCExprs, GOExprs);
-        
-        IterationAlgorithm *IA1 = new IterationAlgorithm(
-                                      targetFun, solver, formula, hasArgv, options);
-        if (options->pushPopUsed()) {
-            IA1->runTCAS_PP(TCExprs, GOExprs);
-        } else {
-            error("use push & pop optimization!");
-        }
-        delete C;
-        delete tcas;
-        return;
-    }*/
-    delete C;
     
     // Generate program executions
     if (options->methodConcolic()) {

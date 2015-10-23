@@ -17,7 +17,6 @@ sniper_SOURCES = Main.cpp \
 		Backends/SniperBackend/EncoderPass.cpp \
 		Backends/SniperBackend/IterationAlgorithm.cpp \
 		Backends/SniperBackend/SniperBackend.cpp \
-		Benchmarks/TCAS.cpp \
 		Encoder/Context.cpp \
 		Encoder/Encoder.cpp \
 		Encoder/EncoderLight.cpp \
@@ -42,7 +41,6 @@ sniper_SOURCES = Main.cpp \
 		Logic/YicesSolver.cpp \
 		Profile/ProgramProfile.cpp \
 		Profile/ProgramTrace.cpp \
-		Utils/HittingSet.cpp \
 		Utils/Utils.cpp
 
 #dist_noinst_SCRIPTS = autogen.sh
