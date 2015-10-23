@@ -78,18 +78,31 @@ void Combine::pairwiseUnion(std::vector<SetOfFormulasPtr> MCSes,
 
 // Minimal-hitting set based combination
 SetOfFormulasPtr Combine::combineByMHS(std::vector<SetOfFormulasPtr> D) {
-/*    // Compute the MUSes
-    SetOfFormulasPtr MUSes;
+    // Compute the MUSes
+    SetOfFormulasPtr MUSes = SetOfFormulas::make();
     for (SetOfFormulasPtr M : D) {
         M->removeDoublons();
         // Compute a MUS with the MHS of a MCS
-        SetOfFormulasPtr MUS;
-        HittingSet::getMinimalHittingSets_LP(M, MUS);
+        std::vector<std::set<ExprPtr> > InMCS;
+        std::vector<std::set<ExprPtr> > OutMUS;
+        auto F = M->getFormulas();
+        for (FormulaPtr f : F) {
+            std::vector<ExprPtr> E = f->getExprs();
+            std::set<ExprPtr> SetE(E.begin(), E.end());
+            InMCS.push_back(SetE);
+        }
+        HittingSet<ExprPtr>::getMinimalHittingSets_LP(InMCS, OutMUS);
+        SetOfFormulasPtr MUS = SetOfFormulas::make();
+        for (auto s : OutMUS) {
+            FormulaPtr f = Formula::make();
+            f->add(s);
+            MUS->add(f);
+        }
         // Print MUS
         //if (options->printMUS()) {
         //    std::cout << "MUS: " << MUS << "\n\n";
         //}
-        MUSes->add(MUS); //MUSes.insert(MUSes.end(), MUS.begin(), MUS.end());
+        MUSes->add(MUS);
     }
     
     // Remove doublons
@@ -103,12 +116,21 @@ SetOfFormulasPtr Combine::combineByMHS(std::vector<SetOfFormulasPtr> D) {
     //    std::cout << "ACSR: " << getCodeSizeReduction(MUSes, loc) << "%\n";;
     //}
     // Minimal hitting set of the union of the MUSes
+    std::vector<std::set<ExprPtr> > InMUSes;
+    std::vector<std::set<ExprPtr> > OutCombMCSes;
+    auto F2 = MUSes->getFormulas();
+    for (FormulaPtr f : F2) {
+        std::vector<ExprPtr> E = f->getExprs();
+        std::set<ExprPtr> SetE(E.begin(), E.end());
+        InMUSes.push_back(SetE);
+    }
+    HittingSet<ExprPtr>::getMinimalHittingSets_LP(InMUSes, OutCombMCSes);
     SetOfFormulasPtr combMCSes = SetOfFormulas::make();
-    HittingSet::getMinimalHittingSets_LP(MUSes, combMCSes);*/
-    
-    SetOfFormulasPtr combMCSes = SetOfFormulas::make();
-    
-    
+    for (auto s : OutCombMCSes) {
+        FormulaPtr f = Formula::make();
+        f->add(s);
+        combMCSes->add(f);
+    }
     return combMCSes;
 }
 
