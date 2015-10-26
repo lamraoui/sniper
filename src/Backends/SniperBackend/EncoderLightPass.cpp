@@ -592,7 +592,7 @@ ExprPtr EncoderLightPass::constructPartialPart() {
                 // Is already in?
                 bool isAlreadyIn = false;
                 for (ExprPtr e : andExprs) {
-                    if (Expression::equal(eqExpr, e)) {
+                    if (eqExpr == e) {
                         isAlreadyIn = true;
                         break;
                     }

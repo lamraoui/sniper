@@ -171,7 +171,8 @@ public:
     static ExprPtr         mkOp(ExprPtr left, ExprPtr right, llvm::CmpInst::Predicate op);
     static ExprPtr         mkOp(ExprPtr left, ExprPtr right, llvm::Instruction *i);
     
-    static bool equal(ExprPtr e1, ExprPtr e2);
+    friend bool operator== (ExprPtr e1, ExprPtr e2);
+    friend bool operator!= (ExprPtr e1, ExprPtr e2);
     
     static llvm::CmpInst::Predicate negateOp(llvm::CmpInst::Predicate op);
     static ExprPtr getExprFromValue(llvm::Value *v);

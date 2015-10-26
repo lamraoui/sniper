@@ -485,7 +485,7 @@ ExprPtr EncoderPass::constructPartialPart_V3() {
                             bool isAlreadyIn = false;
                             ExprVec vec = allExprsMap[firstBugFreeBlock];
                             for (ExprPtr e : vec) {
-                                if (Expression::equal(andExpr, e)) {
+                                if (andExpr == e) {
                                     isAlreadyIn = true;
                                     break;
                                 }
@@ -661,7 +661,7 @@ ExprPtr EncoderPass::constructPartialPart_V3() {
                 // Is already in?
                 bool isAlreadyIn = false;
                 for (ExprPtr e : andExprs) {
-                    if (Expression::equal(eqExpr, e)) {
+                    if (eqExpr == e) {
                         isAlreadyIn = true;
                         break;
                     }
@@ -827,7 +827,7 @@ ExprPtr EncoderPass::constructPartialPart() {
                         // Is already in?
                         bool isAlreadyIn = false;
                         for (ExprPtr e : allExprs) {
-                            if (Expression::equal(traceExpr, e)) {
+                            if (traceExpr == e) {
                                 isAlreadyIn = true;
                                 break;
                             }
@@ -1002,7 +1002,7 @@ ExprPtr EncoderPass::constructPartialPart() {
                 // Is already in?
                 bool isAlreadyIn = false;
                 for (ExprPtr e : andExprs) {
-                    if (Expression::equal(eqExpr, e)) {
+                    if (eqExpr == e) {
                         isAlreadyIn = true;
                         break;
                     }

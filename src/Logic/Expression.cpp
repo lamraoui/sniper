@@ -400,15 +400,17 @@ ExprPtr Expression::getExprFromValue(llvm::Value *v) {
     }
 }
 
-bool Expression::equal(ExprPtr e1, ExprPtr e2) {
-    if (e1==NULL || e2==NULL) {
+// TODO: order is taken into account in the equality of expressions,
+//       which is not correct.
+bool operator== (ExprPtr e1, ExprPtr e2) {
+    if (e1.get()==NULL || e2.get()==NULL) {
         error("null expression");
     }
     if (e1->getOpCode()!=e2->getOpCode()) {
         return false;
     }
     // Same reference
-    if (e1==e2) {
+    if (e1.get()==e2.get()) {
         return true;
     }
     // Op code of e1 == op code of e2
@@ -419,13 +421,17 @@ bool Expression::equal(ExprPtr e1, ExprPtr e2) {
         case Expression::False:
             return true;
         case Expression::UInt32Num: {
-            UInt32NumExprPtr i1 = std::static_pointer_cast<UInt32NumExpression>(e1);
-            UInt32NumExprPtr i2 = std::static_pointer_cast<UInt32NumExpression>(e2);
+            UInt32NumExprPtr i1 =
+            std::static_pointer_cast<UInt32NumExpression>(e1);
+            UInt32NumExprPtr i2 =
+            std::static_pointer_cast<UInt32NumExpression>(e2);
             return (i1->getValue()==i2->getValue());
         }
         case Expression::SInt32Num: {
-            SInt32NumExprPtr i1 = std::static_pointer_cast<SInt32NumExpression>(e1);
-            SInt32NumExprPtr i2 = std::static_pointer_cast<SInt32NumExpression>(e2);
+            SInt32NumExprPtr i1 =
+            std::static_pointer_cast<SInt32NumExpression>(e1);
+            SInt32NumExprPtr i2 =
+            std::static_pointer_cast<SInt32NumExpression>(e2);
             return (i1->getValue()==i2->getValue());
         }
         case Expression::BoolVar: {
@@ -439,8 +445,10 @@ bool Expression::equal(ExprPtr e1, ExprPtr e2) {
             return (ie1->getName()==ie2->getName());
         }
         case Expression::IntToIntVar: {
-            IntToIntVarExprPtr ie1 = std::static_pointer_cast<IntToIntVarExpression>(e1);
-            IntToIntVarExprPtr ie2 = std::static_pointer_cast<IntToIntVarExpression>(e2);
+            IntToIntVarExprPtr ie1 =
+            std::static_pointer_cast<IntToIntVarExpression>(e1);
+            IntToIntVarExprPtr ie2 =
+            std::static_pointer_cast<IntToIntVarExpression>(e2);
             return (ie1->getName()==ie2->getName());
         }
         case Expression::ToParse: {
@@ -451,68 +459,65 @@ bool Expression::equal(ExprPtr e1, ExprPtr e2) {
         case Expression::Gt: {
             GtExprPtr gt1 = std::static_pointer_cast<GtExpression>(e1);
             GtExprPtr gt2 = std::static_pointer_cast<GtExpression>(e2);
-            const bool r1 = Expression::equal(gt1->getExpr1(), gt2->getExpr1());
-            if (!r1) return false;
-            const bool r2 = Expression::equal(gt1->getExpr2(), gt2->getExpr2());
-            return r2;
+            if (gt1->getExpr1()!=gt2->getExpr1())
+                return false;
+            return (gt1->getExpr2()==gt2->getExpr2());
         }
         case Expression::Ge: {
             GeExprPtr ge1 = std::static_pointer_cast<GeExpression>(e1);
             GeExprPtr ge2 = std::static_pointer_cast<GeExpression>(e2);
-            const bool r1 = Expression::equal(ge1->getExpr1(), ge2->getExpr1());
-            if (!r1) return false;
-            const bool r2 = Expression::equal(ge1->getExpr2(), ge2->getExpr2());
-            return r2;
+            if (ge1->getExpr1() != ge2->getExpr1())
+                return false;
+            return (ge1->getExpr2()==ge2->getExpr2());
         }
         case Expression::Le: {
             LeExprPtr le1 = std::static_pointer_cast<LeExpression>(e1);
             LeExprPtr le2 = std::static_pointer_cast<LeExpression>(e2);
-            const bool r1 = Expression::equal(le1->getExpr1(), le2->getExpr1());
-            if (!r1) return false;
-            const bool r2 = Expression::equal(le1->getExpr2(), le2->getExpr2());
-            return r2;
+            if (le1->getExpr1()!=le2->getExpr1())
+                return false;
+            return (le1->getExpr2()==le2->getExpr2());
         }
         case Expression::Lt: {
             LtExprPtr lt1 = std::static_pointer_cast<LtExpression>(e1);
             LtExprPtr lt2 = std::static_pointer_cast<LtExpression>(e2);
-            const bool r1 = Expression::equal(lt1->getExpr1(), lt2->getExpr1());
-            if (!r1) return false;
-            const bool r2 = Expression::equal(lt1->getExpr2(), lt2->getExpr2());
-            return r2;
+            if (lt1->getExpr1()!=lt2->getExpr1())
+                return false;
+            return (lt1->getExpr2()==lt2->getExpr2());
         }
         case Expression::Diseq: {
             DiseqExprPtr de1 = std::static_pointer_cast<DiseqExpression>(e1);
             DiseqExprPtr de2 = std::static_pointer_cast<DiseqExpression>(e2);
-            const bool r1 = Expression::equal(de1->getExpr1(), de2->getExpr1());
-            if (!r1) return false;
-            const bool r2 = Expression::equal(de1->getExpr2(), de2->getExpr2());
-            return r2;
+            if (de1->getExpr1()!=de2->getExpr1())
+                return false;
+            return (de1->getExpr2()==de2->getExpr2());
         }
         case Expression::Eq: {
             EqExprPtr ee1 = std::static_pointer_cast<EqExpression>(e1);
             EqExprPtr ee2 = std::static_pointer_cast<EqExpression>(e2);
-            const bool r1 = Expression::equal(ee1->getExpr1(), ee2->getExpr1());
-            if (!r1) return false;
-            const bool r2 = Expression::equal(ee1->getExpr2(), ee2->getExpr2());
-            return r2;
+            if (ee1->getExpr1()!=ee2->getExpr1())
+                return false;
+            return (ee1->getExpr2()==ee2->getExpr2());
         }
         case Expression::Not: {
             NotExprPtr ne1 = std::static_pointer_cast<NotExpression>(e1);
             NotExprPtr ne2 = std::static_pointer_cast<NotExpression>(e2);
-            return Expression::equal(ne1->get(), ne2->get());
+            return (ne1->get()==ne2->get());
         }
         case Expression::And: {
             AndExprPtr ae1 = std::static_pointer_cast<AndExpression>(e1);
             AndExprPtr ae2 = std::static_pointer_cast<AndExpression>(e2);
             std::vector<ExprPtr> es1 = ae1->getExprs();
             std::vector<ExprPtr> es2 = ae2->getExprs();
-            if (es1.size()!=es2.size()) return false;
+            if (es1.size()!=es2.size())
+                return false;
             const unsigned n = es1.size();
-            if (n==0) error("AND expression");
-            if (n==1)  return Expression::equal(es1.back(), es2.back());
+            if (n==0)
+                error("AND expression");
+            if (n==1)
+                return (es1.back()==es2.back());
             for(unsigned i=0; i<n; i++) {
-                const bool r = Expression::equal(es1[i], es2[i]);
-                if (!r) return false;
+                if (es1[i]!=es2[i])
+                    return false;
             }
             return true;
         }
@@ -521,13 +526,16 @@ bool Expression::equal(ExprPtr e1, ExprPtr e2) {
             OrExprPtr oe2 = std::static_pointer_cast<OrExpression>(e2);
             std::vector<ExprPtr> es1 = oe1->getExprs();
             std::vector<ExprPtr> es2 = oe2->getExprs();
-            if (es1.size()!=es2.size()) return false;
+            if (es1.size()!=es2.size())
+                return false;
             const unsigned n = es1.size();
-            if (n==0) error("OR expression");
-            if (n==1)  return Expression::equal(es1.back(), es2.back());
+            if (n==0)
+                error("OR expression");
+            if (n==1)
+                return (es1.back()==es2.back());
             for(unsigned i=0; i<n; i++) {
-                const bool r = Expression::equal(es1[i], es2[i]);
-                if (!r) return false;
+                if (es1[i]!=es2[i])
+                    return false;
             }
             return true;
         }
@@ -536,13 +544,16 @@ bool Expression::equal(ExprPtr e1, ExprPtr e2) {
             XorExprPtr xe2 = std::static_pointer_cast<XorExpression>(e2);
             std::vector<ExprPtr> es1 = xe1->getExprs();
             std::vector<ExprPtr> es2 = xe2->getExprs();
-            if (es1.size()!=es2.size()) return false;
+            if (es1.size()!=es2.size())
+                return false;
             const unsigned n = es1.size();
-            if (n==0) error("XOR expression");
-            if (n==1)  return Expression::equal(es1.back(), es2.back());
+            if (n==0)
+                error("XOR expression");
+            if (n==1)
+                return (es1.back()==es2.back());
             for(unsigned i=0; i<n; i++) {
-                const bool r = Expression::equal(es1[i], es2[i]);
-                if (!r) return false;
+                if (es1[i]!=es2[i])
+                    return false;
             }
             return true;
         }
@@ -551,13 +562,16 @@ bool Expression::equal(ExprPtr e1, ExprPtr e2) {
             SumExprPtr se2 = std::static_pointer_cast<SumExpression>(e2);
             std::vector<ExprPtr> es1 = se1->getExprs();
             std::vector<ExprPtr> es2 = se2->getExprs();
-            if (es1.size()!=es2.size()) return false;
+            if (es1.size()!=es2.size())
+                return false;
             const unsigned n = es1.size();
-            if (n==0) error("SUM expression");
-            if (n==1)  return Expression::equal(es1.back(), es2.back());
+            if (n==0)
+                error("SUM expression");
+            if (n==1)
+                return (es1.back()==es2.back());
             for(unsigned i=0; i<n; i++) {
-                const bool r = Expression::equal(es1[i], es2[i]);
-                if (!r) return false;
+                if (es1[i]!=es2[i])
+                    return false;
             }
             return true;
         }
@@ -566,13 +580,16 @@ bool Expression::equal(ExprPtr e1, ExprPtr e2) {
             SubExprPtr se2 = std::static_pointer_cast<SubExpression>(e2);
             std::vector<ExprPtr> es1 = se1->getExprs();
             std::vector<ExprPtr> es2 = se2->getExprs();
-            if (es1.size()!=es2.size()) return false;
+            if (es1.size()!=es2.size())
+                return false;
             const unsigned n = es1.size();
-            if (n==0) error("SUB expression");
-            if (n==1)  return Expression::equal(es1.back(), es2.back());
+            if (n==0)
+                error("SUB expression");
+            if (n==1)
+                return (es1.back()==es2.back());
             for(unsigned i=0; i<n; i++) {
-                const bool r = Expression::equal(es1[i], es2[i]);
-                if (!r) return false;
+                if (es1[i]!=es2[i])
+                    return false;
             }
             return true;
         }
@@ -581,65 +598,67 @@ bool Expression::equal(ExprPtr e1, ExprPtr e2) {
             MulExprPtr me2 = std::static_pointer_cast<MulExpression>(e2);
             std::vector<ExprPtr> es1 = me1->getExprs();
             std::vector<ExprPtr> es2 = me2->getExprs();
-            if (es1.size()!=es2.size()) return false;
+            if (es1.size()!=es2.size())
+                return false;
             const unsigned n = es1.size();
-            if (n==0) error("MUL expression");
-            if (n==1)  return Expression::equal(es1.back(), es2.back());
+            if (n==0)
+                error("MUL expression");
+            if (n==1)
+                return (es1.back()==es2.back());
             for(unsigned i=0; i<n; i++) {
-                const bool r = Expression::equal(es1[i], es2[i]);
-                if (!r) return false;
+                if (es1[i]!=es2[i])
+                    return false;
             }
             return true;
         }
         case Expression::Ite: {
             IteExprPtr ie1 = std::static_pointer_cast<IteExpression>(e1);
             IteExprPtr ie2 = std::static_pointer_cast<IteExpression>(e2);
-            const bool r1 = Expression::equal(ie1->getExpr1(), ie2->getExpr1());
-            if (!r1) return false;
-            const bool r2 = Expression::equal(ie1->getExpr2(), ie2->getExpr2());
-            if (!r2) return false;
-            const bool r3 = Expression::equal(ie1->getExpr3(), ie2->getExpr3());
-            return r3;
+            if (ie1->getExpr1()==ie2->getExpr1())
+                return false;
+            if (ie1->getExpr2()!=ie2->getExpr2())
+                return false;
+            return (ie1->getExpr3()==ie2->getExpr3());
         }
         case Expression::App: {
             AppExprPtr ae1 = std::static_pointer_cast<AppExpression>(e1);
             AppExprPtr ae2 = std::static_pointer_cast<AppExpression>(e2);
-            const bool r1 = Expression::equal(ae1->getExpr1(), ae2->getExpr1());
-            if (!r1) return false;
-            const bool r2 = Expression::equal(ae1->getExpr2(), ae2->getExpr2());
-            return r2;
+            if (ae1->getExpr1()!=ae2->getExpr1())
+                return false;
+            return (ae1->getExpr2()==ae2->getExpr2());
         }
         case Expression::Update: {
             UpdateExprPtr ue1 = std::static_pointer_cast<UpdateExpression>(e1);
             UpdateExprPtr ue2 = std::static_pointer_cast<UpdateExpression>(e2);
-            const bool r1 = Expression::equal(ue1->getExpr1(), ue2->getExpr1());
-            if (!r1) return false;
-            const bool r2 = Expression::equal(ue1->getExpr2(), ue2->getExpr2());
-            if (!r2) return false;
-            const bool r3 = Expression::equal(ue1->getExpr3(), ue2->getExpr3());
-            return r3;
+            if (ue1->getExpr1()!=ue2->getExpr1())
+                return false;
+            if (ue1->getExpr2()!=ue2->getExpr2())
+                return false;
+            return (ue1->getExpr3()==ue2->getExpr3());
         }
         case Expression::Div: {
             DivExprPtr de1 = std::static_pointer_cast<DivExpression>(e1);
             DivExprPtr de2 = std::static_pointer_cast<DivExpression>(e2);
-            const bool r1 = Expression::equal(de1->getExpr1(), de2->getExpr1());
-            if (!r1) return false;
-            const bool r2 = Expression::equal(de1->getExpr2(), de2->getExpr2());
-            return r2;
+            if (de1->getExpr1()!=de2->getExpr1())
+                return false;
+            return (de1->getExpr2()==de2->getExpr2());
         }
         case Expression::Mod: {
             ModExprPtr de1 = std::static_pointer_cast<ModExpression>(e1);
             ModExprPtr de2 = std::static_pointer_cast<ModExpression>(e2);
-            const bool r1 = Expression::equal(de1->getExpr1(), de2->getExpr1());
-            if (!r1) return false;
-            const bool r2 = Expression::equal(de1->getExpr2(), de2->getExpr2());
-            return r2;
+            if (de1->getExpr1()!=de2->getExpr1())
+                return false;
+            return (de1->getExpr2()==de2->getExpr2());
         }
         default:
             error("wrong expression op code");
             break;
     }
     return false;
+}
+
+bool operator!= (ExprPtr e1, ExprPtr e2) {
+    return !(e1 == e2);
 }
 
 // TODO: add ostream operator to all kind of expressions

@@ -80,7 +80,7 @@ public:
         if (next!=p->next) return false;
         if (clauses.size()!=p->clauses.size()) return false;
         for (unsigned i=0; i<clauses.size(); i++) {
-            if (!Expression::equal(clauses[i], p->clauses[i])) {
+            if (clauses[i] != p->clauses[i]) {
                 return false;
             }
         }
