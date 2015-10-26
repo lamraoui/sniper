@@ -28,7 +28,7 @@ EncoderLightPass::~EncoderLightPass() {
 // 
 // Encode the target function into a partial SMT formula.
 // =============================================================================
-Formula* EncoderLightPass::makeFormula() {
+Formula* EncoderLightPass::makeTraceFormula() {
     
     if (options->verbose() || options->dbgMsg()) {
         std::cout << "EncoderLightPass [activated]\n";
@@ -37,8 +37,10 @@ Formula* EncoderLightPass::makeFormula() {
     if(options->printDuration()) {
         timer1.start();
     }
-    // Create an empty formula
+    // Create an empty trace formula
     Formula *formula = new Formula();
+    // Create an empty AS formula (for pre- and post-condition)
+    this->AS = new Formula();
     // Prepare the CFG variables
     encoder->prepareControlFlow(targetFun);
     // Pre-process the global variables
@@ -142,7 +144,7 @@ Formula* EncoderLightPass::makeFormula() {
                     expr = encoder->encode(cast<ICmpInst>(i));
                     break;
                 case Instruction::Call:
-                    expr = encoder->encode(cast<CallInst>(i), formula);
+                    expr = encoder->encode(cast<CallInst>(i), AS);
                     isWeigted = false;
                     break;
                 case Instruction::Alloca:
@@ -153,7 +155,7 @@ Formula* EncoderLightPass::makeFormula() {
                     expr = encoder->encode(cast<StoreInst>(i));
                     break;
                 case Instruction::Load:
-                    expr = encoder->encode(cast<LoadInst>(i), formula);
+                    expr = encoder->encode(cast<LoadInst>(i), AS);
                     break;
                 case Instruction::GetElementPtr:
                     expr = encoder->encode(cast<GetElementPtrInst>(i));
@@ -306,6 +308,15 @@ Formula* EncoderLightPass::makeFormula() {
     }
     formula->setAsLocked();
     return formula;
+}
+
+// =============================================================================
+// getASFormula
+//
+// Return a formula representating the pre- and post-conditions
+// =============================================================================
+Formula *EncoderLightPass::getASFormula() {
+    return AS;
 }
 
 // =============================================================================

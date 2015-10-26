@@ -102,13 +102,14 @@ void SniperBackend::run() {
     // Encode the IR into a partial weighted formula
     Context     *C       = new Context(LV, options);
     //EncoderLightPass *EP = new EncoderLightPass(targetFun, C, LIP, PP, options);
-    EncoderPass *EP    = new EncoderPass(targetFun, C, LIP, PP, options);
-    Formula     *formula = EP->makeFormula();
+    EncoderPass *EP = new EncoderPass(targetFun, C, LIP, PP, options);
+    Formula     *TF = EP->makeTraceFormula();
+    Formula     *AS = EP->getASFormula();
     delete EP;
     delete C;
     
     if (options->printTF()) {
-        formula->dump();
+        TF->dump();
     }
     
     // Create a partial weighted MaxSMT solver
@@ -120,7 +121,7 @@ void SniperBackend::run() {
         //std::vector<Expression*> PC = formula->getPostConditions();
     }
     else {
-        BMC *bmc = new BMC(targetFun, solver, formula, LIP, options, hasArgv);
+        BMC *bmc = new BMC(targetFun, solver, TF, AS, LIP, options, hasArgv);
         bool ok = true;
         if (options->methodPathExploration()) {
             if (LIP->hasLoops()) {
@@ -164,8 +165,8 @@ void SniperBackend::run() {
     Combine::Method CM = Combine::FLA;
     
     if (options->useDynamicDiagnosesEnum()) {
-        IA->run_dynamic(formula, PP, CM);
+        IA->run_dynamic(TF, AS, PP, CM);
     } else {
-        IA->run(formula, PP, CM);
+        IA->run(TF, AS, PP, CM);
     }
 }

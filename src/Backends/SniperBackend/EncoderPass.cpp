@@ -71,11 +71,11 @@ void EncoderPass::initAssertCalls() {
 }
 
 // =============================================================================
-// makeFormula
+// makeTraceFormula
 // 
 // Encode the target function into a partial SMT formula.
 // =============================================================================
-Formula* EncoderPass::makeFormula() { 
+Formula* EncoderPass::makeTraceFormula() {
     
     MSTimer timer1;
     if(options->printDuration()) {
@@ -353,6 +353,15 @@ Formula* EncoderPass::makeFormula() {
     }
     formula->setAsLocked();
     return formula;
+}
+
+// =============================================================================
+// getASFormula
+//
+// Return a formula representating the pre- and post-conditions
+// =============================================================================
+Formula* EncoderPass::getASFormula() {
+    return AS;
 }
 
 // =============================================================================

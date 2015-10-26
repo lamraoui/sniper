@@ -75,11 +75,11 @@ public:
     ExprPtr encode(ICmpInst *icmp);
     ExprPtr encode(AllocaInst *alloca);
     ExprPtr encode(StoreInst *store);
-    ExprPtr encode(LoadInst *load, Formula *formula);
+    ExprPtr encode(LoadInst *load, Formula *AS);
     ExprPtr encode(GetElementPtrInst *gep);
     ExprPtr encode(SExtInst *sext);
     ExprPtr encode(ZExtInst *zext);
-    ExprPtr encode(CallInst *call, Formula *formula);
+    ExprPtr encode(CallInst *call, Formula *AS);
     
     // Not implemented
     ExprPtr encode(FenceInst *i);

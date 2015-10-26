@@ -39,12 +39,14 @@ private:
     LoopInfoPass *loops;
     ProgramProfile * profile;
     Options *options;
+    Formula *AS;
 
 public:
     EncoderLightPass(Function *_targetFun, Context *_ctx, LoopInfoPass *_loops,
                 ProgramProfile *profile, Options *options);
     ~EncoderLightPass();
-    Formula* makeFormula();
+    Formula* makeTraceFormula();
+    Formula* getASFormula();
     
 private:
     void initGlobalVariables();

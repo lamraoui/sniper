@@ -31,13 +31,14 @@ class BMC {
 private:
     Function *targetFun;
     ISolver *solver;
-    Formula *formula;
+    Formula *TF;
+    Formula *AS;
     LoopInfoPass *loopInfo;
     Options *options;
     bool hasArgv;
 
 public:
-    BMC(Function *_targetFun, ISolver *_solver, Formula *_formula, 
+    BMC(Function *_targetFun, ISolver *_solver, Formula *_TF, Formula *_AS,
         LoopInfoPass *_loopInfo, Options *_options, bool hasArgv);
     ~BMC() { }
     void runBMCWithPathExploration(ProgramProfile *profile);

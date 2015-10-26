@@ -48,8 +48,9 @@ public:
                        hasArgv(_hasArgv), options(_options) { }
     ~IterationAlgorithm() { }
     
-    void run(Formula *TF, ProgramProfile *prof, Combine::Method combineMethod);
-    void run_dynamic(Formula *TF, ProgramProfile *prof,
+    void run(Formula *TF, Formula *AS, ProgramProfile *prof,
+             Combine::Method combineMethod);
+    void run_dynamic(Formula *TF, Formula *AS, ProgramProfile *prof,
                      Combine::Method combineMethod);
     
     std::vector<SetOfFormulasPtr> allDiagnosis(Formula *TF,

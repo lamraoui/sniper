@@ -12,9 +12,9 @@
 #include "BMC.h"
 
 
-BMC::BMC(Function *_targetFun, ISolver *_solver, Formula *_formula,  
+BMC::BMC(Function *_targetFun, ISolver *_solver, Formula *_TF, Formula *_AS,
          LoopInfoPass *_loopInfo, Options *_options, bool _hasArgv) 
-: targetFun(_targetFun), solver(_solver), formula(_formula), 
+: targetFun(_targetFun), solver(_solver), TF(_TF), AS(_AS),
 loopInfo(_loopInfo), options(_options), hasArgv(_hasArgv) { 
 
 }
@@ -30,18 +30,18 @@ loopInfo(_loopInfo), options(_options), hasArgv(_hasArgv) {
 void BMC::runBMCWithPathExploration(ProgramProfile *profile) {
     
     GenPath *gp = new GenPath();
-    gp->run(targetFun, formula); 
+    gp->run(targetFun, TF);
     std::vector<ExprPtr> fbb = gp->getFormulas();
     
     // Create a backtracking point.
-    formula->push(); 
+    TF->push();
+    
+    // TODO: add all pre-condition (not negated)
     
     // Add all the not(post-condition) to the context
-    std::vector<ExprPtr> notPostConds = formula->getNotPostConditions();
-    std::vector<ExprPtr>::iterator it1;
-    for(it1=notPostConds.begin(); it1!=notPostConds.end(); ++it1) {
-        ExprPtr notPost_expr = *it1;
-        formula->assertHard(notPost_expr);
+    for (ExprPtr e : AS->getExprs()) {
+        ExprPtr ne = Expression::mkNot(e);
+        TF->assertHard(ne);
     }
     
     // Compute iterative BMC
@@ -56,24 +56,24 @@ void BMC::runBMCWithPathExploration(ProgramProfile *profile) {
         ExprPtr fbb_expr = *itf;
         
         // Create a backtracking point.
-        formula->push(); 
+        TF->push();
         
         // Add the path formula to the context
-        formula->assertHard(fbb_expr);
+        TF->assertHard(fbb_expr);
         
-        switch(solver->check(formula)) {
+        switch(solver->check(TF)) {
                 // Negated claim is satisfiable, i.e., does not hold
             case l_true: {
             } break;  
                 // Negated claim is unsatisfiable: verification successful
             case l_false:
                 // Backtrack (remove the path formula)
-                formula->pop();
+                TF->pop();
                 continue; // go to the next iteration
             case l_undef:
                 //std::cout << "unknown: it was not possible to decide due to an incompleteness.\n";
                 // Backtrack (remove the path formula)
-                formula->pop();
+                TF->pop();
                 continue; // go to the next iteration
         }    
         
@@ -137,12 +137,12 @@ void BMC::runBMCWithPathExploration(ProgramProfile *profile) {
         }
         
         // Backtrack (remove the path formula)
-        formula->pop();
+        TF->pop();
     }
     
     // Backtrack to the last backtracking point
     // -> remove all notPostConditions
-    formula->pop();
+    TF->pop();
     
     const unsigned size = execs.size();
     if (size>0 && options->verbose()) {
@@ -172,14 +172,14 @@ void BMC::runBMCWithPathExploration(ProgramProfile *profile) {
 void BMC::runClassicBMC(ProgramProfile *profile) {
     
     // Create a backtracking point.
-    formula->push();
+    TF->push();
+    
+    // TODO: add all pre-condition (not negated)
     
     // Add all the not(post-condition) to the context
-    std::vector<ExprPtr> notPostConds = formula->getNotPostConditions();
-    std::vector<ExprPtr>::iterator it1;
-    for(it1=notPostConds.begin(); it1!=notPostConds.end(); ++it1) {
-        ExprPtr notPost_expr = *it1;
-        formula->assertHard(notPost_expr);
+    for (ExprPtr e : AS->getExprs()) {
+        ExprPtr ne = Expression::mkNot(e);
+        TF->assertHard(ne);
     }
     
     // Compute BMC
@@ -188,7 +188,7 @@ void BMC::runClassicBMC(ProgramProfile *profile) {
         std::cout << "Starting Bounded Model Checking...\n\n";
     }
         
-    switch(solver->check(formula)) {
+    switch(solver->check(TF)) {
         // Negated claim is satisfiable, i.e., does not hold
         case l_true: {
         } break;  
@@ -265,5 +265,5 @@ void BMC::runClassicBMC(ProgramProfile *profile) {
     
     // Backtrack to the last backtracking point (restores the context)
     // -> remove all notPostConditions
-    formula->pop();
+    TF->pop();
 }

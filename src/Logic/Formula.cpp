@@ -16,8 +16,6 @@ Formula::Formula(Formula *f) {
     this->nbHardExpressions = f->getNbHardExpr();
     this->nbSoftExpressions = f->getNbSoftExpr();
     this->exprs = f->getExprs();
-    this->notPostConditions = f->getNotPostConditions();
-    this->postConditions = f->getPostConditions();
     // OK?
     this->currentPushPopId = 0;
     this->lock = f->lock; 
@@ -88,22 +86,6 @@ void Formula::remove(ExprPtr e) {
     if (lock) {
         e->invalidate();
     }
-}
-
-void Formula::addPostCondition(ExprPtr e) {
-    postConditions.push_back(e);
-}
-
-void Formula::addNotPostCondition(ExprPtr e) {
-    notPostConditions.push_back(e);
-}
-
-std::vector<ExprPtr> Formula::getPostConditions() {
-    return this->postConditions;
-}
-
-std::vector<ExprPtr> Formula::getNotPostConditions() {
-    return this->notPostConditions;
 }
 
 std::vector<ExprPtr> Formula::getExprs(llvm::BasicBlock *bb) {

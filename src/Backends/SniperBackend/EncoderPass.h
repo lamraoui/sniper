@@ -39,13 +39,15 @@ private:
     LoopInfoPass *loops;
     ProgramProfile * profile;
     Options *options;
+    Formula *AS;
 
 public:
     EncoderPass(Function *_targetFun, Context *_ctx, LoopInfoPass *_loops, 
                 ProgramProfile *profile, Options *options);
     ~EncoderPass();
     
-    Formula* makeFormula();
+    Formula* makeTraceFormula();
+    Formula* getASFormula();
     
 private:
     void modelControlFlow();

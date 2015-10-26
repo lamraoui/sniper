@@ -40,17 +40,13 @@ class Formula {
     
 private:
     std::vector<ExprPtr> exprs;
-    
     std::vector<ExprPtr> oldSoftExprs;
-    std::vector<ExprPtr> notPostConditions;
-    std::vector<ExprPtr> postConditions;
-    std::vector<ExprPtr> loopAssertExprs;
     
     unsigned nbHardExpressions;
     unsigned nbSoftExpressions;
-    unsigned currentPushPopId;
     
-    bool lock;
+    unsigned currentPushPopId;
+    bool     lock;
     std::vector<unsigned> pushPopIds;
     
 public:
@@ -74,11 +70,6 @@ public:
     void setHard(ExprPtr e);
     void setHard(std::set<ExprPtr> es);
     
-    void                    addPostCondition(ExprPtr e);
-    void                    addNotPostCondition(ExprPtr e);
-    std::vector<ExprPtr>    getPostConditions();
-    std::vector<ExprPtr>    getNotPostConditions();
-    
     std::vector<ExprPtr>    getExprs(llvm::BasicBlock *bb);
     std::vector<ExprPtr>    getSoftExprs(llvm::BasicBlock *bb);
     std::vector<ExprPtr>    getExprs();
@@ -94,11 +85,6 @@ public:
     void dump();
     void lightDump();
     void dumpLineNumber();
-    
-    // TMP
-    std::vector<ExprPtr> getLoopAssertExprs() { return loopAssertExprs; }
-    void addLoopAssert(ExprPtr e) { loopAssertExprs.push_back(e); }
-    //
     
 }; 
 //============================================================================

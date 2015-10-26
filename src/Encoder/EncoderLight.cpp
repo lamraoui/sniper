@@ -557,7 +557,7 @@ ExprPtr EncoderLight::encode(ZExtInst *zext) {
 // =============================================================================
 // encode - CallInst
 // =============================================================================
-ExprPtr EncoderLight::encode(CallInst *call, Formula *formula) {
+ExprPtr EncoderLight::encode(CallInst *call, Formula *AS) {
     
     StringRef functionName;
     Function *F = call->getCalledFunction();
@@ -617,9 +617,7 @@ ExprPtr EncoderLight::encode(CallInst *call, Formula *formula) {
                 || functionName==SNIPER_ASSERT_RETVOID_FUN_NAME
                 || functionName==ASSERT_FUN_NAME) {
             //ExprPtr and_expr1 = Expression::mkAnd(arg_bb, eqOne_expr);
-            formula->addPostCondition(eqOne_expr); //POST
-            //ExprPtr and_expr2 = Expression::mkAnd(arg_bb, eqZero_expr);
-            formula->addNotPostCondition(eqZero_expr); //notPOST
+            AS->add(eqOne_expr); // Post-condition
             return NULL;
         } else {
             error("cannot process assert call");
@@ -779,7 +777,7 @@ ExprPtr EncoderLight::encode(StoreInst *store) {
 // =============================================================================
 // encode - LoadInst 
 // =============================================================================
-ExprPtr EncoderLight::encode(LoadInst *load, Formula *formula) {
+ExprPtr EncoderLight::encode(LoadInst *load, Formula *AS) {
     Value *ptr = load->getPointerOperand();
     ExprPtr mem_expr;
     // Argv
@@ -800,7 +798,7 @@ ExprPtr EncoderLight::encode(LoadInst *load, Formula *formula) {
         ExprPtr appargExpr = ctx->getVariable(ptr);
         ExprPtr app_expr = Expression::mkApp(mem_expr, appargExpr); 
         ExprPtr eqExpr = Expression::mkEq(lhs_expr, app_expr);
-        formula->assertHard(eqExpr);
+        AS->add(eqExpr);
         return NULL;
     }
     // Shared memory other than argv

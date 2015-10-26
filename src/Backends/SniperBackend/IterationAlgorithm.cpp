@@ -13,7 +13,8 @@
 
 unsigned nbCallsToSolver = 0;
 
-void IterationAlgorithm::run(Formula *TF, ProgramProfile *prof,
+void IterationAlgorithm::run(Formula *TF, Formula *AS,
+                             ProgramProfile *prof,
                              Combine::Method combineMethod) {
     // Nothing to do
     if (!prof->hasFailingProgramTraces()) {
@@ -27,11 +28,11 @@ void IterationAlgorithm::run(Formula *TF, ProgramProfile *prof,
     std::vector<ProgramTrace*>
     failingTraces = prof->getFailingProgramTraces(options);
     
-    // Add all the post-conditions to the context
-    std::vector<ExprPtr> postConds = TF->getPostConditions();
-    for(ExprPtr post_expr : postConds) {
-        TF->assertHard(post_expr);
+    // Add the pre- and post-conditions to the context
+    for (ExprPtr e : AS->getExprs()) {
+        TF->assertHard(e);
     }
+    
     if (options->verbose()) {
         std::cout << "=================================================\n";
         std::cout << "Running AllDiagnosis algorithm ";
@@ -108,7 +109,8 @@ void IterationAlgorithm::run(Formula *TF, ProgramProfile *prof,
 
 
 // Dynamic Diagnoses Enumeration
-void IterationAlgorithm::run_dynamic(Formula *TF, ProgramProfile *prof,
+void IterationAlgorithm::run_dynamic(Formula *TF, Formula *AS,
+                                     ProgramProfile *prof,
                                      Combine::Method combineMethod) {
     
     if (!options->instructionGranularityLevel()) {
@@ -119,6 +121,11 @@ void IterationAlgorithm::run_dynamic(Formula *TF, ProgramProfile *prof,
     }
     std::vector<ProgramTrace*>
     failingTraces = prof->getFailingProgramTraces(options);
+    
+    // Add the pre- and post-conditions to the context
+    for (ExprPtr e : AS->getExprs()) {
+        TF->assertHard(e);
+    }
     
     //
     // Create a new trace formula with a block-level granularity
