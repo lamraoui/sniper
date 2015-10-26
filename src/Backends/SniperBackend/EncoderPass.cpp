@@ -17,6 +17,8 @@ EncoderPass::EncoderPass(Function *_targetFun, Context *_ctx, LoopInfoPass *_loo
                          ProgramProfile *_profile, Options *_options) 
 : targetFun(_targetFun), ctx(_ctx), loops(_loops), profile(_profile), options(_options) { 
     this->encoder = new Encoder(ctx);
+    // Create an empty AS formula (for pre- and post-condition)
+    this->AS = new Formula();
 }
 
 EncoderPass::~EncoderPass() { 
@@ -190,7 +192,7 @@ Formula* EncoderPass::makeTraceFormula() {
                     expr = encoder->encode(cast<ICmpInst>(i));
                     break;
                 case Instruction::Call:
-                    expr = encoder->encode(cast<CallInst>(i), formula);
+                    expr = encoder->encode(cast<CallInst>(i), AS);
                     isWeigted = false;
                     break;
                 case Instruction::Alloca:
@@ -202,7 +204,7 @@ Formula* EncoderPass::makeTraceFormula() {
                     //isWeigted = true;
                     break;
                 case Instruction::Load:
-                    expr = encoder->encode(cast<LoadInst>(i), formula);
+                    expr = encoder->encode(cast<LoadInst>(i), AS);
                     //isWeigted = true;
                     break;
                 case Instruction::GetElementPtr:

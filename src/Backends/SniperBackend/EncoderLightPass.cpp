@@ -17,6 +17,8 @@ EncoderLightPass::EncoderLightPass(Function *_targetFun, Context *_ctx, LoopInfo
                          ProgramProfile *_profile, Options *_options) 
 : targetFun(_targetFun), ctx(_ctx), loops(_loops), profile(_profile), options(_options) { 
     this->encoder = new EncoderLight(ctx);
+    // Create an empty AS formula (for pre- and post-condition)
+    this->AS = new Formula();
 }
 
 EncoderLightPass::~EncoderLightPass() { 
@@ -39,8 +41,6 @@ Formula* EncoderLightPass::makeTraceFormula() {
     }
     // Create an empty trace formula
     Formula *formula = new Formula();
-    // Create an empty AS formula (for pre- and post-condition)
-    this->AS = new Formula();
     // Prepare the CFG variables
     encoder->prepareControlFlow(targetFun);
     // Pre-process the global variables
