@@ -7,7 +7,9 @@ AC_INIT([SNIPER], [0.2], [simo@nii.ac.jp], [sniper])
 AC_CONFIG_SRCDIR([src/main.cpp])
 
 AC_PREREQ([2.59])
-AM_INIT_AUTOMAKE([1.10 -Wall no-define subdir-objects])
+# Disable the -Wextra-portability option until developers can all use
+# automake-1.11.2 or newer, at which point we'll use the new AM_PROG_AR instead.
+AM_INIT_AUTOMAKE([1.10 -Wall no-define subdir-objects -Wno-extra-portability])
 AC_CONFIG_HEADERS([config.h])
 
 AC_GNU_SOURCE
@@ -20,6 +22,7 @@ AC_LANG([C++])
 
 # Checks for programs
 AC_PROG_CC
+AC_PROG_RANLIB
 AC_PROG_CXX
 AC_PROG_CPP
 AC_PROG_CXXCPP
@@ -83,8 +86,14 @@ AC_SUBST(LLVM_CPPFLAGS, $(llvm-config --cppflags))
 AC_SUBST(LLVM_LDADD, $(llvm-config --ldflags --libs core linker ipo interpreter mcjit jit native irreader | tr '\n' ' '))
 
 
-
-
-AC_CONFIG_FILES([Makefile src/Makefile])
+AC_CONFIG_FILES([
+	Makefile 
+	src/Makefile 
+	utils/Makefile
+	utils/unittest/Makefile
+	utils/unittest/googletest/Makefile
+	unittests/Makefile
+	unittests/Expression/Makefile
+])
 AC_OUTPUT
 
