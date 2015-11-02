@@ -357,6 +357,9 @@ public:
     virtual void dump() {
         std::cout << name;
     }
+    virtual ~BoolVarExpression() {
+        NbBoolVariables--;
+    }
 };
 
 class IntVarExpression : public SingleExpression {
@@ -370,6 +373,9 @@ public:
     }
     virtual void dump() {
         std::cout << name;
+    }
+    virtual ~IntVarExpression() {
+        NbIntVariables--;
     }
 };
 
@@ -389,7 +395,7 @@ class ToParseExpression : public Expression {
 private:
     std::string str;
 public:
-    ToParseExpression(std::string s);
+    ToParseExpression(std::string s) : str(s) { }
     std::string getString() {
         return str;
     }
