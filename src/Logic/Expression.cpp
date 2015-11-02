@@ -170,8 +170,8 @@ ExprPtr Expression::mkOp(ExprPtr left, ExprPtr right, llvm::CmpInst::Predicate o
         case llvm::CmpInst::ICMP_SLE: // signed less or equal
             return mkLe(left, right);
         default:
-            std::cout << "error: Unsupported comaprison operator!\n"; 
-            exit(1);
+            llvm_unreachable("Invalid comparison operator");
+            
     }
 }
 
@@ -253,9 +253,7 @@ ExprPtr Expression::mkOp(ExprPtr left, ExprPtr right, llvm::Instruction *i) {
         case llvm::Instruction::AShr:
          ***/
         default:
-            std::cout << "error: Instruction not supported. OpCode: ";
-            std::cout << opCode << std::endl;
-            exit(1);
+            llvm_unreachable("Instruction not supported by SNIPER");
     }
 }
 
@@ -306,8 +304,7 @@ llvm::CmpInst::Predicate Expression::negateOp(llvm::CmpInst::Predicate op) {
         case llvm::CmpInst::ICMP_SLE: // signed less or equal
             return llvm::CmpInst::ICMP_SGT;
         default:
-            std::cout << "error: Unsupported comaprison operator!\n"; 
-            exit(1);
+            llvm_unreachable("Invalid comparison operator");
     }   
 }
 
@@ -403,9 +400,7 @@ ExprPtr Expression::getExprFromValue(llvm::Value *v) {
 // TODO: order is taken into account in the equality of expressions,
 //       which is not correct.
 bool operator== (ExprPtr e1, ExprPtr e2) {
-    if (e1.get()==NULL || e2.get()==NULL) {
-        error("null expression");
-    }
+    assert((e1.get() && e2.get()) && "Unexpected null expressions");
     if (e1->getOpCode()!=e2->getOpCode()) {
         return false;
     }
@@ -511,8 +506,7 @@ bool operator== (ExprPtr e1, ExprPtr e2) {
             if (es1.size()!=es2.size())
                 return false;
             const unsigned n = es1.size();
-            if (n==0)
-                error("AND expression");
+            assert(n==0 && "Empty AndExpression");
             if (n==1)
                 return (es1.back()==es2.back());
             for(unsigned i=0; i<n; i++) {
@@ -529,8 +523,7 @@ bool operator== (ExprPtr e1, ExprPtr e2) {
             if (es1.size()!=es2.size())
                 return false;
             const unsigned n = es1.size();
-            if (n==0)
-                error("OR expression");
+            assert(n==0 && "Empty MulExpression");
             if (n==1)
                 return (es1.back()==es2.back());
             for(unsigned i=0; i<n; i++) {
@@ -547,8 +540,7 @@ bool operator== (ExprPtr e1, ExprPtr e2) {
             if (es1.size()!=es2.size())
                 return false;
             const unsigned n = es1.size();
-            if (n==0)
-                error("XOR expression");
+            assert(n==0 && "Empty XorExpression");
             if (n==1)
                 return (es1.back()==es2.back());
             for(unsigned i=0; i<n; i++) {
@@ -565,8 +557,7 @@ bool operator== (ExprPtr e1, ExprPtr e2) {
             if (es1.size()!=es2.size())
                 return false;
             const unsigned n = es1.size();
-            if (n==0)
-                error("SUM expression");
+            assert(n==0 && "Empty SumExpression");
             if (n==1)
                 return (es1.back()==es2.back());
             for(unsigned i=0; i<n; i++) {
@@ -583,8 +574,7 @@ bool operator== (ExprPtr e1, ExprPtr e2) {
             if (es1.size()!=es2.size())
                 return false;
             const unsigned n = es1.size();
-            if (n==0)
-                error("SUB expression");
+            assert(n==0 && "Empty SubExpression");
             if (n==1)
                 return (es1.back()==es2.back());
             for(unsigned i=0; i<n; i++) {
@@ -601,8 +591,7 @@ bool operator== (ExprPtr e1, ExprPtr e2) {
             if (es1.size()!=es2.size())
                 return false;
             const unsigned n = es1.size();
-            if (n==0)
-                error("MUL expression");
+            assert(n==0 && "Empty MulExpression");
             if (n==1)
                 return (es1.back()==es2.back());
             for(unsigned i=0; i<n; i++) {
@@ -651,7 +640,7 @@ bool operator== (ExprPtr e1, ExprPtr e2) {
             return (de1->getExpr2()==de2->getExpr2());
         }
         default:
-            error("wrong expression op code");
+            llvm_unreachable("Invalid Expression subclass");
             break;
     }
     return false;
