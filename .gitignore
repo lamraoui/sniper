@@ -20,6 +20,7 @@ sniper
 .dirstamp
 .deps
 *.o
+*.a
 *~
 .DS_Store
 *.bc
