@@ -166,7 +166,8 @@ void Executor::ExecuteInst(Instruction *i) {
             error("test-executor");
     }
     if (expr && !DisabledSymbolicExeCurRun) {
-        PathFormula->assertHard(expr);
+        expr->setHard();
+        PathFormula->add(expr);
     }
 }
 
@@ -222,7 +223,8 @@ void Executor::ExecuteInst1(Instruction *i, Value *val) {
             error("test-executor");
     }
     if (expr && !DisabledSymbolicExeCurRun) {
-        PathFormula->assertHard(expr);
+        expr->setHard();
+        PathFormula->add(expr);
     }
 }
 
@@ -271,7 +273,8 @@ void Executor::ExecuteInst2(Instruction *i, Value *val1, Value *val2) {
             error("test-executor");
     }
     if (expr && !DisabledSymbolicExeCurRun) {
-        PathFormula->assertHard(expr);
+        expr->setHard();
+        PathFormula->add(expr);
     }
 }
 
@@ -300,7 +303,8 @@ void Executor::ExecuteInst3(Instruction *i, Value *val1, Value *val2, Value *val
             error("test-executor");
     }
     if (expr && !DisabledSymbolicExeCurRun) {
-        PathFormula->assertHard(expr);
+        expr->setHard();
+        PathFormula->add(expr);
     }
 }
 

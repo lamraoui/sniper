@@ -87,7 +87,8 @@ Formula* EncoderPass::makeTraceFormula() {
     Formula *formula = new Formula();
     // Model the CFG formula
     ExprPtr cfExpr = encoder->encodeControlFlow(targetFun);
-    formula->assertHard(cfExpr);
+    cfExpr->setHard();
+    formula->add(cfExpr);
     // Pre-process the global variables
     initGlobalVariables();
     // Save the line numbers of the call to assert 
@@ -108,7 +109,8 @@ Formula* EncoderPass::makeTraceFormula() {
         // Propagate pointers when we enter in a new basicblock
         ExprPtr e = ctx->propagatePointers(bb);
         if (e) {
-            formula->assertHard(e);
+            e->setHard();
+            formula->add(e);
         }
         // PTF: Do not encode bug free blocks
         bool doEncodeBB = true;
@@ -271,7 +273,8 @@ Formula* EncoderPass::makeTraceFormula() {
                     // Add each instruction separately
                     if (options->instructionGranularityLevel()) {
                         expr->setInstruction(i);
-                        formula->assertSoft(expr);
+                        expr->setSoft();
+                        formula->add(expr);
                     }
                     // Pack and add all instructions from
                     // the same line number
@@ -286,7 +289,8 @@ Formula* EncoderPass::makeTraceFormula() {
                             }
                             ExprPtr e = Expression::mkAnd(currentConstraits);
                             e->setInstruction(lastInstruction);
-                            formula->assertSoft(e);
+                            e->setSoft();
+                            formula->add(e);
                             currentConstraits.clear();
                         }
                         currentConstraits.push_back(expr);
@@ -302,7 +306,8 @@ Formula* EncoderPass::makeTraceFormula() {
                 }
                 // Instruction with no line number
                 else {
-                    formula->assertHard(expr);
+                    e->setHard();
+                    formula->add(expr);
                 }
             }
         }
@@ -311,7 +316,8 @@ Formula* EncoderPass::makeTraceFormula() {
             if (!currentConstraits.empty()) {
                 ExprPtr e = Expression::mkAnd(currentConstraits);
                 e->setInstruction(lastInstruction);
-                formula->assertSoft(e);
+                e->setSoft();
+                formula->add(e);
                 currentConstraits.clear();
             }
         }
@@ -324,7 +330,8 @@ Formula* EncoderPass::makeTraceFormula() {
             }
             ExprPtr e = Expression::mkAnd(currentConstraits);
             e->setInstruction(lastInstruction);
-            formula->assertSoft(e);
+            e->setSoft();
+            formula->add(e);
             currentConstraits.clear();
         } else {
             error("EncodePass");
@@ -342,7 +349,8 @@ Formula* EncoderPass::makeTraceFormula() {
 //        }
 //        ExprPtr pp = constructPartialPart_V3();
 //        if (pp) {
-//            formula->assertHard(pp);
+//            pp->setHard();
+//            formula->add(pp);
 //            if (options->dbgMsg()) {
 //                std::cout << "Partial part of TF: "<< std::endl;
 //                pp->dump();

@@ -30,7 +30,8 @@ void IterationAlgorithm::run(Formula *TF, Formula *AS,
     
     // Add the pre- and post-conditions to the context
     for (ExprPtr e : AS->getExprs()) {
-        TF->assertHard(e);
+        e->setHard();
+        TF->add(e);
     }
     
     if (options->verbose()) {
@@ -124,7 +125,8 @@ void IterationAlgorithm::run_dynamic(Formula *TF, Formula *AS,
     
     // Add the pre- and post-conditions to the context
     for (ExprPtr e : AS->getExprs()) {
-        TF->assertHard(e);
+        e->setHard();
+        TF->add(e);
     }
     
     //
@@ -138,7 +140,7 @@ void IterationAlgorithm::run_dynamic(Formula *TF, Formula *AS,
     for (ExprPtr e : clauses) {
         // Hard clause
         if (e->isHard()) {
-            formula2->assertHard(e);
+            formula2->add(e);
         }
         // Soft clause
         else {
@@ -152,7 +154,7 @@ void IterationAlgorithm::run_dynamic(Formula *TF, Formula *AS,
                 ExprPtr blockExpr = Expression::mkAnd(tmpClauses);
                 blockExpr->setInstruction(lastInst);
                 blockExpr->setSoft();
-                formula2->assertSoft(blockExpr);
+                formula2->add(blockExpr);
                 tmpClauses.clear();
             }
             tmpClauses.push_back(e);
@@ -165,7 +167,7 @@ void IterationAlgorithm::run_dynamic(Formula *TF, Formula *AS,
         ExprPtr blockExpr = Expression::mkAnd(tmpClauses);
         blockExpr->setInstruction(lastInst);
         blockExpr->setSoft();
-        formula2->assertSoft(blockExpr);
+        formula2->add(blockExpr);
         tmpClauses.clear();
     }
     
@@ -221,7 +223,7 @@ void IterationAlgorithm::run_dynamic(Formula *TF, Formula *AS,
     for (ExprPtr e : clauses2) {
         // Hard clause
         if (e->isHard()) {
-            formula3->assertHard(e);
+            formula3->add(e);
         }
         // Soft clause
         else {
@@ -233,10 +235,11 @@ void IterationAlgorithm::run_dynamic(Formula *TF, Formula *AS,
             const bool isSuspicous
             = (suspicousBlocks.find(bb)!=suspicousBlocks.end());
             if (!isSuspicous) {
-                formula3->assertHard(e);
+                e->setHard();
+                formula3->add(e);
             } else {
                 e->setSoft();
-                formula3->assertSoft(e);
+                formula3->add(e);
             }
         }
     }
@@ -290,11 +293,13 @@ IterationAlgorithm::allDiagnosis(Formula *TF,
             ExprPtr notai = Expression::mkNot(ai);
             //notai->setWeight(e->getWeight());
             notai->setLine(e->getLine());
-            WF->assertSoft(notai);
+            notai->setSoft();
+            WF->add(notai);
             // Remove E and add EA as hard
             ExprPtr ea = Expression::mkOr(e, ai);
             WF->remove(e);
-            WF->assertHard(ea);
+            ea->setHard();
+            WF->add(ea);
         }
     }
     if (AV.empty()) {

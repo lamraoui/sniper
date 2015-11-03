@@ -26,47 +26,21 @@ FormulaPtr Formula::make() {
     return std::make_shared<Formula>();
 }
 
-void Formula::assertHard(ExprPtr e) {
-    e->setHard();
+// Insert an expression
+void Formula::add(ExprPtr e) {
     exprs.push_back(e);
-    currentPushPopId = exprs.size();
-    if (lock) {
-        e->invalidate();
-    }
 }
 
-void Formula::assertSoft(ExprPtr e) {
-    e->setSoft();
-    if (e && e->getInstruction()) {
-        if (llvm::MDNode *N = e->getInstruction()->getMetadata("dbg")) { 
-            llvm::DILocation Loc(N); 
-            unsigned l = Loc.getLineNumber();
-            //StringRef File = Loc.getFilename();
-            //StringRef Dir = Loc.getDirectory();
-            e->setLine(l);
-        } else {
-            e->setLine(0);
-        }
-    }
-    exprs.push_back(e);
-    currentPushPopId = exprs.size();
-    if (lock) {
-        e->invalidate();
-    }
+// Merge the formula f into this one
+void Formula::add(FormulaPtr f) {
+    std::vector<ExprPtr> E = f->getExprs();
+    this->exprs.insert(exprs.end(), E.begin(), E.end());
+    // TODO: Push/pop
 }
 
-void Formula::setHard(ExprPtr e) {
-    e->setHard();
-    // TODO : multi push/pop compliant
-    oldSoftExprs.push_back(e);
-}
-
-void Formula::setHard(std::set<ExprPtr> es) {
-    std::set<ExprPtr>::iterator it;
-    for (it=es.begin(); it!=es.end(); it++) {
-        ExprPtr e = *it;
-        setHard(e);
-    }
+// Insert a set of expressions
+void Formula::add(std::set<ExprPtr> E) {
+    std::copy(E.begin(), E.end(), std::back_inserter(exprs));
 }
 
 void Formula::remove(ExprPtr e) {
@@ -75,6 +49,16 @@ void Formula::remove(ExprPtr e) {
     if (lock) {
         e->invalidate();
     }
+}
+
+// Retrun the number of clauses in this formula
+unsigned Formula::size() {
+    return exprs.size();
+}
+
+// Return true if the MCS contains expressions, false otherwise
+bool Formula::empty() {
+    return exprs.empty();
 }
 
 std::vector<ExprPtr> Formula::getExprs(llvm::BasicBlock *bb) {
@@ -105,86 +89,6 @@ std::vector<ExprPtr> Formula::getExprs() {
     return this->exprs;
 }
 
-// Merge the formula f into this one
-void Formula::add(FormulaPtr f) {
-    std::vector<ExprPtr> E = f->getExprs();
-    this->exprs.insert(exprs.end(), E.begin(), E.end());
-    // TODO: Push/pop
-}
-
-void Formula::push() {
-    pushPopIds.push_back(currentPushPopId);
-}
-
-void Formula::pop() {
-    // Nothing to pop
-    if (currentPushPopId==0 || pushPopIds.empty()) {
-        std::cout << "nothing to pop...\n";
-        return;
-    }
-    // Update push/pop IDs
-    currentPushPopId = pushPopIds.back();
-    pushPopIds.pop_back();
-    // Remove from the formula all expressions
-    // that were asserted after the last push 
-    int n = exprs.size() - currentPushPopId;
-    for(int i=0; i<n; i++) {
-        ExprPtr e = exprs.back();
-        exprs.pop_back();
-    }
-    std::vector<ExprPtr>::iterator it;
-    for(ExprPtr e : oldSoftExprs) {
-        e->setSoft();
-    }
-    oldSoftExprs.clear();
-}
-
-
-void Formula::dump() {
-    std::cout << "--------------------------------------------\n";
-    std::cout << "Formula dump\n";
-    std::cout << " nb hard expressions: " << getNbHardExpr() << std::endl;
-    std::cout << " nb soft expressions: " << getNbSoftExpr() << std::endl;
-    for (ExprPtr e : exprs) {
-        e->dump();
-        if (e->isHard()) {
-            std::cout << " [h]";
-        } else {
-            std::cout << " [s]";
-        }
-        std::cout << std::endl;
-    }
-    std::cout << "--------------------------------------------\n";
-}
-
-void Formula::lightDump() {
-    std::cout << "{ ";
-    for (ExprPtr e : exprs) {
-        e->dump();
-        std::cout << " ";
-    }
-    std::cout << "}";
-}
-
-// Insert an expression
-void Formula::add(ExprPtr e) {
-    exprs.push_back(e);
-}
-
-// Insert a set of expressions
-void Formula::add(std::set<ExprPtr> E) {
-    std::copy(E.begin(), E.end(), std::back_inserter(exprs));
-}
-
-unsigned Formula::size() {
-    return exprs.size();
-}
-
-// Return true if the MCS contains expressions, false otherwise
-bool Formula::empty() {
-    return exprs.empty();
-}
-
 std::vector<unsigned> Formula::getLineNumbers() {
     std::vector<unsigned> lines;
     for(ExprPtr e : exprs) {
@@ -213,6 +117,59 @@ unsigned Formula::getNbSoftExpr() {
         }
     }
     return count;
+}
+
+void Formula::push() {
+    pushPopIds.push_back(currentPushPopId);
+}
+
+void Formula::pop() {
+    // Nothing to pop
+    if (currentPushPopId==0 || pushPopIds.empty()) {
+        std::cout << "nothing to pop...\n";
+        return;
+    }
+    // Update push/pop IDs
+    currentPushPopId = pushPopIds.back();
+    pushPopIds.pop_back();
+    // Remove from the formula all expressions
+    // that were asserted after the last push
+    int n = exprs.size() - currentPushPopId;
+    for(int i=0; i<n; i++) {
+        ExprPtr e = exprs.back();
+        exprs.pop_back();
+    }
+    std::vector<ExprPtr>::iterator it;
+    for(ExprPtr e : oldSoftExprs) {
+        e->setSoft();
+    }
+    oldSoftExprs.clear();
+}
+
+void Formula::dump() {
+    std::cout << "--------------------------------------------\n";
+    std::cout << "Formula dump\n";
+    std::cout << " nb hard expressions: " << getNbHardExpr() << std::endl;
+    std::cout << " nb soft expressions: " << getNbSoftExpr() << std::endl;
+    for (ExprPtr e : exprs) {
+        e->dump();
+        if (e->isHard()) {
+            std::cout << " [h]";
+        } else {
+            std::cout << " [s]";
+        }
+        std::cout << std::endl;
+    }
+    std::cout << "--------------------------------------------\n";
+}
+
+void Formula::lightDump() {
+    std::cout << "{ ";
+    for (ExprPtr e : exprs) {
+        e->dump();
+        std::cout << " ";
+    }
+    std::cout << "}";
 }
 
 void Formula::dumpLineNumber() {

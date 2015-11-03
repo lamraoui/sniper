@@ -41,7 +41,8 @@ void BMC::runBMCWithPathExploration(ProgramProfile *profile) {
     // Add all the not(post-condition) to the context
     for (ExprPtr e : AS->getExprs()) {
         ExprPtr ne = Expression::mkNot(e);
-        TF->assertHard(ne);
+        ne->setHard();
+        TF->add(ne);
     }
     
     // Compute iterative BMC
@@ -59,7 +60,8 @@ void BMC::runBMCWithPathExploration(ProgramProfile *profile) {
         TF->push();
         
         // Add the path formula to the context
-        TF->assertHard(fbb_expr);
+        fbb_expr->setHard();
+        TF->add(fbb_expr);
         
         switch(solver->check(TF)) {
                 // Negated claim is satisfiable, i.e., does not hold
@@ -179,7 +181,8 @@ void BMC::runClassicBMC(ProgramProfile *profile) {
     // Add all the not(post-condition) to the context
     for (ExprPtr e : AS->getExprs()) {
         ExprPtr ne = Expression::mkNot(e);
-        TF->assertHard(ne);
+        ne->setHard();
+        TF->add(ne);
     }
     
     // Compute BMC

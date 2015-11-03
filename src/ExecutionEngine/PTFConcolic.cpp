@@ -247,7 +247,8 @@ bool PTFConcolic::solve(std::vector<ExprCellPtr> path, std::vector<ExprCellPtr> 
             std::cout << "error: Concolic Module.\n";
             exit(1);
         }
-        formula->assertHard(e);
+        e->setHard();
+        formula->add(e);
     }
     // Create and add the constraint in the formula:
     // If the branch taken in the last
@@ -264,7 +265,8 @@ bool PTFConcolic::solve(std::vector<ExprCellPtr> path, std::vector<ExprCellPtr> 
     } else {
         e = selectedNode->getExpr();
     }
-    formula->assertHard(e);
+    e->setHard();
+    formula->add(e);
     
     // Add the asserts to the formula
     for (unsigned i=0; i<asserts.size(); i++) {
@@ -278,7 +280,8 @@ bool PTFConcolic::solve(std::vector<ExprCellPtr> path, std::vector<ExprCellPtr> 
         //std::cout << "assert: ";
         //e->dump();
         //std::cout << std::endl;
-        formula->assertHard(e);
+        e->setHard();
+        formula->add(e);
     }
     //formula->dump();
     

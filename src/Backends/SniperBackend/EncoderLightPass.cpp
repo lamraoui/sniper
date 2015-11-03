@@ -63,7 +63,8 @@ Formula* EncoderLightPass::makeTraceFormula() {
         // Propagate pointers when we enter in a new basicblock
         ExprPtr e = ctx->propagatePointers(bb);
         if (e) {
-            formula->assertHard(e);
+            e->setHard();
+            formula->add(e);
         }
         // PFTF: Do not encode bug free blocks
         // HFTF: Encode bug free blocks as hard
@@ -224,7 +225,8 @@ Formula* EncoderLightPass::makeTraceFormula() {
                     // Add each instruction separately
                     if (options->instructionGranularityLevel()) {
                         expr->setInstruction(i);
-                        formula->assertSoft(expr);
+                        expr->setSoft();
+                        formula->add(expr);
                     }
                     // Pack and add all instructions from
                     // the same line number
@@ -239,7 +241,8 @@ Formula* EncoderLightPass::makeTraceFormula() {
                             }
                             ExprPtr e = Expression::mkAnd(currentConstraits);
                             e->setInstruction(lastInstruction);
-                            formula->assertSoft(e);
+                            e->setSoft();
+                            formula->add(e);
                             currentConstraits.clear();
                         }
                         currentConstraits.push_back(expr);
@@ -255,7 +258,8 @@ Formula* EncoderLightPass::makeTraceFormula() {
                 }
                 // Instruction with no line number
                 else {
-                    formula->assertHard(expr);
+                    expr->setHard();
+                    formula->add(expr);
                 }
             }
         }
@@ -264,7 +268,8 @@ Formula* EncoderLightPass::makeTraceFormula() {
             if (!currentConstraits.empty()) {
                 ExprPtr e = Expression::mkAnd(currentConstraits);
                 e->setInstruction(lastInstruction);
-                formula->assertSoft(e);
+                e->setSoft();
+                formula->add(e);
                 currentConstraits.clear();
             }
         }
@@ -277,7 +282,8 @@ Formula* EncoderLightPass::makeTraceFormula() {
             }
             ExprPtr e = Expression::mkAnd(currentConstraits);
             e->setInstruction(lastInstruction);
-            formula->assertSoft(e);
+            e->setSoft();
+            formula->add(e);
             currentConstraits.clear();
         } else {
             error("Encoder-light Pass");

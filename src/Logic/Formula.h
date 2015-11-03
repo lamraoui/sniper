@@ -61,11 +61,6 @@ public:
     unsigned    size();
     bool        empty();
     
-    void assertHard(ExprPtr e);
-    void assertSoft(ExprPtr e);
-    void setHard(ExprPtr e);
-    void setHard(std::set<ExprPtr> es);
-    
     std::vector<ExprPtr>    getExprs(llvm::BasicBlock *bb);
     std::vector<ExprPtr>    getSoftExprs(llvm::BasicBlock *bb);
     std::vector<ExprPtr>    getExprs();

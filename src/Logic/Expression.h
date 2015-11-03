@@ -21,6 +21,7 @@
 #include "llvm/IR/Instructions.h"
 #include "llvm/IR/BasicBlock.h"
 #include "llvm/IR/InstrTypes.h"
+#include "llvm/DebugInfo.h"
 
 class Expression;
 class SingleExpression;
@@ -200,6 +201,15 @@ public:
         soft = false;
     }
     void setSoft() {
+        llvm::Instruction *I = getInstruction();
+        assert(I && "Expected an instruction");
+        if (llvm::MDNode *N = I->getMetadata("dbg")) {
+            llvm::DILocation Loc(N);
+            unsigned l = Loc.getLineNumber();
+            setLine(l);
+        } else {
+            setLine(0);
+        }
         soft = true;
     }
     unsigned getLine() {

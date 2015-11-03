@@ -166,7 +166,9 @@ void YicesSolver::setHard(Formula *formula, ExprPtr e) {
     expr2yexpr.erase(e);
     yices_retract(ctx, id);
     yices_assert(ctx, expr);
-    formula->setHard(e);
+    e->setHard();
+    // TODO: check if is e in formula
+    //formula->setHard(e);
 }
 
 std::string YicesSolver::getModel() {
