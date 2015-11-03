@@ -15,13 +15,6 @@ unsigned Expression::ID = 0;
 unsigned Expression::NbIntVariables = 0;
 unsigned Expression::NbBoolVariables = 0;
 
-Expression::Expression() : currentID(ID++) {
-    line = 0;
-    soft = false;
-    valid = true;
-    instruction = NULL;
-}
-
 TrueExprPtr Expression::mkTrue() {
     return std::make_shared<TrueExpression>();
 }

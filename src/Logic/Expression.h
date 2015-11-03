@@ -131,7 +131,8 @@ protected:
     static unsigned NbIntVariables;
     static unsigned NbBoolVariables;
 protected:
-    Expression();
+    Expression()
+    : currentID(ID++), soft(false), valid(true), instruction(NULL), line(0) { }
     virtual ~Expression() { }
     
 public:
@@ -201,15 +202,16 @@ public:
         soft = false;
     }
     void setSoft() {
+        unsigned l = 0;
         llvm::Instruction *I = getInstruction();
-        assert(I && "Expected an instruction");
-        if (llvm::MDNode *N = I->getMetadata("dbg")) {
-            llvm::DILocation Loc(N);
-            unsigned l = Loc.getLineNumber();
-            setLine(l);
-        } else {
-            setLine(0);
+        if (I) {
+            if (llvm::MDNode *N = I->getMetadata("dbg")) {
+                llvm::DILocation Loc(N);
+                l = Loc.getLineNumber();
+                setLine(l);
+            }
         }
+        setLine(l);
         soft = true;
     }
     unsigned getLine() {
