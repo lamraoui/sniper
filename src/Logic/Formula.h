@@ -42,16 +42,12 @@ private:
     std::vector<ExprPtr> exprs;
     std::vector<ExprPtr> oldSoftExprs;
     
-    unsigned nbHardExpressions;
-    unsigned nbSoftExpressions;
-    
     unsigned currentPushPopId;
     bool     lock;
     std::vector<unsigned> pushPopIds;
     
 public:
-    Formula() : nbHardExpressions(0), nbSoftExpressions(0),
-                currentPushPopId(0), lock(false) { }
+    Formula() : currentPushPopId(0), lock(false) { }
     Formula(Formula *f);
     Formula(std::vector<ExprPtr> _exprs): exprs(_exprs) { }
     ~Formula() { }
@@ -75,8 +71,8 @@ public:
     std::vector<ExprPtr>    getExprs();
     std::vector<unsigned>   getLineNumbers();
     
-    unsigned getNbHardExpr() { return nbHardExpressions; }
-    unsigned getNbSoftExpr() { return nbSoftExpressions; }
+    unsigned getNbHardExpr();
+    unsigned getNbSoftExpr();
     
     void setAsLocked() { lock = true; }
     void push();

@@ -13,8 +13,6 @@
 
 // Clone
 Formula::Formula(Formula *f) {
-    this->nbHardExpressions = f->getNbHardExpr();
-    this->nbSoftExpressions = f->getNbSoftExpr();
     this->exprs = f->getExprs();
     // OK?
     this->currentPushPopId = 0;
@@ -30,7 +28,6 @@ FormulaPtr Formula::make() {
 
 void Formula::assertHard(ExprPtr e) {
     e->setHard();
-    nbHardExpressions++;
     exprs.push_back(e);
     currentPushPopId = exprs.size();
     if (lock) {
@@ -40,7 +37,6 @@ void Formula::assertHard(ExprPtr e) {
 
 void Formula::assertSoft(ExprPtr e) {
     e->setSoft();
-    nbSoftExpressions++;
     if (e && e->getInstruction()) {
         if (llvm::MDNode *N = e->getInstruction()->getMetadata("dbg")) { 
             llvm::DILocation Loc(N); 
@@ -60,8 +56,6 @@ void Formula::assertSoft(ExprPtr e) {
 }
 
 void Formula::setHard(ExprPtr e) {
-    nbHardExpressions++;
-    nbSoftExpressions--;
     e->setHard();
     // TODO : multi push/pop compliant
     oldSoftExprs.push_back(e);
@@ -76,11 +70,6 @@ void Formula::setHard(std::set<ExprPtr> es) {
 }
 
 void Formula::remove(ExprPtr e) {
-    if (e->isSoft()) {
-        nbSoftExpressions--;
-    } else {
-        nbHardExpressions--;
-    }
     exprs.erase(std::remove(exprs.begin(), exprs.end(), e), exprs.end());
     currentPushPopId = exprs.size();
     if (lock) {
@@ -120,8 +109,6 @@ std::vector<ExprPtr> Formula::getExprs() {
 void Formula::add(FormulaPtr f) {
     std::vector<ExprPtr> E = f->getExprs();
     this->exprs.insert(exprs.end(), E.begin(), E.end());
-    this->nbSoftExpressions += f->getNbSoftExpr();
-    this->nbHardExpressions += f->getNbHardExpr();
     // TODO: Push/pop
 }
 
@@ -143,18 +130,10 @@ void Formula::pop() {
     int n = exprs.size() - currentPushPopId;
     for(int i=0; i<n; i++) {
         ExprPtr e = exprs.back();
-        // Update formula information
-        if (e->isHard()) {
-            nbHardExpressions--;
-        } else {
-            nbSoftExpressions--;
-        }     
         exprs.pop_back();
     }
     std::vector<ExprPtr>::iterator it;
     for(ExprPtr e : oldSoftExprs) {
-        nbHardExpressions--;
-        nbSoftExpressions++;
         e->setSoft();
     }
     oldSoftExprs.clear();
@@ -164,8 +143,8 @@ void Formula::pop() {
 void Formula::dump() {
     std::cout << "--------------------------------------------\n";
     std::cout << "Formula dump\n";
-    std::cout << " nb hard expressions: " << nbHardExpressions << std::endl;
-    std::cout << " nb soft expressions: " << nbSoftExpressions << std::endl;
+    std::cout << " nb hard expressions: " << getNbHardExpr() << std::endl;
+    std::cout << " nb soft expressions: " << getNbSoftExpr() << std::endl;
     for (ExprPtr e : exprs) {
         e->dump();
         if (e->isHard()) {
@@ -212,6 +191,28 @@ std::vector<unsigned> Formula::getLineNumbers() {
         lines.push_back(e->getLine());
     }
     return lines;
+}
+
+// Return the number of hard clauses in this formula
+unsigned Formula::getNbHardExpr() {
+    unsigned count = 0;
+    for (ExprPtr e : exprs) {
+        if (e->isHard()) {
+            count++;
+        }
+    }
+    return count;
+}
+
+// Return the number of soft clauses in this formula
+unsigned Formula::getNbSoftExpr() {
+    unsigned count = 0;
+    for (ExprPtr e : exprs) {
+        if (e->isSoft()) {
+            count++;
+        }
+    }
+    return count;
 }
 
 void Formula::dumpLineNumber() {
