@@ -12,7 +12,6 @@
 #ifndef _FORMULA_H
 #define _FORMULA_H
 
-
 #include <string>
 #include <set>
 #include <vector>
@@ -29,28 +28,30 @@ class SetOfFormulas;
 typedef std::shared_ptr<Formula> FormulaPtr;
 typedef std::shared_ptr<SetOfFormulas> SetOfFormulasPtr;
 
-// Pretty printer for Formula and SetOfFormulas
-std::ostream& operator<<(std::ostream& os, const FormulaPtr f);
-std::ostream& operator<<(std::ostream& os, const SetOfFormulasPtr f);
-std::ostream& operator<<(std::ostream& os, const std::vector<SetOfFormulasPtr> f);
-
-
 //============================================================================
 class Formula {
     
 private:
     std::vector<ExprPtr> exprs;
-    std::vector<ExprPtr> oldSoftExprs;
-    
-    unsigned currentPushPopId;
-    bool     lock;
-    std::vector<unsigned> pushPopIds;
     
 public:
-    Formula() : currentPushPopId(0), lock(false) { }
+    Formula() { }
     Formula(Formula *f);
     Formula(std::vector<ExprPtr> _exprs): exprs(_exprs) { }
     ~Formula() { }
+    
+    // Copy constructor/operator invalidate current push/pop status
+    Formula(const Formula& other) : exprs(other.exprs) { }
+    Formula& operator=(const Formula& other) {
+        if (this == &other)
+            return *this;
+        Formula tmp(other);
+        std::swap(exprs, tmp.exprs);
+        return *this;
+    }
+    Formula* clone() {
+        return new Formula(exprs);
+    }
     
     static FormulaPtr make();
     
@@ -69,13 +70,14 @@ public:
     unsigned getNbHardExpr();
     unsigned getNbSoftExpr();
     
-    void setAsLocked() { lock = true; }
-    void push();
-    void pop();
-    
     void dump();
     void lightDump();
     void dumpLineNumber();
+    
+    bool operator==(const Formula &other) const;
+    bool operator!=(const Formula &other) const;
+    
+    friend std::ostream& operator<<(std::ostream& os, const FormulaPtr f);
     
 }; 
 //============================================================================
@@ -108,6 +110,10 @@ public:
     
     double getCodeSizeReduction(unsigned totalNbLine);
     
+    friend std::ostream& operator<<(std::ostream& os, const SetOfFormulasPtr f);
+    friend std::ostream& operator<<(std::ostream& os,
+                                    const std::vector<SetOfFormulasPtr> f);
+
 };
 //============================================================================
 #endif

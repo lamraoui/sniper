@@ -361,7 +361,6 @@ Formula* EncoderPass::makeTraceFormula() {
 //            timer2.stop("Pruned Part Encoding Time");
 //        }
     }
-    formula->setAsLocked();
     return formula;
 }
 

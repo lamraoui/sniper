@@ -13,12 +13,8 @@
 
 // Clone
 Formula::Formula(Formula *f) {
-    this->exprs = f->getExprs();
-    // OK?
-    this->currentPushPopId = 0;
-    this->lock = f->lock; 
-    // pushPopIds
-    // currentPushPopId
+    std::vector<ExprPtr> E = f->getExprs();
+    this->exprs.insert(this->exprs.end(), E.begin(), E.end());
 }
 
 // Alloc a new empty formula
@@ -28,44 +24,40 @@ FormulaPtr Formula::make() {
 
 // Insert an expression
 void Formula::add(ExprPtr e) {
-    exprs.push_back(e);
+    this->exprs.push_back(e);
 }
 
 // Merge the formula f into this one
 void Formula::add(FormulaPtr f) {
     std::vector<ExprPtr> E = f->getExprs();
-    this->exprs.insert(exprs.end(), E.begin(), E.end());
-    // TODO: Push/pop
+    this->exprs.insert(this->exprs.end(), E.begin(), E.end());
 }
 
 // Insert a set of expressions
 void Formula::add(std::set<ExprPtr> E) {
-    std::copy(E.begin(), E.end(), std::back_inserter(exprs));
+    std::copy(E.begin(), E.end(), std::back_inserter(this->exprs));
 }
 
 void Formula::remove(ExprPtr e) {
-    exprs.erase(std::remove(exprs.begin(), exprs.end(), e), exprs.end());
-    currentPushPopId = exprs.size();
-    if (lock) {
-        e->invalidate();
-    }
+    exprs.erase(std::remove(this->exprs.begin(), this->exprs.end(), e),
+                this->exprs.end());
 }
 
 // Retrun the number of clauses in this formula
 unsigned Formula::size() {
-    return exprs.size();
+    return this->exprs.size();
 }
 
 // Return true if the MCS contains expressions, false otherwise
 bool Formula::empty() {
-    return exprs.empty();
+    return this->exprs.empty();
 }
 
+// Return all expressions with an instruction that belongs to bb
 std::vector<ExprPtr> Formula::getExprs(llvm::BasicBlock *bb) {
+    assert(bb && "Exptected a basic block!");
     std::vector<ExprPtr> bbExpr;
-    std::vector<ExprPtr>::iterator it;
-    for(it = exprs.begin(); it != exprs.end(); ++it) {
-        ExprPtr e = *it;
+    for(ExprPtr e : this->exprs) {
         if(e->getBB()==bb) {
             bbExpr.push_back(e);
         }
@@ -73,22 +65,24 @@ std::vector<ExprPtr> Formula::getExprs(llvm::BasicBlock *bb) {
     return bbExpr;
 }
 
+// Return all soft expressions with an instruction that belongs to bb
 std::vector<ExprPtr> Formula::getSoftExprs(llvm::BasicBlock *bb) {
+    assert(bb && "Exptected a basic block!");
     std::vector<ExprPtr> bbExpr;
-    std::vector<ExprPtr>::iterator it;
-    for(it = exprs.begin(); it != exprs.end(); ++it) {
-        ExprPtr e = *it;
-        if(e->isSoft() && e->getBB()!=NULL && e->getBB()==bb) {
+    for(ExprPtr e : this->exprs) {
+        if(e->isSoft() && e->getBB()==bb) {
             bbExpr.push_back(e);
         }
     }
     return bbExpr;
 }
 
+// Return all expressions
 std::vector<ExprPtr> Formula::getExprs() {
     return this->exprs;
 }
 
+// Return the instruction line numbers for all expressions
 std::vector<unsigned> Formula::getLineNumbers() {
     std::vector<unsigned> lines;
     for(ExprPtr e : exprs) {
@@ -117,33 +111,6 @@ unsigned Formula::getNbSoftExpr() {
         }
     }
     return count;
-}
-
-void Formula::push() {
-    pushPopIds.push_back(currentPushPopId);
-}
-
-void Formula::pop() {
-    // Nothing to pop
-    if (currentPushPopId==0 || pushPopIds.empty()) {
-        std::cout << "nothing to pop...\n";
-        return;
-    }
-    // Update push/pop IDs
-    currentPushPopId = pushPopIds.back();
-    pushPopIds.pop_back();
-    // Remove from the formula all expressions
-    // that were asserted after the last push
-    int n = exprs.size() - currentPushPopId;
-    for(int i=0; i<n; i++) {
-        ExprPtr e = exprs.back();
-        exprs.pop_back();
-    }
-    std::vector<ExprPtr>::iterator it;
-    for(ExprPtr e : oldSoftExprs) {
-        e->setSoft();
-    }
-    oldSoftExprs.clear();
 }
 
 void Formula::dump() {
@@ -189,7 +156,6 @@ void Formula::dumpLineNumber() {
 //============================================================================
 // SetOfFormulas
 //============================================================================
-
 
 // Alloc a new empty set of formulas
 SetOfFormulasPtr SetOfFormulas::make() {
@@ -293,6 +259,17 @@ void SetOfFormulas::removeSubsets() {
     }*/
 }
 
+// Return true if f1 is equal to f2, false otherwise
+bool Formula::operator==(const Formula &other) const {
+    return (this->exprs == other.exprs);
+}
+
+// Return true if f1 is not equal to f2, false otherwise
+bool Formula::operator!=(const Formula &other) const {
+    return !(*this == other);
+}
+
+// Pretty printer for Formula
 std::ostream& operator<<(std::ostream& os, const FormulaPtr f) {
     os << "{";
     const std::vector<ExprPtr> E = f->getExprs();
@@ -306,6 +283,7 @@ std::ostream& operator<<(std::ostream& os, const FormulaPtr f) {
     return os;
 }
 
+// Pretty printer for SetOfFormulas
 std::ostream& operator<<(std::ostream& os, const SetOfFormulasPtr f) {
     os << "{";
     const std::vector<FormulaPtr> F = f->getFormulas();
@@ -319,6 +297,7 @@ std::ostream& operator<<(std::ostream& os, const SetOfFormulasPtr f) {
     return os;
 }
 
+// Pretty printer for a vector of SetOfFormulas
 std::ostream& operator<<(std::ostream& os, const std::vector<SetOfFormulasPtr> f) {
     os << "{";
     for(std::vector<SetOfFormulasPtr>::const_iterator it = f.begin(); it != f.end(); it++) {

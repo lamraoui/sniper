@@ -33,8 +33,13 @@ void BMC::runBMCWithPathExploration(ProgramProfile *profile) {
     gp->run(targetFun, TF);
     std::vector<ExprPtr> fbb = gp->getFormulas();
     
+    // Add the trace formula to the context
+    YicesSolver *yices = (YicesSolver*) solver;
+    yices->init();
+    yices->addToContext(TF);
+
     // Create a backtracking point.
-    TF->push();
+    yices->push();
     
     // TODO: add all pre-condition (not negated)
     
@@ -42,7 +47,7 @@ void BMC::runBMCWithPathExploration(ProgramProfile *profile) {
     for (ExprPtr e : AS->getExprs()) {
         ExprPtr ne = Expression::mkNot(e);
         ne->setHard();
-        TF->add(ne);
+        yices->addToContext(ne);
     }
     
     // Compute iterative BMC
@@ -57,25 +62,25 @@ void BMC::runBMCWithPathExploration(ProgramProfile *profile) {
         ExprPtr fbb_expr = *itf;
         
         // Create a backtracking point.
-        TF->push();
+        yices->push();
         
         // Add the path formula to the context
         fbb_expr->setHard();
-        TF->add(fbb_expr);
+        yices->addToContext(fbb_expr);
         
-        switch(solver->check(TF)) {
+        switch(yices->check()) {
                 // Negated claim is satisfiable, i.e., does not hold
             case l_true: {
             } break;  
                 // Negated claim is unsatisfiable: verification successful
             case l_false:
                 // Backtrack (remove the path formula)
-                TF->pop();
+                yices->pop();
                 continue; // go to the next iteration
             case l_undef:
                 //std::cout << "unknown: it was not possible to decide due to an incompleteness.\n";
                 // Backtrack (remove the path formula)
-                TF->pop();
+                yices->pop();
                 continue; // go to the next iteration
         }    
         
@@ -139,12 +144,12 @@ void BMC::runBMCWithPathExploration(ProgramProfile *profile) {
         }
         
         // Backtrack (remove the path formula)
-        TF->pop();
+        yices->pop();
     }
     
     // Backtrack to the last backtracking point
     // -> remove all notPostConditions
-    TF->pop();
+    yices->pop();
     
     const unsigned size = execs.size();
     if (size>0 && options->verbose()) {
@@ -173,8 +178,10 @@ void BMC::runBMCWithPathExploration(ProgramProfile *profile) {
 // =============================================================================
 void BMC::runClassicBMC(ProgramProfile *profile) {
     
-    // Create a backtracking point.
-    TF->push();
+    // Add the trace formula to the context
+    YicesSolver *yices = (YicesSolver*) solver;
+    yices->init();
+    yices->addToContext(TF);
     
     // TODO: add all pre-condition (not negated)
     
@@ -182,7 +189,7 @@ void BMC::runClassicBMC(ProgramProfile *profile) {
     for (ExprPtr e : AS->getExprs()) {
         ExprPtr ne = Expression::mkNot(e);
         ne->setHard();
-        TF->add(ne);
+        yices->addToContext(ne);
     }
     
     // Compute BMC
@@ -191,7 +198,7 @@ void BMC::runClassicBMC(ProgramProfile *profile) {
         std::cout << "Starting Bounded Model Checking...\n\n";
     }
         
-    switch(solver->check(TF)) {
+    switch(yices->check()) {
         // Negated claim is satisfiable, i.e., does not hold
         case l_true: {
         } break;  
@@ -266,7 +273,5 @@ void BMC::runClassicBMC(ProgramProfile *profile) {
     }
     profile->addProgramTrace(E);
     
-    // Backtrack to the last backtracking point (restores the context)
-    // -> remove all notPostConditions
-    TF->pop();
+    yices->clean();
 }
