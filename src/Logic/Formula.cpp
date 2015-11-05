@@ -11,10 +11,15 @@
 
 #include "Formula.h"
 
+
+Formula::Formula(std::vector<ExprPtr> vec) {
+    copy(vec.begin(), vec.end(), inserter(this->exprs, this->exprs.end() ));
+}
+
 // Clone
 Formula::Formula(Formula *f) {
-    std::vector<ExprPtr> E = f->getExprs();
-    this->exprs.insert(this->exprs.end(), E.begin(), E.end());
+    std::set<ExprPtr> E = f->getExprs();
+    this->exprs.insert(E.begin(), E.end());
 }
 
 // Alloc a new empty formula
@@ -24,23 +29,22 @@ FormulaPtr Formula::make() {
 
 // Insert an expression
 void Formula::add(ExprPtr e) {
-    this->exprs.push_back(e);
+    this->exprs.insert(e);
 }
 
 // Merge the formula f into this one
 void Formula::add(FormulaPtr f) {
-    std::vector<ExprPtr> E = f->getExprs();
-    this->exprs.insert(this->exprs.end(), E.begin(), E.end());
+    std::set<ExprPtr> E = f->getExprs();
+    add(E);
 }
 
 // Insert a set of expressions
 void Formula::add(std::set<ExprPtr> E) {
-    std::copy(E.begin(), E.end(), std::back_inserter(this->exprs));
+    this->exprs.insert(E.begin(), E.end());
 }
 
 void Formula::remove(ExprPtr e) {
-    exprs.erase(std::remove(this->exprs.begin(), this->exprs.end(), e),
-                this->exprs.end());
+    this->exprs.erase(e);
 }
 
 // Retrun the number of clauses in this formula
@@ -78,7 +82,7 @@ std::vector<ExprPtr> Formula::getSoftExprs(llvm::BasicBlock *bb) {
 }
 
 // Return all expressions
-std::vector<ExprPtr> Formula::getExprs() {
+std::set<ExprPtr> Formula::getExprs() {
     return this->exprs;
 }
 
@@ -141,11 +145,11 @@ void Formula::lightDump() {
 
 void Formula::dumpLineNumber() {
     std::cout << "{";
-    std::vector<ExprPtr>::iterator it;
+    std::set<ExprPtr>::iterator it;
     for (it=exprs.begin(); it!=exprs.end(); ++it) {
         ExprPtr e = *it;
         std::cout << e->getLine();
-        if ((it+1)!=exprs.end()) {
+        if (std::distance(it, exprs.end())>1) {
             std::cout << ", ";
         }
     }
@@ -272,8 +276,8 @@ bool Formula::operator!=(const Formula &other) const {
 // Pretty printer for Formula
 std::ostream& operator<<(std::ostream& os, const FormulaPtr f) {
     os << "{";
-    const std::vector<ExprPtr> E = f->getExprs();
-    for(std::vector<ExprPtr>::const_iterator it = E.begin(); it != E.end(); it++) {
+    const std::set<ExprPtr> E = f->getExprs();
+    for(std::set<ExprPtr>::const_iterator it = E.begin(); it != E.end(); it++) {
         os << *it;
         if (std::distance(it, E.end())>1) {
             os << ", ";

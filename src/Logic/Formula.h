@@ -32,12 +32,13 @@ typedef std::shared_ptr<SetOfFormulas> SetOfFormulasPtr;
 class Formula {
     
 private:
-    std::vector<ExprPtr> exprs;
+    std::set<ExprPtr> exprs;
     
 public:
     Formula() { }
     Formula(Formula *f);
-    Formula(std::vector<ExprPtr> _exprs): exprs(_exprs) { }
+    Formula(std::set<ExprPtr> _exprs) : exprs(_exprs) { }
+    Formula(std::vector<ExprPtr> vec);
     ~Formula() { }
     
     // Copy constructor/operator invalidate current push/pop status
@@ -64,7 +65,7 @@ public:
     
     std::vector<ExprPtr>    getExprs(llvm::BasicBlock *bb);
     std::vector<ExprPtr>    getSoftExprs(llvm::BasicBlock *bb);
-    std::vector<ExprPtr>    getExprs();
+    std::set<ExprPtr>       getExprs();
     std::vector<unsigned>   getLineNumbers();
     
     unsigned getNbHardExpr();

@@ -35,10 +35,8 @@ void YicesSolver::addToContext(ExprPtr e) {
     }
 }
 void YicesSolver::addToContext(Formula *f) {
-    std::vector<ExprPtr> es = f->getExprs();
-    std::vector<ExprPtr>::iterator it;
-    for(it = es.begin(); it != es.end(); ++it) {
-        ExprPtr e = *it;
+    std::set<ExprPtr> E = f->getExprs();
+    for(ExprPtr e : E) {
         addToContext(e);
     }
 }
@@ -89,10 +87,8 @@ int YicesSolver::maxSat(Formula *formula) {
     //    std::cout << "YICES PUSH\n";
     //}
     // Construct and assert the Yices expression
-    std::vector<ExprPtr> es = formula->getExprs();
-    std::vector<ExprPtr>::iterator it;
-    for(it = es.begin(); it != es.end(); ++it) {
-        ExprPtr e = *it;
+    std::set<ExprPtr> E = formula->getExprs();
+    for(ExprPtr e : E) {
         //if (e->isValid() && round>=1) {
         //    continue;
         //}        
@@ -136,10 +132,8 @@ int YicesSolver::check(Formula *formula) {
  
     init();
     // Construct and assert the Yices expression
-    std::vector<ExprPtr> es = formula->getExprs();
-    std::vector<ExprPtr>::iterator it;
-    for(it = es.begin(); it != es.end(); ++it) {
-        ExprPtr e = *it;
+    std::set<ExprPtr> E = formula->getExprs();
+    for(ExprPtr e : E) {
         // Construct
         yices_expr expr = makeYicesExpression(e);
         // Assert

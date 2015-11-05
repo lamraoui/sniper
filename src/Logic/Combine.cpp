@@ -87,9 +87,8 @@ SetOfFormulasPtr Combine::combineByMHS(std::vector<SetOfFormulasPtr> D) {
         std::vector<std::set<ExprPtr> > OutMUS;
         auto F = M->getFormulas();
         for (FormulaPtr f : F) {
-            std::vector<ExprPtr> E = f->getExprs();
-            std::set<ExprPtr> SetE(E.begin(), E.end());
-            InMCS.push_back(SetE);
+            std::set<ExprPtr> E = f->getExprs();
+            InMCS.push_back(E);
         }
         HittingSet<ExprPtr>::getMinimalHittingSets_LP(InMCS, OutMUS);
         SetOfFormulasPtr MUS = SetOfFormulas::make();
@@ -120,9 +119,8 @@ SetOfFormulasPtr Combine::combineByMHS(std::vector<SetOfFormulasPtr> D) {
     std::vector<std::set<ExprPtr> > OutCombMCSes;
     auto F2 = MUSes->getFormulas();
     for (FormulaPtr f : F2) {
-        std::vector<ExprPtr> E = f->getExprs();
-        std::set<ExprPtr> SetE(E.begin(), E.end());
-        InMUSes.push_back(SetE);
+        std::set<ExprPtr> E = f->getExprs();
+        InMUSes.push_back(E);
     }
     HittingSet<ExprPtr>::getMinimalHittingSets_LP(InMUSes, OutCombMCSes);
     SetOfFormulasPtr combMCSes = SetOfFormulas::make();

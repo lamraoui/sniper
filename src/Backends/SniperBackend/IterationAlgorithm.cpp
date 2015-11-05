@@ -136,7 +136,7 @@ void IterationAlgorithm::run_dynamic(Formula *TF, Formula *AS,
     std::vector<ExprPtr> tmpClauses;
     BasicBlock *lastBlock = NULL;
     Instruction *lastInst = NULL;
-    std::vector<ExprPtr> clauses = TF->getExprs();
+    std::set<ExprPtr> clauses = TF->getExprs();
     for (ExprPtr e : clauses) {
         // Hard clause
         if (e->isHard()) {
@@ -192,7 +192,7 @@ void IterationAlgorithm::run_dynamic(Formula *TF, Formula *AS,
     for (SetOfFormulasPtr v : MCSes ) {
         std::vector<FormulaPtr> F = v->getFormulas();
         for (FormulaPtr f : F) {
-            std::vector<ExprPtr> E = f->getExprs();
+            std::set<ExprPtr> E = f->getExprs();
             for (ExprPtr e : E) {
                 allExprs.insert(e);
             }
@@ -219,7 +219,7 @@ void IterationAlgorithm::run_dynamic(Formula *TF, Formula *AS,
     // as hard except for the suspicous blocks.
     //
     Formula *formula3 = new Formula();
-    std::vector<ExprPtr> clauses2 = TF->getExprs();
+    std::set<ExprPtr> clauses2 = TF->getExprs();
     for (ExprPtr e : clauses2) {
         // Hard clause
         if (e->isHard()) {
@@ -279,7 +279,7 @@ IterationAlgorithm::allDiagnosis(Formula *TF,
     unsigned z = 0;
     std::vector<BoolVarExprPtr> AV;
     std::map<BoolVarExprPtr, ExprPtr> AVMap;
-    std::vector<ExprPtr> clauses = WF->getExprs();
+    std::set<ExprPtr> clauses = WF->getExprs();
     for(ExprPtr e : clauses) {
         if (e->isSoft()) {
             // AI is a new auxiliary var. created
