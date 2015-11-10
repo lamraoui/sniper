@@ -306,7 +306,7 @@ Formula* EncoderPass::makeTraceFormula() {
                 }
                 // Instruction with no line number
                 else {
-                    e->setHard();
+                    expr->setHard();
                     formula->add(expr);
                 }
             }
