@@ -21,6 +21,8 @@ sniper
 .deps
 *.o
 *.a
+*.trs
+*_test
 *~
 .DS_Store
 *.bc

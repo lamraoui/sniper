@@ -94,6 +94,7 @@ AC_CONFIG_FILES([
 	utils/unittest/googletest/Makefile
 	unittests/Makefile
 	unittests/Expression/Makefile
+	unittests/Formula/Makefile
 ])
 AC_OUTPUT
 
