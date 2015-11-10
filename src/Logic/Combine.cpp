@@ -19,15 +19,9 @@ SetOfFormulasPtr Combine::combineByPWU(std::vector<SetOfFormulasPtr> D) {
     for (SetOfFormulasPtr M : D) {
         M->removeDoublons();
         MCSesNoDoublons.push_back(M);
-        //if (options->printMUS()) {
-        //    FormulaPtr MUS = Formula::make(); // MUS
-        //    HittingSet::getMinimalHittingSets_LP(M, MUS);
-        //    std::cout << "MUS: " << MUS << "\n\n";
-        //}
     }
     SetOfFormulasPtr combMCSes = SetOfFormulas::make();
     if (!MCSesNoDoublons.empty()) {
-        //removeDoublons(MCSesNoDoublons);
         // Pair-wise union of MCSes to obtain the complete diagnosis
         pairwiseUnion(MCSesNoDoublons, combMCSes);
         combMCSes->removeDoublons();
@@ -55,7 +49,7 @@ void Combine::pairwiseUnion(std::vector<SetOfFormulasPtr> MCSes,
             SetOfFormulasPtr A = MCSes[i];
             int j = a[i];
             FormulaPtr B = A->getAt(j);
-            S->add(B);
+            S->add(B->getExprs());
         }
         Diag->add(S);
         // Update indexes
@@ -85,48 +79,39 @@ SetOfFormulasPtr Combine::combineByMHS(std::vector<SetOfFormulasPtr> D) {
         // Compute a MUS with the MHS of a MCS
         std::vector<std::set<ExprPtr> > InMCS;
         std::vector<std::set<ExprPtr> > OutMUS;
-        auto F = M->getFormulas();
+        std::vector<FormulaPtr> F = M->getFormulas();
         for (FormulaPtr f : F) {
-            std::set<ExprPtr> E = f->getExprs();
-            InMCS.push_back(E);
+            std::vector<ExprPtr> E = f->getExprs();
+            std::set<ExprPtr> Eset(E.begin(), E.end());
+            InMCS.push_back(Eset);
         }
         HittingSet<ExprPtr>::getMinimalHittingSets_LP(InMCS, OutMUS);
         SetOfFormulasPtr MUS = SetOfFormulas::make();
-        for (auto s : OutMUS) {
+        for (std::set<ExprPtr> s : OutMUS) {
             FormulaPtr f = Formula::make();
-            f->add(s);
+            std::vector<ExprPtr> Evec;
+            std::copy(s.begin(), s.end(), std::back_inserter(Evec));
+            f->add(Evec);
             MUS->add(f);
         }
-        // Print MUS
-        //if (options->printMUS()) {
-        //    std::cout << "MUS: " << MUS << "\n\n";
-        //}
         MUSes->add(MUS);
     }
-    
-    // Remove doublons
-    MUSes->removeDoublons();
-    //std::sort(MUSes.begin(), MUSes.end());
-    //MUSes.erase(std::unique(MUSes.begin(), MUSes.end()), MUSes.end());
-    
-    // ACSR
-    //const unsigned loc = options->getNbLOC();
-    //if (loc>0) {
-    //    std::cout << "ACSR: " << getCodeSizeReduction(MUSes, loc) << "%\n";;
-    //}
     // Minimal hitting set of the union of the MUSes
     std::vector<std::set<ExprPtr> > InMUSes;
     std::vector<std::set<ExprPtr> > OutCombMCSes;
-    auto F2 = MUSes->getFormulas();
+    std::vector<FormulaPtr> F2 = MUSes->getFormulas();
     for (FormulaPtr f : F2) {
-        std::set<ExprPtr> E = f->getExprs();
-        InMUSes.push_back(E);
+        std::vector<ExprPtr> E = f->getExprs();
+        std::set<ExprPtr> Eset(E.begin(), E.end());
+        InMUSes.push_back(Eset);
     }
     HittingSet<ExprPtr>::getMinimalHittingSets_LP(InMUSes, OutCombMCSes);
     SetOfFormulasPtr combMCSes = SetOfFormulas::make();
-    for (auto s : OutCombMCSes) {
+    for (std::set<ExprPtr> s : OutCombMCSes) {
         FormulaPtr f = Formula::make();
-        f->add(s);
+        std::vector<ExprPtr> Evec;
+        std::copy(s.begin(), s.end(), std::back_inserter(Evec));
+        f->add(Evec);
         combMCSes->add(f);
     }
     return combMCSes;

@@ -32,16 +32,14 @@ typedef std::shared_ptr<SetOfFormulas> SetOfFormulasPtr;
 class Formula {
     
 private:
-    std::set<ExprPtr> exprs;
+    std::vector<ExprPtr> exprs;
     
 public:
     Formula() { }
     Formula(Formula *f);
-    Formula(std::set<ExprPtr> _exprs) : exprs(_exprs) { }
-    Formula(std::vector<ExprPtr> vec);
+    Formula(std::vector<ExprPtr> _exprs) : exprs(_exprs) { }
     ~Formula() { }
     
-    // Copy constructor/operator invalidate current push/pop status
     Formula(const Formula& other) : exprs(other.exprs) { }
     Formula& operator=(const Formula& other) {
         if (this == &other)
@@ -57,15 +55,14 @@ public:
     static FormulaPtr make();
     
     void        add(ExprPtr e);
-    void        add(FormulaPtr f);
-    void        add(std::set<ExprPtr> E);
+    void        add(std::vector<ExprPtr> E);
     void        remove(ExprPtr e);
     unsigned    size();
     bool        empty();
     
     std::vector<ExprPtr>    getExprs(llvm::BasicBlock *bb);
     std::vector<ExprPtr>    getSoftExprs(llvm::BasicBlock *bb);
-    std::set<ExprPtr>       getExprs();
+    std::vector<ExprPtr>    getExprs();
     std::vector<unsigned>   getLineNumbers();
     
     unsigned getNbHardExpr();
@@ -107,7 +104,6 @@ public:
     
     void removeDoublons();
     void removeSubsets();
-    //void copy(std::vector<std::vector<unsigned> > &vv, MCSesPtr M);
     
     double getCodeSizeReduction(unsigned totalNbLine);
     
