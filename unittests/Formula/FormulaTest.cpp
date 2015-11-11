@@ -200,6 +200,140 @@ TEST(FormulaTest, FormulaBase) {
     delete f6;
 }
 
+
+TEST(FormulaTest, SetOfFormulasBase) {
+    
+    // Create a basic block containing three instructions
+    llvm::LLVMContext &C(llvm::getGlobalContext());
+    llvm::BasicBlock *bb0     = llvm::BasicBlock::Create(C);
+    llvm::Type       *int32Ty = llvm::Type::getInt32Ty(C);
+    llvm::Value      *val0    = llvm::ConstantInt::get(int32Ty, 42);
+    llvm::ZExtInst   *ze0     = new llvm::ZExtInst(val0, int32Ty, "", bb0);
+    llvm::SExtInst   *se0     = new llvm::SExtInst(ze0,  int32Ty, "", bb0);
+    llvm::ReturnInst *br0     = llvm::ReturnInst::Create(C, bb0);
+    
+    // Create some expressions and assigned them the previous instructions
+    ExprPtr e1 = Expression::mkBoolVar("a");
+    ExprPtr e2 = Expression::mkBoolVar("b");
+    ExprPtr e3 = Expression::mkBoolVar("c");
+    
+    // Create an empty set of formulas
+    SetOfFormulas *sf = new SetOfFormulas();
+    EXPECT_TRUE(sf->empty());
+    EXPECT_EQ(sf->size(), 0);
+    
+    // Create and add some formulas
+    const unsigned n = 10;
+    std::vector<FormulaPtr> F1;
+    for (int i=0;i<n;i++) {
+        FormulaPtr f = Formula::make();
+        std::stringstream sstm;
+        sstm << "n" << i;
+        std::string result = sstm.str();
+        ExprPtr e = Expression::mkBoolVar(result);
+        f->add(e);
+        F1.push_back(f);
+        sf->add(f);
+    }
+    EXPECT_TRUE(!sf->empty());
+    EXPECT_EQ(sf->size(), n);
+    
+    // Get formulas of sf
+    std::vector<FormulaPtr> F2 = sf->getFormulas();
+    const bool equal1 = (F1 == F2);
+    EXPECT_TRUE(equal1);
+    
+    // Get formual at a particulat position in sf
+    ASSERT_EQ(sf->size(), n);
+    ASSERT_EQ(F1.size(), n);
+    for (int i=0;i<n;i++) {
+        FormulaPtr f1 = sf->getAt(i);
+        FormulaPtr f2 = F1[i];
+        EXPECT_EQ(f1, f2);
+    }
+    
+    // Add a vector of formula to sf
+    const unsigned m = 42;
+    std::vector<FormulaPtr> F3;
+    for (int i=0;i<m;i++) {
+        FormulaPtr f = Formula::make();
+        std::stringstream sstm;
+        sstm << "m" << i;
+        std::string result = sstm.str();
+        ExprPtr e = Expression::mkBoolVar(result);
+        f->add(e);
+        F3.push_back(f);
+    }
+    sf->add(F3);
+    EXPECT_EQ(sf->size(), n+m);
+    
+    // Add a set of formula to sf
+    SetOfFormulasPtr sf2 = SetOfFormulas::make();
+    const unsigned k = 22;
+    for (int i=0;i<k;i++) {
+        FormulaPtr f = Formula::make();
+        std::stringstream sstm;
+        sstm << "k" << i;
+        std::string result = sstm.str();
+        ExprPtr e = Expression::mkBoolVar(result);
+        f->add(e);
+        sf2->add(f);
+    }
+    sf->add(sf2->getFormulas());
+    EXPECT_EQ(sf->size(), n+m+k);
+    
+    // TODO: Get code size reduction of sf
+    //double csr1 = sf->getCodeSizeReduction(42);
+    //EXPECT_EQ(csr1, 0);
+    
+    // TODO: CSR non null
+    //double csr2 = sf->getCodeSizeReduction(42);
+    //EXPECT_EQ(csr1, 14.2);
+    
+    // Add a formula which is a subset of another one
+    // -> f3 = {var2} is a subset of f2 = {var1, var2, var3}
+    SetOfFormulasPtr sf3 = SetOfFormulas::make();
+    FormulaPtr f2 = Formula::make();
+    FormulaPtr f3 = Formula::make();
+    ExprPtr var1 = Expression::mkBoolVar("var1");
+    ExprPtr var2 = Expression::mkBoolVar("var2");
+    ExprPtr var3 = Expression::mkBoolVar("var3");
+    f2->add(var1);
+    f2->add(var2);
+    f2->add(var3);
+    f3->add(var2);
+    sf3->add(f2);
+    sf3->add(f3);
+    EXPECT_EQ(sf3->size(), 1);
+    
+    // Add a formula which is a overset of a formula already in the set
+    // -> f4 = {var1, var2, var3, var4} is a overset of f2 = {var1, var2, var3}
+    FormulaPtr f4 = Formula::make();
+    ExprPtr var1b1 = Expression::mkBoolVar("var1");
+    ExprPtr var2b1 = Expression::mkBoolVar("var2");
+    ExprPtr var3b1 = Expression::mkBoolVar("var3");
+    ExprPtr var4b1 = Expression::mkBoolVar("var4");
+    f4->add(var1b1);
+    f4->add(var2b1);
+    f4->add(var3b1);
+    f4->add(var4b1);
+    sf3->add(f4);
+    EXPECT_EQ(sf3->size(), 1);
+    EXPECT_EQ(sf3->getFormulas()[0]->size(), 4);
+    
+    // Add a formula which is equal to one in the set
+    FormulaPtr f5 = Formula::make();
+    ExprPtr var1bis = Expression::mkBoolVar("var1");
+    ExprPtr var2bis = Expression::mkBoolVar("var2");
+    ExprPtr var3bis = Expression::mkBoolVar("var3");
+    f5->add(var1bis);
+    f5->add(var2bis);
+    f5->add(var3bis);
+    sf3->add(f5);
+    EXPECT_EQ(sf3->size(), 1);
+}
+
+
 GTEST_API_ int main(int argc, char **argv) {
     printf("Running main() from gtest_main.cc\n");
     testing::InitGoogleTest(&argc, argv);
