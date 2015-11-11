@@ -154,6 +154,54 @@ void Formula::dumpLineNumber() {
     std::cout << "}";
 }
 
+// Check if other is a subset of this formula
+bool Formula::contains(const FormulaPtr other) {
+    if (this->size()<other->size()) {
+        return false;
+    }
+    std::vector<ExprPtr> E1 = this->exprs;
+    std::vector<ExprPtr> E2 = other->getExprs();
+    std::vector<ExprPtr>::const_iterator it1;
+    for (it1 = E1.begin(); it1 != E1.end(); ++it1) {
+        bool match = true;
+        std::vector<ExprPtr>::const_iterator it2 = it1;
+        std::vector<ExprPtr>::const_iterator it3;
+        for (it3 = E2.begin(); it3 != E2.end(); ++it3) {
+                if (it2==E1.end() || *it3!=*it2) {
+                    match = false;
+                    break;
+                }
+                it2++;
+        }
+        if (match) {
+            return true;
+        }
+    }
+    return false;
+}
+
+// Return true if f1 is equal to f2, false otherwise
+bool Formula::operator==(const Formula &other) const {
+    //assert((f1 && f2) && "Unexpected null formulas");
+    return (this->exprs == other.exprs);
+}
+
+// Return true if f1 is not equal to f2, false otherwise
+bool Formula::operator!=(const Formula &other) const {
+    return !(*this == other);
+}
+
+// Return true if f1 is equal to f2, false otherwise
+bool operator== (FormulaPtr f1, FormulaPtr f2) {
+    assert((f1.get() && f2.get()) && "Unexpected null formulas");
+    return (f1->exprs == f2->exprs);
+}
+
+// Return true if f1 is not equal to f2, false otherwise
+bool operator!= (FormulaPtr f1, FormulaPtr f2) {
+    return !(f1 == f2);
+}
+
 
 //============================================================================
 // SetOfFormulas
@@ -166,27 +214,41 @@ SetOfFormulasPtr SetOfFormulas::make() {
 
 // Insert a formula
 void SetOfFormulas::add(FormulaPtr f) {
-    this->formulas.push_back(f);
+    // Add if A is not subset (or equal) of B
+    // If A is a superset of B, remove B and add A
+    bool hasSubsets   = false;
+    bool hasSupersets = false;
+    auto i = std::begin(formulas);
+    while (i != std::end(formulas)) {
+        FormulaPtr f2 = *i;
+        // f2 \subset f
+        if (f2->contains(f)) {
+            hasSubsets = true;
+            break;
+        }
+        // f \subset f2
+        else if (f->contains(f2)) {
+            i = formulas.erase(i);
+            hasSupersets = true;
+        } else {
+            ++i;
+        }
+    }
+    assert((hasSubsets && hasSupersets)
+           && "Something is wrong with this set of formulas!");
+    if (!hasSubsets) {
+        this->formulas.push_back(f);
+    }
 }
 
 void SetOfFormulas::add(std::vector<FormulaPtr> F) {
-    this->formulas.insert(formulas.end(), F.begin(), F.end());
-}
-
-void SetOfFormulas::add(SetOfFormulasPtr F) {
-    assert(F.get()==this && "Self copy!");
-    std::vector<FormulaPtr> formulas2 = F->getFormulas();
-    this->formulas.insert(this->formulas.end(),
-                          formulas2.begin(), formulas2.end());
+    for (FormulaPtr f : F) {
+        add(f);
+    }
 }
 
 std::vector<FormulaPtr> SetOfFormulas::getFormulas() {
     return this->formulas;
-}
-
-FormulaPtr SetOfFormulas::getAt(unsigned i) {
-    assert((i<0 || i>=formulas.size()) && "Out of bound");
-    return this->formulas[i];
 }
 
 unsigned SetOfFormulas::size() {
@@ -196,6 +258,11 @@ unsigned SetOfFormulas::size() {
 // Return true if it contains Formulas, false otherwise
 bool SetOfFormulas::empty() {
     return this->formulas.empty();
+}
+
+FormulaPtr SetOfFormulas::getAt(unsigned i) {
+    assert((i<0 || i>=formulas.size()) && "Out of bound");
+    return this->formulas[i];
 }
 
 double SetOfFormulas::getCodeSizeReduction(unsigned totalNbLine) {
@@ -213,62 +280,6 @@ double SetOfFormulas::getCodeSizeReduction(unsigned totalNbLine) {
         sum = sum + crs_i;
     }
     return sum/(double)CSR.size();
-}
-
-// Transform a vector of expressions (MCS)
-// into a set of expressions (MCS).
-// Copy vv to M
-/*void copy(std::vector<std::vector<unsigned> > &vv, MCSesPtr M) {
- UVVec::const_iterator itv;
- for (itv=vv.begin(); itv!=vv.end(); ++itv) {
- // Copy the MCS (vector) into a MCS (set)
- std::set<unsigned> subset((*itv).begin(), (*itv).end());
- M.add(subset);
- }
- }*/
-
-
-// Remove all subset doublons
-// {{x,y}, {a,b}, {x,y}} -> {{a,b}}
-void SetOfFormulas::removeDoublons() {
-    //std::sort(exprs.begin(), exprs.end());
-    //exprs.erase(std::unique(exprs.begin(),
-    //exprs.end()), exprs.end());
-}
-
-// Remove all subsets of subsets
-// {{x}, {a,b}, {x,y}} -> {{a,b},{x,y}}
-void SetOfFormulas::removeSubsets() {
-    /*std::vector<std::set<unsigned> >::iterator itm;
-    for (itm=exprs.begin(); itm!=exprs.end();) {
-        std::set<unsigned> s(*itm);
-        unsigned i = 0;
-        bool isIn = false;
-        while (i<v.size()) {
-            if (s!=v[i]) {
-                isIn = std::includes(v[i].begin(), v[i].end(), s.begin(),s.end());
-                if (isIn) {
-                    break;
-                }
-            }
-            i++;
-        }
-        if (isIn) {
-            itm = exprs.erase(itm);
-        } else {
-            ++itm;
-        }
-    }*/
-}
-
-// Return true if f1 is equal to f2, false otherwise
-bool Formula::operator==(const Formula &other) const {
-    return (this->exprs == other.exprs);
-}
-
-// Return true if f1 is not equal to f2, false otherwise
-bool Formula::operator!=(const Formula &other) const {
-    return !(*this == other);
 }
 
 // Pretty printer for Formula

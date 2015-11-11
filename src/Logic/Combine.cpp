@@ -14,18 +14,17 @@
 
 // Pair-wise union based combination
 SetOfFormulasPtr Combine::combineByPWU(std::vector<SetOfFormulasPtr> D) {
-    // Compute the MCSes
-    std::vector<SetOfFormulasPtr> MCSesNoDoublons;
+    // TODO: remove subsets in D
+    /*std::vector<SetOfFormulasPtr> MCSesNoDoublons;
     for (SetOfFormulasPtr M : D) {
         M->removeDoublons();
         MCSesNoDoublons.push_back(M);
-    }
+    }*/
+    // Compute the MCSes
     SetOfFormulasPtr combMCSes = SetOfFormulas::make();
-    if (!MCSesNoDoublons.empty()) {
+    if (!D.empty()) {
         // Pair-wise union of MCSes to obtain the complete diagnosis
-        pairwiseUnion(MCSesNoDoublons, combMCSes);
-        combMCSes->removeDoublons();
-        combMCSes->removeSubsets();
+        pairwiseUnion(D, combMCSes);
     }
     return combMCSes;
 }
@@ -75,7 +74,6 @@ SetOfFormulasPtr Combine::combineByMHS(std::vector<SetOfFormulasPtr> D) {
     // Compute the MUSes
     SetOfFormulasPtr MUSes = SetOfFormulas::make();
     for (SetOfFormulasPtr M : D) {
-        M->removeDoublons();
         // Compute a MUS with the MHS of a MCS
         std::vector<std::set<ExprPtr> > InMCS;
         std::vector<std::set<ExprPtr> > OutMUS;
@@ -94,7 +92,7 @@ SetOfFormulasPtr Combine::combineByMHS(std::vector<SetOfFormulasPtr> D) {
             f->add(Evec);
             MUS->add(f);
         }
-        MUSes->add(MUS);
+        MUSes->add(MUS->getFormulas());
     }
     // Minimal hitting set of the union of the MUSes
     std::vector<std::set<ExprPtr> > InMUSes;
@@ -122,7 +120,7 @@ SetOfFormulasPtr Combine::combineByMHS(std::vector<SetOfFormulasPtr> D) {
 SetOfFormulasPtr Combine::combineByFlatten(std::vector<SetOfFormulasPtr> D) {
     SetOfFormulasPtr allElts = SetOfFormulas::make();
     for (SetOfFormulasPtr M : D ) {
-        allElts->add(M);
+        allElts->add(M->getFormulas());
     }
     return allElts;
 }

@@ -72,8 +72,13 @@ public:
     void lightDump();
     void dumpLineNumber();
     
+    bool contains(const FormulaPtr other);
+    
     bool operator==(const Formula &other) const;
     bool operator!=(const Formula &other) const;
+    
+    friend bool operator== (FormulaPtr f1, FormulaPtr f2);
+    friend bool operator!= (FormulaPtr f1, FormulaPtr f2);
     
     friend std::ostream& operator<<(std::ostream& os, const FormulaPtr f);
     
@@ -96,14 +101,11 @@ public:
     
     void                    add(FormulaPtr M);
     void                    add(std::vector<FormulaPtr> formulas);
-    void                    add(SetOfFormulasPtr F);
-    std::vector<FormulaPtr> getFormulas();
-    FormulaPtr              getAt(unsigned i);
     unsigned                size();
     bool                    empty();
     
-    void removeDoublons();
-    void removeSubsets();
+    std::vector<FormulaPtr> getFormulas();
+    FormulaPtr              getAt(unsigned i);
     
     double getCodeSizeReduction(unsigned totalNbLine);
     
