@@ -26,9 +26,7 @@
 //============================================================================
 class YicesSolver : public IWPMaxSATSolver {
         
-    
 private:
-    unsigned round;
     yices_context ctx;
     yices_type int8_ty, int32_ty, int64_ty;
     yices_type int32toint32_ty;
@@ -39,8 +37,8 @@ private:
     std::map<ExprPtr, yices_expr> expr2yexpr;
     
 public:
-    YicesSolver();
-    ~YicesSolver();
+    YicesSolver() : ctx(0), model(NULL) { }
+    ~YicesSolver() { }
     
     // ISolver
     virtual int         getValue(std::string name);

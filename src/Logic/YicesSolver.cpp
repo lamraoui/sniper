@@ -12,12 +12,6 @@
 #include "YicesSolver.h"
 
 
-YicesSolver::YicesSolver() {
-    round = 0;
-    ctx = 0;
-}
-
-
 ////// TMP ///////////
 
 void YicesSolver::addToContext(ExprPtr e) {
@@ -34,6 +28,7 @@ void YicesSolver::addToContext(ExprPtr e) {
         expr2yexpr[e] = expr;
     }
 }
+
 void YicesSolver::addToContext(Formula *f) {
     std::vector<ExprPtr> E = f->getExprs();
     for(ExprPtr e : E) {
@@ -75,23 +70,11 @@ void YicesSolver::pop() {
 ///////////////////////
 
 
-
-
 int YicesSolver::maxSat(Formula *formula) { 
-    
-    //if (round==0) {
-        init();
-    //}
-    //if (round>=1) {
-    //    yices_push(ctx);
-    //    std::cout << "YICES PUSH\n";
-    //}
+    init();
     // Construct and assert the Yices expression
     std::vector<ExprPtr> E = formula->getExprs();
     for(ExprPtr e : E) {
-        //if (e->isValid() && round>=1) {
-        //    continue;
-        //}        
         // Construct
         yices_expr expr = makeYicesExpression(e);
         // Hard assert
@@ -117,19 +100,11 @@ int YicesSolver::maxSat(Formula *formula) {
     //    yices_display_model(model);
     //}
     
-    //if (round>=1) {
-    //    yices_pop(ctx);
-    //    std::cout << "YICES POP\n";
-    //}
-    
     //clean();
-    round++;
     return val;
 }
 
-
 int YicesSolver::check(Formula *formula) {
- 
     init();
     // Construct and assert the Yices expression
     std::vector<ExprPtr> E = formula->getExprs();
@@ -162,7 +137,6 @@ void YicesSolver::setHard(Formula *formula, ExprPtr e) {
     yices_assert(ctx, expr);
     e->setHard();
     // TODO: check if is e in formula
-    //formula->setHard(e);
 }
 
 std::string YicesSolver::getModel() {
@@ -183,24 +157,19 @@ int YicesSolver::getValue(std::string name) {
     if (model==NULL) {
         return -1;
     }
-    yices_var_decl d = 
-    yices_get_var_decl_from_name(ctx, name.c_str());
-    if (d!=0) { 
-        long value;
-        int error = yices_get_int_value(model, d, &value);                 
-        if (error==1) {
-            return value;
-        } else {
-            std::cout << "error: cannot extract value from model:\n";
-            std::cout << "v is not a proper declaration or not the declaration of a numerical variable\n";
-            std::cout << "v has no value assigned in model m (typically, this means that v does not occur in the asserted constraints)\n";
-            std::cout << "v has a value that cannot be converted to long, because it is rational or too big\n";
-            exit(1);
-        }
-    } else {
-        std::cerr << "error: yices_get_var_decl_from_name\n";
-        exit(1);
-    }
+    yices_var_decl d = yices_get_var_decl_from_name(ctx, name.c_str());
+    assert(d!=0 && "yices_get_var_decl_from_name");
+    long value;
+    int error = yices_get_int_value(model, d, &value);
+    assert(error!=1 && "cannot extract value from model:\n" &&
+                        "v is not a proper declaration or not the" &&
+                        "declaration of a numerical variable\n" &&
+                        "v has no value assigned in model m (typically," &&
+                        " this means that v does not occur in the"
+                        " asserted constraints)\n" &&
+                        "v has a value that cannot be converted to long," &&
+                        " because it is rational or too big\n");
+    return value;
 }
 
 int YicesSolver::getBoolValue(std::string name) {
@@ -224,19 +193,15 @@ int YicesSolver::getValueOrZero(std::string name) {
     if (model==NULL) {
         return 0;
     }
-    yices_var_decl d = 
-    yices_get_var_decl_from_name(ctx, name.c_str());
+    yices_var_decl d = yices_get_var_decl_from_name(ctx, name.c_str());
     if (d!=0) { 
         long value;
         int error = yices_get_int_value(model, d, &value);                 
         if (error==1) {
             return value;
-        } else {
-            return 0;
         }
-    } else {
-        return 0;
     }
+    return 0;
 }
 
 int YicesSolver::getValue(std::string name, bool &error) { 
@@ -244,22 +209,17 @@ int YicesSolver::getValue(std::string name, bool &error) {
         error = true;
         return 0;
     }
-    yices_var_decl d = 
-    yices_get_var_decl_from_name(ctx, name.c_str());
+    yices_var_decl d = yices_get_var_decl_from_name(ctx, name.c_str());
     if (d!=0) { 
         long value;
         int e = yices_get_int_value(model, d, &value);                 
         if (e==1) {
             error = false;
             return value;
-        } else {
-            error = true;
-            return 0;
         }
-    } else {
-        error = true;
-        return 0;
     }
+    error = true;
+    return 0;
 }
 
 void YicesSolver::clean() {
@@ -314,12 +274,8 @@ std::vector<ExprPtr> YicesSolver::getSatExpressions() {
 void YicesSolver::init() {
     
     // TMP
-    if (expr2ids.size()>0) {
-        expr2ids.clear();
-    }
-    if (expr2yexpr.size()>0) {
-        expr2yexpr.clear();
-    }
+    expr2ids.clear();
+    expr2yexpr.clear();
     if (ctx!=0) {
         yices_del_context(ctx);
     }
@@ -342,7 +298,8 @@ void YicesSolver::init() {
         exit(1);
     }
     // Integer 64 bit
-    this->int64_ty = yices_parse_type(ctx, "(subrange -9223372036854775808 9223372036854775807)");
+    this->int64_ty =
+    yices_parse_type(ctx, "(subrange -9223372036854775808 9223372036854775807)");
     if (this->int64_ty==NULL) {
         const char *msg = yices_get_last_error_message();
         std::cout << msg << std::endl;
@@ -382,7 +339,7 @@ yices_expr YicesSolver::makeYicesExpression(ExprPtr e) {
             BoolVarExprPtr be = std::static_pointer_cast<BoolVarExpression>(e);
             // Check if the varibale has already been created
             yices_var_decl d = 
-            yices_get_var_decl_from_name(ctx, be->getName().c_str()); 	
+            yices_get_var_decl_from_name(ctx, be->getName().c_str());
             if (d==0) {
                 d = yices_mk_bool_var_decl(ctx, be->getName().c_str());	
             }
@@ -399,7 +356,8 @@ yices_expr YicesSolver::makeYicesExpression(ExprPtr e) {
             return yices_mk_var_from_decl(ctx, d);
         }
         case Expression::IntToIntVar: {
-            IntToIntVarExprPtr ie = std::static_pointer_cast<IntToIntVarExpression>(e);
+            IntToIntVarExprPtr ie =
+            std::static_pointer_cast<IntToIntVarExpression>(e);
             // Check if the varibale has already been created
             yices_var_decl d = 
             yices_get_var_decl_from_name(ctx, ie->getName().c_str()); 	
@@ -457,13 +415,10 @@ yices_expr YicesSolver::makeYicesExpression(ExprPtr e) {
             AndExprPtr ae = std::static_pointer_cast<AndExpression>(e);
             std::vector<ExprPtr> es = ae->getExprs();
             unsigned n = es.size();
-            if (n==0) {
-                std::cout << "error: and expression.\n";
-                exit(1);
-            } else
-                if (n==1) {
-                    return makeYicesExpression(es.back());
-                }
+            assert(n>0 && "empty AND expression!");
+            if (n==1) {
+                return makeYicesExpression(es.back());
+            }
             yices_expr args[n];
             for(unsigned i=0; i<n; i++) {
                 args[i] = makeYicesExpression(es[i]); 
@@ -474,13 +429,10 @@ yices_expr YicesSolver::makeYicesExpression(ExprPtr e) {
             OrExprPtr oe = std::static_pointer_cast<OrExpression>(e);
             std::vector<ExprPtr> es = oe->getExprs();
             unsigned n = es.size();
-            if (n==0) {
-                std::cout << "error: or expression.\n";
-                exit(1);
-            } else
-                if (n==1) {
-                    return makeYicesExpression(es.back());
-                }
+            assert(n>0 && "empty OR expression!");
+            if (n==1) {
+                return makeYicesExpression(es.back());
+            }
             yices_expr args[n];
             for(unsigned i=0; i<n; i++) {
                 args[i] = makeYicesExpression(es[i]); 
@@ -491,6 +443,8 @@ yices_expr YicesSolver::makeYicesExpression(ExprPtr e) {
             XorExprPtr xe = std::static_pointer_cast<XorExpression>(e);
             std::vector<ExprPtr> es = xe->getExprs();
             unsigned n = es.size();
+            assert(n>0 && "empty XOR expression!");
+            assert(n<=3 && "unsupported XOR expression (too many args)!");
             if (n==1) {
                 return makeYicesExpression(es.back());
             }
@@ -500,62 +454,55 @@ yices_expr YicesSolver::makeYicesExpression(ExprPtr e) {
                 ExprPtr notExpr = Expression::mkNot(andExpr);
                 ExprPtr xorExpr = Expression::mkAnd(orExpr, notExpr);
                 return makeYicesExpression(xorExpr);
-            } else 
-                if (n==3) {                
-                    ExprPtr e1= es[0];
-                    ExprPtr e2= es[1];
-                    ExprPtr e3= es[2];
-                    ExprPtr not_e1= Expression::mkNot(es[0]);
-                    ExprPtr not_e2= Expression::mkNot(es[1]);
-                    ExprPtr not_e3= Expression::mkNot(es[2]);
-                    // (and e1' e2' e3)
-                    std::vector<ExprPtr> v1;
-                    v1.push_back(not_e1);
-                    v1.push_back(not_e2);
-                    v1.push_back(e3);
-                    ExprPtr and1 = Expression::mkAnd(v1);
-                    // (and e1' e2 e3')
-                    std::vector<ExprPtr> v2;
-                    v2.push_back(not_e1);
-                    v2.push_back(e2);
-                    v2.push_back(not_e3);
-                    ExprPtr and2 = Expression::mkAnd(v2);
-                    // (and e1 e2' e3')
-                    std::vector<ExprPtr> v3;
-                    v3.push_back(e1);
-                    v3.push_back(not_e2);
-                    v3.push_back(not_e3);
-                    ExprPtr and3 = Expression::mkAnd(v3);
-                    // (and e1 e2 e3)
-                    std::vector<ExprPtr> v4;
-                    v4.push_back(e1);
-                    v4.push_back(e2);
-                    v4.push_back(e3);
-                    ExprPtr and4 = Expression::mkAnd(v4);
-                    // (or and1 and2 and3 and4)
-                    std::vector<ExprPtr> v5;
-                    v5.push_back(and1);
-                    v5.push_back(and2);
-                    v5.push_back(and3);
-                    v5.push_back(and4);
-                    ExprPtr xorExpr = Expression::mkOr(v5);
-                    return makeYicesExpression(xorExpr);
-                } else {
-                    std::cout << "error: xor expression.\n";
-                    exit(1);
-                }  
+            } else if (n==3) {
+                ExprPtr e1= es[0];
+                ExprPtr e2= es[1];
+                ExprPtr e3= es[2];
+                ExprPtr not_e1= Expression::mkNot(es[0]);
+                ExprPtr not_e2= Expression::mkNot(es[1]);
+                ExprPtr not_e3= Expression::mkNot(es[2]);
+                // (and e1' e2' e3)
+                std::vector<ExprPtr> v1;
+                v1.push_back(not_e1);
+                v1.push_back(not_e2);
+                v1.push_back(e3);
+                ExprPtr and1 = Expression::mkAnd(v1);
+                // (and e1' e2 e3')
+                std::vector<ExprPtr> v2;
+                v2.push_back(not_e1);
+                v2.push_back(e2);
+                v2.push_back(not_e3);
+                ExprPtr and2 = Expression::mkAnd(v2);
+                // (and e1 e2' e3')
+                std::vector<ExprPtr> v3;
+                v3.push_back(e1);
+                v3.push_back(not_e2);
+                v3.push_back(not_e3);
+                ExprPtr and3 = Expression::mkAnd(v3);
+                // (and e1 e2 e3)
+                std::vector<ExprPtr> v4;
+                v4.push_back(e1);
+                v4.push_back(e2);
+                v4.push_back(e3);
+                ExprPtr and4 = Expression::mkAnd(v4);
+                // (or and1 and2 and3 and4)
+                std::vector<ExprPtr> v5;
+                v5.push_back(and1);
+                v5.push_back(and2);
+                v5.push_back(and3);
+                v5.push_back(and4);
+                ExprPtr xorExpr = Expression::mkOr(v5);
+                return makeYicesExpression(xorExpr);
+            }
         }
         case Expression::Sum: {
             SumExprPtr se = std::static_pointer_cast<SumExpression>(e);
             std::vector<ExprPtr> es = se->getExprs();
             unsigned n = es.size();
-            if (n==0) {
-                std::cout << "error: sum expression.\n";
-                exit(1);
-            } else
-                if (n==1) {
-                    return makeYicesExpression(es.back());
-                }
+            assert(n>0 && "empty SUM expression!");
+            if (n==1) {
+                return makeYicesExpression(es.back());
+            }
             yices_expr args[n];
             for(unsigned i=0; i<n; i++) {
                 args[i] = makeYicesExpression(es[i]); 
@@ -566,13 +513,10 @@ yices_expr YicesSolver::makeYicesExpression(ExprPtr e) {
             SubExprPtr se = std::static_pointer_cast<SubExpression>(e);
             std::vector<ExprPtr> es = se->getExprs();
             unsigned n = es.size();
-            if (n==0) {
-                std::cout << "error: sub expression.\n";
-                exit(1);
-            } else
-                if (n==1) {
-                    return makeYicesExpression(es.back());
-                }
+            assert(n>0 && "empty SUB expression!");
+            if (n==1) {
+                return makeYicesExpression(es.back());
+            }
             yices_expr args[n];
             for(unsigned i=0; i<n; i++) {
                 args[i] = makeYicesExpression(es[i]); 
@@ -583,13 +527,10 @@ yices_expr YicesSolver::makeYicesExpression(ExprPtr e) {
             MulExprPtr me = std::static_pointer_cast<MulExpression>(e);
             std::vector<ExprPtr> es = me->getExprs();
             unsigned n = es.size();
-            if (n==0) {
-                std::cout << "error: mul expression.\n";
-                exit(1);
-            } else
-                if (n==1) {
-                    return makeYicesExpression(es.back());
-                }
+            assert(n>0 && "empty MUL expression!");
+            if (n==1) {
+                return makeYicesExpression(es.back());
+            }
             yices_expr args[n];
             for(unsigned i=0; i<n; i++) {
                 args[i] = makeYicesExpression(es[i]); 
@@ -633,13 +574,7 @@ yices_expr YicesSolver::makeYicesExpression(ExprPtr e) {
             return yices_mk_app(ctx, intmod_op, args, 2);
         }
         default:
-            std::cerr << "error: wrong expression op code!\n";
-            exit(1);
+            llvm_unreachable("Illegal expression opcode!");
             break;
     }
-}
-
-
-YicesSolver::~YicesSolver() {
-    
 }
