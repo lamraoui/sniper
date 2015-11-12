@@ -91,9 +91,6 @@ static cl::opt <bool>
 WithoutWeights("ww", cl::desc("Without weights"));
 
 static cl::opt <bool>
-NoPushPop("nopp", cl::desc("Do not use push-pop optimization"));
-
-static cl::opt <bool>
 PTF("ptf", cl::desc("Use Partial TF (needs -ce)"));
 
 static cl::opt <bool>
@@ -229,10 +226,6 @@ unsigned Options::getUnrollCount() {
 
 unsigned Options::getMaxDepth() {
     return MaxDepth;
-}
-
-bool Options::pushPopUsed() {
-    return !NoPushPop;
 }
 
 bool Options::ptfUsed() {

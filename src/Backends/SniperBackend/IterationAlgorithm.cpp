@@ -37,7 +37,6 @@ void IterationAlgorithm::run(Formula *TF, Formula *AS,
     if (options->verbose()) {
         std::cout << "=================================================\n";
         std::cout << "Running AllDiagnosis algorithm ";
-        if (options->pushPopUsed())  std::cout << "[Push&Pop]";
         if (combineMethod==Combine::MHS)      std::cout << "[MHS]";
         else if (combineMethod==Combine::PWU) std::cout << "[PWU]";
         else if (combineMethod==Combine::FLA) std::cout << "[FLA]";
