@@ -66,10 +66,8 @@ void EncoderPass::initAssertCalls() {
         }
     }
     // No post-condition and no oracle?
-    if (!hasAsserts && options->getGoldenOutputsFileName().empty()) {
-        //std::cout << "warning: no call to assert function!\n";
-        error("no call to assert function!");
-    }
+    assert((hasAsserts || !options->getGoldenOutputsFileName().empty()) &&
+           "No call to assert function nor oracle!");
 }
 
 // =============================================================================
@@ -251,7 +249,7 @@ Formula* EncoderPass::makeTraceFormula() {
                 case Instruction::ExtractValue:
                 case Instruction::InsertValue:
                     i->dump();
-                    error("unsupported LLVM instruction!\n");
+                    assert("Unsupported LLVM instruction!");
                     break;
                 default:
                     llvm_unreachable("Illegal opcode!");
@@ -279,14 +277,12 @@ Formula* EncoderPass::makeTraceFormula() {
                     // Pack and add all instructions from
                     // the same line number
                     else if (options->lineGranularityLevel()) {
-                        if (line==0) {
-                            error("EncodePass");
-                        }
+                        assert(line>0 && "Illegal line number!");
                         // New line, Add the collect constraints to the formula
                         if (line!=oldLine && oldLine!=0) {
-                            if (currentConstraits.empty() || !lastInstruction) {
-                                error("EncodePass");
-                            }
+                            assert(!currentConstraits.empty() &&
+                                   "No constraints!");
+                            assert(lastInstruction && "Instruction is null!");
                             ExprPtr e = Expression::mkAnd(currentConstraits);
                             e->setInstruction(lastInstruction);
                             e->setSoft();
@@ -301,7 +297,7 @@ Formula* EncoderPass::makeTraceFormula() {
                     else if (options->blockGranularityLevel()) {
                         currentConstraits.push_back(expr);
                     } else {
-                        error("EncodePass");
+                        assert("EncodePass!");
                     }
                 }
                 // Instruction with no line number
@@ -324,25 +320,21 @@ Formula* EncoderPass::makeTraceFormula() {
     }
     // Add the remaining soft constraints to the formula
     if (!currentConstraits.empty()) {
-        if (options->lineGranularityLevel()) {
-            if (!lastInstruction) {
-                error("EncodePass");
-            }
-            ExprPtr e = Expression::mkAnd(currentConstraits);
-            e->setInstruction(lastInstruction);
-            e->setSoft();
-            formula->add(e);
-            currentConstraits.clear();
-        } else {
-            error("EncodePass");
-        }
+        assert(options->lineGranularityLevel()
+               && "Some instructions could not be encoded!");
+        assert(lastInstruction && "Instruction is null!");
+        ExprPtr e = Expression::mkAnd(currentConstraits);
+        e->setInstruction(lastInstruction);
+        e->setSoft();
+        formula->add(e);
+        currentConstraits.clear();
     }
     if(options->printDuration()) {
         //timer1.stop("Trace Formula Encoding Time");
     }
     // Pruned Flow-sensitive Trace Formula
     if (options->ptfUsed()) {
-          error("Pruned flow-sensitive trace formula is desactivated");
+          assert("Pruned flow-sensitive trace formula is desactivated");
 //        MSTimer timer2;
 //        if(options->printDuration()) {
 //            timer2.start();
@@ -515,18 +507,12 @@ ExprPtr EncoderPass::constructPartialPart_V3() {
                 BasicBlock *targetbb;
                 if (br->isConditional()) {
                     Value *concrete = t->getConcreteValue(br->getCondition());
-                    if (!concrete) {
-                        error("no concrete value!");
-                    }
-                    if (br->getNumSuccessors()!=2) {
-                        error("unsupported br!");
-                    }
-                    int val = 0;
-                    if(ConstantInt *ci = dyn_cast<ConstantInt>(concrete)) {
-                        val = (int) ci->getSExtValue();
-                    } else {
-                        error("no concrete value for variable!");
-                    }
+                    assert(concrete && "No concrete value!");
+                    assert(br->getNumSuccessors()==2 &&
+                           "Unsupported br instruction!");
+                    ConstantInt *ci = dyn_cast<ConstantInt>(concrete);
+                    assert(ci && "No concrete value for variable!");
+                    int val = (int) ci->getSExtValue();
                     if (val) {
                         targetbb = br->getSuccessor(0);
                     } else {
@@ -563,13 +549,11 @@ ExprPtr EncoderPass::constructPartialPart_V3() {
                 Value *v = *itb;
                 // Phi
                 if (PHINode *phi = dyn_cast<PHINode>(inst)) {
-                    if (!prevExecutedBlock) {
-                        error("no prev exe block");
-                    }
-                    Value *vTaken = phi->getIncomingValueForBlock(prevExecutedBlock);
-                    if (!vTaken) {
-                        error("no phi incom. value");
-                    }
+                    assert(prevExecutedBlock &&
+                           "No previous execution basic block!");
+                    Value *vTaken =
+                    phi->getIncomingValueForBlock(prevExecutedBlock);
+                    assert(vTaken && "No phi incoming value!");
                     if (vTaken!=v) {
                         continue;
                     }
@@ -598,7 +582,7 @@ ExprPtr EncoderPass::constructPartialPart_V3() {
                 }
                 else {
                     v->dump();
-                    error("not supported");
+                    assert("Not supported!");
                 }
             }
             // ------------------------------------------------
@@ -606,17 +590,13 @@ ExprPtr EncoderPass::constructPartialPart_V3() {
             // ------------------------------------------------
             for (Value::use_iterator itb=inst->use_begin(), ite=inst->use_end(); itb!=ite; ++itb) {
                 Value *v = *itb;
-                if (Instruction *useI = dyn_cast<Instruction>(v)) {
-                    BasicBlock *parentBlock = useI->getParent();
-                    const bool isIn = bfBlocks.find(parentBlock)!=bfBlocks.end();
-                    if (!isIn) {
-                        varsUsedInFailBlocks.insert(inst);
-                        break;
-                    }
-                }
-                else {
-                    v->dump();
-                    error("value not supported");
+                Instruction *useI = dyn_cast<Instruction>(v);
+                assert(useI && "Value not supported!");
+                BasicBlock *parentBlock = useI->getParent();
+                const bool isIn = bfBlocks.find(parentBlock)!=bfBlocks.end();
+                if (!isIn) {
+                    varsUsedInFailBlocks.insert(inst);
+                    break;
                 }
             }
             
@@ -631,7 +611,7 @@ ExprPtr EncoderPass::constructPartialPart_V3() {
                     isa<LoadInst>(v) || isa<GetElementPtrInst>(v) ) {
                     inst->dump();
                     v->dump();
-                    error("instruction not supported!");
+                    assert("Instruction not supported!");
                 }
                 std::string name = v->getName().str();
                 // Get the concrete value
@@ -639,12 +619,9 @@ ExprPtr EncoderPass::constructPartialPart_V3() {
                 if (!concrete) {
                     continue;
                 }
-                int val = 0;
-                if(ConstantInt *ci = dyn_cast<ConstantInt>(concrete)) {
-                    val = (int) ci->getSExtValue();
-                } else {
-                    error("no concrete value for variable!");
-                }
+                ConstantInt *ci = dyn_cast<ConstantInt>(concrete);
+                assert(ci && "No concrete value for variable!");
+                int val = (int) ci->getSExtValue();
                 ExprPtr varExpr;
                 ExprPtr valExpr;
                 Type *t = v->getType();
@@ -661,7 +638,7 @@ ExprPtr EncoderPass::constructPartialPart_V3() {
                     varExpr = Expression::mkIntVar(name);
                     valExpr = Expression::mkSInt32Num(val);
                 } else {
-                    error("unsupported type");
+                    assert("Unsupported type!");
                 }
                 // (= x 0)
                 ExprPtr eqExpr = Expression::mkEq(varExpr, valExpr);
@@ -856,18 +833,12 @@ ExprPtr EncoderPass::constructPartialPart() {
                 BasicBlock *targetbb;
                 if (br->isConditional()) {
                     Value *concrete = t->getConcreteValue(br->getCondition());
-                    if (!concrete) {
-                        error("no concrete value!");
-                    }
-                    if (br->getNumSuccessors()!=2) {
-                        error("unsupported br!");
-                    }
-                    int val = 0;
-                    if(ConstantInt *ci = dyn_cast<ConstantInt>(concrete)) {
-                        val = (int) ci->getSExtValue();
-                    } else {
-                        error("no concrete value for variable!");
-                    }
+                    assert(concrete && "No concrete value!");
+                    assert(br->getNumSuccessors()==2 &&
+                           "Unsupported br instruction!");
+                    ConstantInt *ci = dyn_cast<ConstantInt>(concrete);
+                    assert(ci && "No concrete value for variable!");
+                    int val = (int) ci->getSExtValue();
                     if (val) {
                         targetbb = br->getSuccessor(0);
                     } else {
@@ -904,13 +875,11 @@ ExprPtr EncoderPass::constructPartialPart() {
                 Value *v = *itb;
                 // Phi
                 if (PHINode *phi = dyn_cast<PHINode>(inst)) {
-                    if (!prevExecutedBlock) {
-                        error("no prev exe block");
-                    }
-                    Value *vTaken = phi->getIncomingValueForBlock(prevExecutedBlock);
-                    if (!vTaken) {
-                        error("no phi incom. value");
-                    }
+                    assert(prevExecutedBlock &&
+                           "No previous execution basic block!");
+                    Value *vTaken =
+                    phi->getIncomingValueForBlock(prevExecutedBlock);
+                    assert(vTaken && "No phi incoming value!");
                     if (vTaken!=v) {
                         continue;
                     }
@@ -939,7 +908,7 @@ ExprPtr EncoderPass::constructPartialPart() {
                 } 
                 else {
                     v->dump();
-                    error("not supported");
+                    assert("Not supported");
                 }
             }
             // ------------------------------------------------
@@ -947,17 +916,13 @@ ExprPtr EncoderPass::constructPartialPart() {
             // ------------------------------------------------
             for (Value::use_iterator itb=inst->use_begin(), ite=inst->use_end(); itb!=ite; ++itb) {
                 Value *v = *itb;
-                if (Instruction *useI = dyn_cast<Instruction>(v)) {
-                    BasicBlock *parentBlock = useI->getParent();
-                    const bool isIn = bfBlocks.find(parentBlock)!=bfBlocks.end();
-                    if (!isIn) {
-                        varsUsedInFailBlocks.insert(inst);
-                        break;
-                    }
-                }
-                else {
-                    v->dump();
-                    error("value not supported");
+                Instruction *useI = dyn_cast<Instruction>(v);
+                assert(useI && "Value not supported!");
+                BasicBlock *parentBlock = useI->getParent();
+                const bool isIn = bfBlocks.find(parentBlock)!=bfBlocks.end();
+                if (!isIn) {
+                    varsUsedInFailBlocks.insert(inst);
+                    break;
                 }
             }
             
@@ -972,7 +937,7 @@ ExprPtr EncoderPass::constructPartialPart() {
                     isa<LoadInst>(v) || isa<GetElementPtrInst>(v) ) {
                     inst->dump();
                     v->dump();
-                    error("instruction not supported!");
+                    assert("Instruction not supported!");
                 }
                 std::string name = v->getName().str();
                 // Get the concrete value
@@ -980,12 +945,9 @@ ExprPtr EncoderPass::constructPartialPart() {
                 if (!concrete) {
                     continue;
                 }
-                int val = 0;
-                if(ConstantInt *ci = dyn_cast<ConstantInt>(concrete)) {
-                    val = (int) ci->getSExtValue();
-                } else {
-                    error("no concrete value for variable!");
-                }
+                ConstantInt *ci = dyn_cast<ConstantInt>(concrete);
+                assert(ci && "No concrete value for variable!");
+                int val = (int) ci->getSExtValue();
                 ExprPtr varExpr;
                 ExprPtr valExpr;
                 Type *t = v->getType();
@@ -1002,7 +964,7 @@ ExprPtr EncoderPass::constructPartialPart() {
                     varExpr = Expression::mkIntVar(name);
                     valExpr = Expression::mkSInt32Num(val);
                 } else {
-                     error("unsupported type");
+                     assert("Unsupported type");
                 }
                 // (= x 0)
                 ExprPtr eqExpr = Expression::mkEq(varExpr, valExpr);
@@ -1202,7 +1164,7 @@ ExprPtr EncoderPass::constructPartialPart_old() {
                 } 
                 else {
                     v->dump();
-                    error("not supported");
+                    assert("Value not supported!");
                 }
             }
             // Collect RHS variables computed in failing blocks
@@ -1221,7 +1183,7 @@ ExprPtr EncoderPass::constructPartialPart_old() {
                 } 
                 else {
                     v->dump();
-                    error("not supported");
+                    assert("Value not supported!");
                 }
             }
             
@@ -1235,18 +1197,12 @@ ExprPtr EncoderPass::constructPartialPart_old() {
                 BasicBlock *targetbb;
                 if (br->isConditional()) {
                     Value *concrete = t->getConcreteValue(br->getCondition());
-                    if (!concrete) {
-                        error("no concrete value!");
-                    }
-                    if (br->getNumSuccessors()!=2) {
-                        error("unsupported br!");
-                    }
-                    int val = 0;
-                    if(ConstantInt *ci = dyn_cast<ConstantInt>(concrete)) {
-                        val = (int) ci->getSExtValue();
-                    } else {
-                        error("no concrete value for variable!");
-                    }
+                    assert(concrete && "no concrete value!");
+                    assert(br->getNumSuccessors()==2 &&
+                           "Unsupported br instruction!");
+                    ConstantInt *ci = dyn_cast<ConstantInt>(concrete);
+                    assert(ci && "No concrete value for variable!");
+                    int val = (int) ci->getSExtValue();
                     if (val) {
                         targetbb = br->getSuccessor(0);
                     } else {
@@ -1269,13 +1225,9 @@ ExprPtr EncoderPass::constructPartialPart_old() {
             } 
             // Phi
             else if (PHINode *phi = dyn_cast<PHINode>(inst)) {
-                if (!lastBlock) {
-                     error("no last block");
-                }
+                assert(lastBlock && "Last basic block is missing!");
                 Value *vTaken = phi->getIncomingValueForBlock(prevExecutedBlock);
-                if (!vTaken) {
-                    error("no phi incom. value");
-                }                
+                assert(vTaken && "No phi incoming value!");
                 // LHS: Is the ouput value used in a failing block
                 const bool isIn1 = varsUsedInFailBlocks.find(phi)!=varsUsedInFailBlocks.end();
                 // RHS: Is the selected value computed in a failing block
@@ -1284,35 +1236,28 @@ ExprPtr EncoderPass::constructPartialPart_old() {
                 if (isIn1) {
                     // The LHS var of a phi is equal to the selected var
                     Value *concrete = t->getConcreteValue(vTaken);
-                    if (concrete) {
-                        int val = 0;
-                        if(ConstantInt *ci = dyn_cast<ConstantInt>(concrete)) {
-                            val = (int) ci->getSExtValue();
+                    assert(concrete && "No concrete value for phi instruction!");
+                    ConstantInt *ci = dyn_cast<ConstantInt>(concrete);
+                    assert(ci && "No concrete value for variable!");
+                    int val = (int) ci->getSExtValue();
+                    ExprPtr varExpr;
+                    ExprPtr valExpr;
+                    std::string name = phi->getName().str();
+                    if (phi->getType()->isIntegerTy(1)) {
+                        varExpr = Expression::mkBoolVar(name);
+                        if (val) {
+                            valExpr = Expression::mkTrue();
                         } else {
-                            error("no concrete value for variable!");
+                            valExpr = Expression::mkFalse();
                         }
-                        ExprPtr varExpr;
-                        ExprPtr valExpr;
-                        std::string name = phi->getName().str();
-                        if (phi->getType()->isIntegerTy(1)) {
-                            varExpr = Expression::mkBoolVar(name);
-                            if (val) {
-                                valExpr = Expression::mkTrue();
-                            } else {
-                                valExpr = Expression::mkFalse();
-                            }
-                            // TODO: check for other types
-                        } else {
-                            varExpr = Expression::mkIntVar(name);
-                            valExpr = Expression::mkSInt32Num(val);
-                        }
-                        // (= x 0)
-                        ExprPtr eqExpr = Expression::mkEq(varExpr, valExpr);
-                        andExprs.push_back(eqExpr);
+                        // TODO: check for other types
                     } else {
-                        vTaken->dump();
-                        error("no concrete value for phi");
+                        varExpr = Expression::mkIntVar(name);
+                        valExpr = Expression::mkSInt32Num(val);
                     }
+                    // (= x 0)
+                    ExprPtr eqExpr = Expression::mkEq(varExpr, valExpr);
+                    andExprs.push_back(eqExpr);
                 }
                 // RHS
                 varsUsedInFailBlocks.clear();
@@ -1324,7 +1269,7 @@ ExprPtr EncoderPass::constructPartialPart_old() {
             else if (isa<SExtInst>(inst) || isa<ZExtInst>(inst) || isa<StoreInst>(inst) || 
                      isa<LoadInst>(inst) || isa<GetElementPtrInst>(inst) ) {
                 inst->dump();
-                error("instruction not supported!");
+                assert("instruction not supported!");
             }
             
             std::set<Value*>::iterator it4;
@@ -1336,12 +1281,9 @@ ExprPtr EncoderPass::constructPartialPart_old() {
                 if (!concrete) {
                     continue;
                 }
-                int val = 0;
-                if(ConstantInt *ci = dyn_cast<ConstantInt>(concrete)) {
-                    val = (int) ci->getSExtValue();
-                } else {
-                    error("no concrete value for variable!");
-                }
+                ConstantInt *ci = dyn_cast<ConstantInt>(concrete);
+                assert("No concrete value for variable!");
+                int val = (int) ci->getSExtValue();
                 ExprPtr varExpr;
                 ExprPtr valExpr;
                 if (v->getType()->isIntegerTy(1) || isa<BasicBlock>(v)) {
@@ -1397,9 +1339,8 @@ ExprPtr EncoderPass::constructPartialPart_old() {
 // =============================================================================
 void EncoderPass::initGlobalVariables() {
     Module *llvmMod = this->targetFun->getParent();
-    if (!llvmMod->global_empty()) {
-        //error("global variables not supported!");
-    }
+    //assert(llvmMod->global_empty() && "Global variables are not supported!");
+    
     // TODO : initializer
     /* Module *m = this->targetFun->getParent();
     Module::global_iterator iter = m->global_begin();

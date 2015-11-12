@@ -21,7 +21,6 @@
 #include "llvm/IR/Function.h"
 #include "llvm/IR/IRBuilder.h"
 
-#include "Utils/Utils.h"
 #include "Logic/Formula.h"
 #include "Logic/Expression.h"
 
@@ -49,9 +48,7 @@ private:
 private:
     InputVariableTrace(Value *o) { 
         name = o->getName().str();
-        if (name.length()==0) {
-            error("empty string!");
-        }
+        assert(name.length()>0 && "Empty string!");
     }
 public:
     InputVariableTrace(Value *o, Value *c) : InputVariableTrace(o) { 
@@ -69,20 +66,15 @@ public:
         return name;
     }
     int getInt32() const { 
-        if(ConstantInt *ci = dyn_cast<ConstantInt>(concrete)) {
-            return (int) ci->getSExtValue();
-        } else {
-            error("no concrete value for variable!");
-            return 0;
-        }
+        ConstantInt *ci = dyn_cast<ConstantInt>(concrete);
+        assert(ci && "No concrete value for variable!");
+        return (int) ci->getSExtValue();
     }
     Value* getConcrete() { return concrete; }
     void dump() {
-        if(ConstantInt *ci = dyn_cast<ConstantInt>(concrete)) {
-            std::cout << ci->getSExtValue();
-        } else {
-            error("no concrete value for variable!");
-        }
+        ConstantInt *ci = dyn_cast<ConstantInt>(concrete);
+        assert(ci && "no concrete value for variable!");
+        std::cout << ci->getSExtValue();
     }
     /*bool operator<(const InputVariableTrace &other) const { 
         return (name<other.name && getInt32()<other.getInt32());
@@ -200,29 +192,21 @@ public:
         }
         else {
             i->dump();
-            error("InstructionTrace");
+            llvm_unreachable("InstructionTrace");
         }
     }
-    InstructionTrace(Instruction *i, Value *c1, Value *c2) : inst(i) { 
-        if (i->mayReturn() && i->getNumOperands()==2) {
-            resVal = emulateInst(i, c1, c2);
-            argVals.push_back(c1);
-            argVals.push_back(c2);
-        } else {
-            i->dump();
-            error("InstructionTrace");
-        }
+    InstructionTrace(Instruction *i, Value *c1, Value *c2) : inst(i) {
+        assert(i->mayReturn() && i->getNumOperands()==2 && "InstructionTrace");
+        resVal = emulateInst(i, c1, c2);
+        argVals.push_back(c1);
+        argVals.push_back(c2);
     }
     InstructionTrace(Instruction *i, Value *c1, Value *c2, Value *c3) : inst(i) {
-        if (i->mayReturn() && i->getNumOperands()==3) {
-            resVal = emulateInst(i, c1, c2, c3);
-            argVals.push_back(c1);
-            argVals.push_back(c2);
-            argVals.push_back(c3);
-        } else {
-            i->dump();
-            error("InstructionTrace");
-        }
+        assert(i->mayReturn() && i->getNumOperands()==3 && "InstructionTrace");
+        resVal = emulateInst(i, c1, c2, c3);
+        argVals.push_back(c1);
+        argVals.push_back(c2);
+        argVals.push_back(c3);
     }
     ~InstructionTrace() {
         /* BUG

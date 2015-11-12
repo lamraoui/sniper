@@ -50,40 +50,34 @@ ExprPtr Context::getLocalVariable(Instruction *i, Value *arg, int pos) {
     }
     
     ExprPtr localVar;
-    if(arg->getType()->isIntegerTy()) {
-        // Boolean
-        if(arg->getType()->isIntegerTy(1)) {
-            localVar = Expression::mkBoolVar(name);
-        } 
-        // Integer 8,16,32,64bits
-        else {
-            localVar = Expression::mkIntVar(name);
-        }
-        // Assert the local variable initialization
-        if(arg->getValueID()!=Value::UndefValueVal) {
-            
-            if (options->dbgMsg()) {
-                std::cout << "[REMOVED CODE]:[Context:68]" << std::endl;
-            }
-            
-           /* ExprPtr argExpr = newVariable(arg);
-            ExprPtr eqExpr = Expression::mkEq(localVar, argExpr);
-            // Assert as soft
-            if (!formula) {
-                error("null formula");
-            }
-            unsigned line = locVar->getLine(name);
-            eqExpr->setInstruction(i);
-            formula->assertSoft(eqExpr);
-            eqExpr->setLine(line);*/
-        }
-        // Add the newly created number into the map
-        this->name2expr[name] = localVar;
-        return localVar;
-    } else {
-        error("type not supported.");
+    assert(arg->getType()->isIntegerTy() && "Not supported type!");
+    // Boolean
+    if(arg->getType()->isIntegerTy(1)) {
+        localVar = Expression::mkBoolVar(name);
     }
-    return NULL;
+    // Integer 8,16,32,64bits
+    else {
+        localVar = Expression::mkIntVar(name);
+    }
+    // Assert the local variable initialization
+    if(arg->getValueID()!=Value::UndefValueVal) {
+        
+        if (options->dbgMsg()) {
+            std::cout << "[REMOVED CODE]:[Context:68]" << std::endl;
+        }
+        
+        /* ExprPtr argExpr = newVariable(arg);
+         ExprPtr eqExpr = Expression::mkEq(localVar, argExpr);
+         // Assert as soft
+         assert(formula && "Formula is null!");
+         unsigned line = locVar->getLine(name);
+         eqExpr->setInstruction(i);
+         formula->assertSoft(eqExpr);
+         eqExpr->setLine(line);*/
+    }
+    // Add the newly created number into the map
+    this->name2expr[name] = localVar;
+    return localVar;
 }
 
 // =============================================================================
@@ -129,7 +123,7 @@ ExprPtr Context::newVariable(Value *val, BasicBlock *bb) {
     // Alloca
     // --------------------------------------------------------
     else if (isa<AllocaInst>(val)) {
-        error("pointer/struct types not supported.");
+        assert("Pointer/struct types are not supported!");
     }
     // Global variable
     // --------------------------------------------------------
@@ -141,9 +135,7 @@ ExprPtr Context::newVariable(Value *val, BasicBlock *bb) {
          return expr;
          }*/
         
-        if (!bb) {
-            error("global variables");
-        }
+        assert(bb && "Basic block is null!");
         // Update the version number of the variable
         this->gv2v[gv]++; 
         std::stringstream vers;
@@ -170,14 +162,14 @@ ExprPtr Context::newVariable(Value *val, BasicBlock *bb) {
             //TODO 
             std::string s = val->getName();
             std::cout << s << std::endl;
-            error("global array types not supported.");
+            assert("Global array types are not supported!");
         }
         // Pointer & Struct
         else {
             //TODO 
             std::string s = val->getName();
             std::cout << s << std::endl;
-            error("pointer/struct types not supported."); 
+            assert("Pointer/struct types are not supported!");
         }
     }    
     // Pointer, Struct, Array
@@ -219,24 +211,20 @@ ExprPtr Context::newVariable(Value *val, BasicBlock *bb) {
     // Variable
     // --------------------------------------------------------
     else {
-        if(val->getType()->isIntegerTy()) {
-            // Create a new variable if it is not already created 
-            expr = getVariable(val);
-            if(expr==NULL) {
-                // Boolean
-                if(val->getType()->isIntegerTy(1)) {
-                    expr = Expression::mkBoolVar(val->getName());
-                } 
-                // Integer 8,16,32,64bits
-                else {
-                    expr = Expression::mkIntVar(val->getName());
-                }
-                 // Add the newly created number into the map
-                this->val2expr[val] = expr;
+        assert(val->getType()->isIntegerTy() && "Not supported type!");
+        // Create a new variable if it is not already created
+        expr = getVariable(val);
+        if(expr==NULL) {
+            // Boolean
+            if(val->getType()->isIntegerTy(1)) {
+                expr = Expression::mkBoolVar(val->getName());
             }
-        } else {
-            val->getType()->dump();
-            error("type not supported.");
+            // Integer 8,16,32,64bits
+            else {
+                expr = Expression::mkIntVar(val->getName());
+            }
+            // Add the newly created number into the map
+            this->val2expr[val] = expr;
         }
     }
     return expr;
@@ -399,9 +387,9 @@ ExprPtr Context::propagatePointers(BasicBlock *bb) {
 // propagatePointers (for concolic module)
 // =============================================================================
 void Context::propagatePointers(BasicBlock *bb, BasicBlock *nextbb) {
-    /*if (!nextbb) {
-        error("cannot propagate pointers");
-    }
+    
+    assert(nextbb && "Cannot propagate pointers!");
+    /*
     // ------------------------
     // Entry BB
     // ------------------------
@@ -414,9 +402,6 @@ void Context::propagatePointers(BasicBlock *bb, BasicBlock *nextbb) {
     // ------------------------
     // One or more than one pred BB
     // ------------------------
-    if (!nextbb) {
-        error("cannot propagate pointers");
-    }
     this->bb2id[nextbb] = this->bb2id[bb];
 }
 

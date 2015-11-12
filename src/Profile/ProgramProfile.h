@@ -28,6 +28,7 @@
 #include "llvm/Support/InstIterator.h"
 #include "llvm/Transforms/Utils/BasicBlockUtils.h"
 
+#include "../Options.h"
 #include "ProgramTrace.h"
 
 using namespace llvm;

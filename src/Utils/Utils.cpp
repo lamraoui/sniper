@@ -39,13 +39,3 @@ void MSG(std::string msg, Options *o) {
         std::cout << msg;
     }
 }
-
-// =============================================================================
-// error
-// 
-// Print the given message and exit
-// =============================================================================
-void error(std::string msg) {
-    std::cerr << "error: " << msg << std::endl;
-    exit(1);
-}

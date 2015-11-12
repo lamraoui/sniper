@@ -18,7 +18,6 @@
 #include "llvm/IR/LLVMContext.h"
 
 #include "Options.h"
-#include "Utils/Utils.h"
 #include "Logic/Formula.h"
 #include "Frontend/LocalVariables.h"
 #include "Frontend/LoopInfoPass.h"

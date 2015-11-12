@@ -114,9 +114,8 @@ void IterationAlgorithm::run_dynamic(Formula *TF, Formula *AS,
                                      ProgramProfile *prof,
                                      Combine::Method combineMethod) {
     
-    if (!options->instructionGranularityLevel()) {
-        error("DynamicDiagnosesEnum : set inst granularity level");
-    }
+    assert(options->instructionGranularityLevel()
+           && "Dynamic enumeration needs inst granularity level!");
     if (!prof->hasFailingProgramTraces()) {
         return; // Nothing to do
     }
@@ -145,12 +144,12 @@ void IterationAlgorithm::run_dynamic(Formula *TF, Formula *AS,
         // Soft clause
         else {
             Instruction *I = e->getInstruction();
-            if (!I) error("DynamicDiagnosesEnum");
+            assert(I && "Instruction is null!");
             BasicBlock *currentBlock = I->getParent();
-            if (!currentBlock) error("DynamicDiagnosesEnum");
+            assert(currentBlock && "Basic block is null!");
             // New block
             if (currentBlock!=lastBlock && lastBlock!=NULL) {
-                if (tmpClauses.empty()) error("DynamicDiagnosesEnum");
+                assert(!tmpClauses.empty() && "No clauses!");
                 ExprPtr blockExpr = Expression::mkAnd(tmpClauses);
                 blockExpr->setInstruction(lastInst);
                 blockExpr->setSoft();
@@ -202,9 +201,9 @@ void IterationAlgorithm::run_dynamic(Formula *TF, Formula *AS,
     std::set<BasicBlock*> suspicousBlocks;
     for (ExprPtr e : allExprs) {
         Instruction *I = e->getInstruction();
-        if (!I) error("DynamicDiagnosesEnum");
+        assert(I && "Instruction is null!");
         BasicBlock *bb = I->getParent();
-        if (!bb) error("DynamicDiagnosesEnum");
+        assert(bb && "Basic block is null!");
         suspicousBlocks.insert(bb);
     }
     
@@ -228,9 +227,9 @@ void IterationAlgorithm::run_dynamic(Formula *TF, Formula *AS,
         // Soft clause
         else {
             Instruction *I = e->getInstruction();
-            if (!I) error("DynamicDiagnosesEnum");
+            assert(I && "Instruction is null!");
             BasicBlock *bb = I->getParent();
-            if (!bb) error("DynamicDiagnosesEnum");
+            assert(bb && "Basic block is null!");
             
             const bool isSuspicous
             = (suspicousBlocks.find(bb)!=suspicousBlocks.end());
@@ -460,9 +459,7 @@ IterationAlgorithm::avToClauses(SetOfFormulasPtr M,
 // =============================================================================
 void IterationAlgorithm::checkControlFlow(YicesSolver *solver) {
     std::cout << "Checking control flow...";
-    if (!solver) {
-        error("checkControlFlowIte: wrong arg");
-    }
+    assert(solver && "Solver is null!");
     // Iterate over basic blocks of the main function
     for (Function::iterator i=targetFun->begin(), e=targetFun->end(); i!=e; ++i) {
         BasicBlock *bb = i;
@@ -481,9 +478,7 @@ void IterationAlgorithm::checkControlFlow(YicesSolver *solver) {
             }
             nbPredTrans++;
         }
-        if (nbTruePredTrans>1) {
-            error("invalid control flow value (0)");
-        }
+        assert(nbTruePredTrans==0 && "Invalid control flow value!");
         if (nbPredTrans==0) { // Entry block doesn't have any predecessors
             nbTruePredTrans = 1;
         }
@@ -492,20 +487,18 @@ void IterationAlgorithm::checkControlFlow(YicesSolver *solver) {
             return; // End of recursion
         }
         const BranchInst *br = dyn_cast<BranchInst>(t);
-        if (!br) {
-            error("unsupported instruction");
-        }
+        assert(br && "Unsupported terminal instruction!");
         if (br->isUnconditional()) {
             BasicBlock *nextbb = br->getSuccessor(0);
             int val = getBlockTransVal(solver, bb, nextbb);
             if (nbTruePredTrans==1 && val==l_false) {
                 dumpTransValues(solver);
-                error("invalid control flow value (1)");
+                assert("invalid control flow value (1)");
             }
             if (nbTruePredTrans==0 && nbUndefPredTrans==0 && val==l_true) {
                 std::cout << bb->getName().str() << std::endl;
                 dumpTransValues(solver);
-                error("invalid control flow value (2)");
+                assert("invalid control flow value (2)");
             }
         } else {
             BasicBlock *nextbb1 = br->getSuccessor(0);
@@ -514,16 +507,16 @@ void IterationAlgorithm::checkControlFlow(YicesSolver *solver) {
             int val2 = getBlockTransVal(solver, bb, nextbb2);
             if (nbTruePredTrans==1 && val1==l_false && val2==l_false) {
                 dumpTransValues(solver);
-                error("invalid control flow value (3)");
+                assert("invalid control flow value (3)");
             }
             if (nbTruePredTrans==0 && nbUndefPredTrans ==0
                 && (val1==l_true || val2==l_true)) {
                 dumpTransValues(solver);
-                error("invalid control flow value (4)");
+                assert("invalid control flow value (4)");
             }
             if (val1==l_true && val2==l_true) {
                 dumpTransValues(solver);
-                error("invalid control flow value (5)");
+                assert("invalid control flow value (5)");
             }
         }
     }
@@ -537,9 +530,8 @@ void IterationAlgorithm::checkControlFlow(YicesSolver *solver) {
 // =============================================================================
 int IterationAlgorithm::getBlockTransVal(YicesSolver *s,
                                          BasicBlock *bb1, BasicBlock *bb2) {
-    if (!s || !bb1 || !bb2) {
-        error("getBlockTransVal: wrong arg");
-    }
+    assert(s && "Solver is null!");
+    assert((bb1 && bb2) && "Basic block is null!");
     std::string bbname1 = bb1->getName().str();
     std::string bbname2 = bb2->getName().str();
     std::string t = bbname1 + "_" + bbname2;
@@ -561,9 +553,7 @@ void IterationAlgorithm::dumpTransValues(YicesSolver *solver) {
             continue; // End
         }
         const BranchInst *br = dyn_cast<BranchInst>(t);
-        if (!br) {
-            error("unsupported instruction");
-        }
+        assert(br && "Unsupported terminal instruction!");
         if (br->isUnconditional()) {
             BasicBlock *nextbb = br->getSuccessor(0);
             int val = getBlockTransVal(solver, bb, nextbb);

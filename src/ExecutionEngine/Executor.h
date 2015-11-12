@@ -33,7 +33,6 @@
 #include "Frontend/LoopInfoPass.h"
 #include "Frontend/LocalVariables.h"
 #include "Encoder/Encoder.h"
-#include "Utils/Utils.h"
 
 
 #define NON_LINEAR_SUPPORTED 0

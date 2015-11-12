@@ -22,8 +22,7 @@
 
 void displayProgressBar(unsigned progress, unsigned total);
 void MSG(std::string msg, Options *o = NULL);
-void error(std::string msg); 
-    
+  
 
 class MSTimer {
 private:
@@ -33,16 +32,12 @@ public:
     MSTimer() : status(0) { }
     ~MSTimer() { };
     void start() {
-        if (status!=0) {
-            error("timer");   
-        }
+        assert(status==0 && "Timer is already running!");
         gettimeofday(&startTime, NULL);
         status = 1;
     }
     void stop() {
-        if (status!=1) {
-            error("timer");
-        }
+        assert(status==1 && "Timer is not running!");
         struct timeval endTime;
         gettimeofday(&endTime, NULL);
         long seconds  = endTime.tv_sec  - startTime.tv_sec;
@@ -55,7 +50,6 @@ public:
         std::cout << msg << ": "; 
         stop();
         std::cout << " ms\n";
-
     }
     
 /*

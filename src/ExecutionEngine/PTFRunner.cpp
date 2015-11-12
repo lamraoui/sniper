@@ -40,19 +40,15 @@ void PTFRunner::run(ProgramProfile *profile, LocalVariables *locVars,
     // Execute the program for each input list
     int i = 0;
     for (std::vector<Value*> IV : inputValuesVec) {
-        if (IV.empty()) {
-            error("empty input values list!");
-        }
+        assert(!IV.empty() && "Empty input values list!");
         // Prepare the executor
         VariablesPtr inputs = std::make_shared<Variables>();
         Function::arg_iterator ait = targetFun->arg_begin();
         for (Value *v : IV) {
-            if(ConstantInt *ci = dyn_cast<ConstantInt>(v)) {
-                int val = (int) ci->getSExtValue();
-                inputs->add(ait++, val);
-            } else {
-                error("no concrete value for variable!");
-            }
+            ConstantInt *ci = dyn_cast<ConstantInt>(v);
+            assert(ci && "No concrete value for variable!");
+            int val = (int) ci->getSExtValue();
+            inputs->add(ait++, val);
         }
         Executor::start(targetFun, inputs, locVars, options);
         // Call the function f with the input values as argument
@@ -69,17 +65,14 @@ void PTFRunner::run(ProgramProfile *profile, LocalVariables *locVars,
         if (expectedOutput && output) {
             ConstantInt *O = dyn_cast<ConstantInt>(output);
             ConstantInt *EO = dyn_cast<ConstantInt>(expectedOutput);
-            if (O && EO) {
-                int oval = (int) O->getSExtValue();
-                int eoval  = (int) EO->getSExtValue();
-                if (oval==eoval) {
-                    Executor::Trace->setSuccessful();
-                } else {
-                    Executor::Trace->setFailing();
-                    Executor::Trace->setExpectedOutput(expectedOutput);
-                }
+            assert((O && EO) && "No concrete value for variables!");
+            int oval = (int) O->getSExtValue();
+            int eoval  = (int) EO->getSExtValue();
+            if (oval==eoval) {
+                Executor::Trace->setSuccessful();
             } else {
-                error("no concrete value for variables!");
+                Executor::Trace->setFailing();
+                Executor::Trace->setExpectedOutput(expectedOutput);
             }
         } else {
             Executor::Trace->setUnknow();
@@ -103,9 +96,7 @@ void PTFRunner::run(ProgramProfile *profile, LocalVariables *locVars,
 std::vector<std::vector<Value*> > PTFRunner::parseTestsuiteFile(
                                 const std::string &filename) {
     std::ifstream infile(filename.c_str());
-    if (!infile) {
-        error("cannot open the testsuite file.");
-    }
+    assert(infile && "Cannot open the testsuite file!");
     std::string line;
     std::vector< std::vector<int> > all_integers;
     while ( getline( infile, line ) ) {
@@ -135,9 +126,7 @@ std::vector<std::vector<Value*> > PTFRunner::parseTestsuiteFile(
 std::vector<Value*> PTFRunner::parseGoldenOutputsFile(const std::string &filename) {
     // Open the file
     std::ifstream infile(filename.c_str());
-    if (!infile) {
-        error("cannot open the golden outputs file.");
-    }
+    assert(infile && "Cannot open the golden outputs file.");
     // Read the elements in the file into a vector
     std::vector<int> allValues;
     int value;

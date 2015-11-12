@@ -20,7 +20,6 @@
 #include "llvm/IR/Instructions.h"
 
 #include "Options.h"
-#include "Utils/Utils.h"
 #include "Frontend/LoopInfoPass.h"
 #include "Profile/ProgramProfile.h"
 #include "Encoder/Context.h"

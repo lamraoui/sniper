@@ -34,7 +34,6 @@
 #include "llvm/ADT/PostOrderIterator.h"
 
 #include "Options.h"
-#include "Utils/Utils.h"
 #include "Logic/Expression.h"
 #include "Logic/Formula.h"
 #include "Frontend/LocalVariables.h"

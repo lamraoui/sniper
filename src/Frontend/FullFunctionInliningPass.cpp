@@ -38,7 +38,8 @@ bool FullFunctionInliningPass::runOnFunction(Function &F) {
         if (!C || C->doesNotReturn()) {
                 continue;
         }
-        for (Value::use_iterator U = C->use_begin(), UE = C->use_end(); U != UE; ++U) {
+        for (Value::use_iterator U = C->use_begin(), UE = C->use_end();
+             U != UE; ++U) {
             if (StoreInst *S = dyn_cast<StoreInst>(*U)) {
                 worklist.push_back(S); //(&*I);
             }
@@ -49,12 +50,10 @@ bool FullFunctionInliningPass::runOnFunction(Function &F) {
         Value *C = S->getValueOperand();
         BinaryOperator *add =
         BinaryOperator::CreateAdd(C, C, "_ret", S); // name?
-        if (Instruction *I = dyn_cast<Instruction>(C)) {
-            MDNode *N = I->getMetadata("dbg");
-            add->setMetadata("dbg", N);
-        } else {
-            error("FullFunctionInliningPass");
-        }
+        Instruction *I = dyn_cast<Instruction>(C);
+        assert(I && "Instruction is null!");
+        MDNode *N = I->getMetadata("dbg");
+        add->setMetadata("dbg", N);
         // store retVal, *p  ->  store addVal, *p
         StoreInst *newS = new StoreInst(add, S->getPointerOperand());
         BasicBlock::iterator ii(S);

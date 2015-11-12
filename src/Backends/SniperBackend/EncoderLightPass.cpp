@@ -203,7 +203,7 @@ Formula* EncoderLightPass::makeTraceFormula() {
                 case Instruction::ExtractValue:
                 case Instruction::InsertValue:
                     i->dump();
-                    error("unsupported LLVM instruction!\n");
+                    assert("unsupported LLVM instruction!\n");
                     break;
                 default:
                     llvm_unreachable("Illegal opcode!");
@@ -231,14 +231,12 @@ Formula* EncoderLightPass::makeTraceFormula() {
                     // Pack and add all instructions from
                     // the same line number
                     else if (options->lineGranularityLevel()) {
-                        if (line==0) {
-                            error("Encoder-light Pass");
-                        }
+                        assert(line>0 && "Illegal line number!");
                         // New line, Add the collect constraints to the formula
                         if (line!=oldLine && oldLine!=0) {
-                            if (currentConstraits.empty() || !lastInstruction) {
-                                error("Encoder-light Pass");
-                            }
+                            assert(!currentConstraits.empty() &&
+                                   "No constraints!");
+                            assert(lastInstruction && "Instruction is null!");
                             ExprPtr e = Expression::mkAnd(currentConstraits);
                             e->setInstruction(lastInstruction);
                             e->setSoft();
@@ -253,7 +251,7 @@ Formula* EncoderLightPass::makeTraceFormula() {
                     else if (options->blockGranularityLevel()) {
                         currentConstraits.push_back(expr);
                     } else {
-                        error("Encoder-light Pass");
+                        assert("Encoder-light Pass");
                     }
                 }
                 // Instruction with no line number
@@ -276,25 +274,21 @@ Formula* EncoderLightPass::makeTraceFormula() {
     }
     // Add the remaining soft constraints to the formula
     if (!currentConstraits.empty()) {
-        if (options->lineGranularityLevel()) {
-            if (!lastInstruction) {
-                error("Encoder-light Pass");
-            }
-            ExprPtr e = Expression::mkAnd(currentConstraits);
-            e->setInstruction(lastInstruction);
-            e->setSoft();
-            formula->add(e);
-            currentConstraits.clear();
-        } else {
-            error("Encoder-light Pass");
-        }
+        assert(options->lineGranularityLevel()
+               && "Some instructions could not be encoded!");
+        assert(lastInstruction && "Instruction is null!");
+        ExprPtr e = Expression::mkAnd(currentConstraits);
+        e->setInstruction(lastInstruction);
+        e->setSoft();
+        formula->add(e);
+        currentConstraits.clear();
     }
     if(options->printDuration()) {
         timer1.stop("Trace Formula Encoding Time");
     }
     // Pruned Flow-sensitive Trace Formula
     if (options->ptfUsed()) {
-          error("Pruned flow-sensitive trace formula is desactivated");
+          assert("Pruned flow-sensitive trace formula is desactivated");
 //        MSTimer timer2;
 //        if(options->printDuration()) {
 //            timer2.start();
@@ -423,9 +417,7 @@ ExprPtr EncoderLightPass::constructPartialPart() {
                 if (!prev_inSafePath && inSafePath) {
                     // Create a new static path
                     Path *p = new Path();
-                    if (p==NULL) {
-                        error("Can't allocate memory for path!");
-                    }
+                    assert(p && "Can't allocate memory for path!");
                     p->pred = lastBlock;
                     p->bb1  = currentBlock;
                     paths.push_back(p);
@@ -492,13 +484,10 @@ ExprPtr EncoderLightPass::constructPartialPart() {
                 Value *v = *itb;
                 // Phi
                 if (PHINode *phi = dyn_cast<PHINode>(inst)) {
-                    if (!prevExecutedBlock) {
-                        error("no prev exe block");
-                    }
+                    assert(prevExecutedBlock &&
+                           "No previous execution basic block!");
                     Value *vTaken = phi->getIncomingValueForBlock(prevExecutedBlock);
-                    if (!vTaken) {
-                        error("no phi incom. value");
-                    }
+                    assert(vTaken && "No phi incoming value!");
                     if (vTaken!=v) {
                         continue;
                     }
@@ -527,7 +516,7 @@ ExprPtr EncoderLightPass::constructPartialPart() {
                 }
                 else {
                     v->dump();
-                    error("not supported");
+                    assert("Not supported!");
                 }
             }
             // ------------------------------------------------
@@ -535,17 +524,13 @@ ExprPtr EncoderLightPass::constructPartialPart() {
             // ------------------------------------------------
             for (Value::use_iterator itb=inst->use_begin(), ite=inst->use_end(); itb!=ite; ++itb) {
                 Value *v = *itb;
-                if (Instruction *useI = dyn_cast<Instruction>(v)) {
-                    BasicBlock *parentBlock = useI->getParent();
-                    const bool isIn = bfBlocks.find(parentBlock)!=bfBlocks.end();
-                    if (!isIn) {
-                        varsUsedInFailBlocks.insert(inst);
-                        break;
-                    }
-                }
-                else {
-                    v->dump();
-                    error("value not supported");
+                Instruction *useI = dyn_cast<Instruction>(v);
+                assert(useI && "Value not supported!");
+                BasicBlock *parentBlock = useI->getParent();
+                const bool isIn = bfBlocks.find(parentBlock)!=bfBlocks.end();
+                if (!isIn) {
+                    varsUsedInFailBlocks.insert(inst);
+                    break;
                 }
             }
             
@@ -560,7 +545,7 @@ ExprPtr EncoderLightPass::constructPartialPart() {
                     isa<LoadInst>(v) || isa<GetElementPtrInst>(v) ) {
                     inst->dump();
                     v->dump();
-                    error("instruction not supported!");
+                    assert("Instruction not supported!");
                 }
                 std::string name = v->getName().str();
                 // Get the concrete value
@@ -568,12 +553,9 @@ ExprPtr EncoderLightPass::constructPartialPart() {
                 if (!concrete) {
                     continue;
                 }
-                int val = 0;
-                if(ConstantInt *ci = dyn_cast<ConstantInt>(concrete)) {
-                    val = (int) ci->getSExtValue();
-                } else {
-                    error("no concrete value for variable!");
-                }
+                ConstantInt *ci = dyn_cast<ConstantInt>(concrete);
+                assert(ci && "No concrete value for variable!");
+                int val = (int) ci->getSExtValue();
                 ExprPtr varExpr;
                 ExprPtr valExpr;
                 Type *t = v->getType();
@@ -590,7 +572,7 @@ ExprPtr EncoderLightPass::constructPartialPart() {
                     varExpr = Expression::mkIntVar(name);
                     valExpr = Expression::mkSInt32Num(val);
                 } else {
-                    error("unsupported type");
+                    assert("Unsupported type!");
                 }
                 // (= x 0)
                 ExprPtr eqExpr = Expression::mkEq(varExpr, valExpr);
@@ -796,10 +778,8 @@ void EncoderLightPass::initAssertCalls() {
         }
     }
     // No post-condition and no oracle?
-    if (!hasAsserts && options->getGoldenOutputsFileName().empty()) {
-        //std::cout << "warning: no call to assert function!\n";
-        error("no call to assert function!");
-    }
+    assert((hasAsserts || !options->getGoldenOutputsFileName().empty()) &&
+           "No call to assert function nor oracle!");
 }
 
 
@@ -809,7 +789,5 @@ void EncoderLightPass::initAssertCalls() {
 void EncoderLightPass::initGlobalVariables() {
     // TODO: support for gloabl variables
     Module *llvmMod = this->targetFun->getParent();
-    if (!llvmMod->global_empty()) {
-        //error("global variables not supported!");
-    }
+    //assert(llvmMod->global_empty() && "Global variables are not supported!");
 }

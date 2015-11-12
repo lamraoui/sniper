@@ -76,8 +76,7 @@ ExprPtr EncoderLight::encode(BinaryOperator *bo) {
                 else if (opCode==Instruction::UDiv || opCode==Instruction::SDiv){
                     c = x / y;
                 } else {
-                    std::cout << "error: encode binary operator\n";
-                    exit(1);
+                    assert("Encode binary operator!");
                 }
                 ExprPtr v1 = Expression::mkSInt32Num(c);
                 ExprPtr v2 = Expression::mkSInt32Num(x);
@@ -144,14 +143,14 @@ ExprPtr EncoderLight::encode(BinaryOperator *bo) {
         case Instruction::FMul:
         case Instruction::FSub:
         case Instruction::FDiv:
-            error("floating point operations not supported.");
+            assert("Floating point operations are not supported!");
             break;
         case Instruction::URem:
         case Instruction::SRem:
         case Instruction::Shl:
         case Instruction::LShr:
         case Instruction::AShr: 
-            error("instruction not supported.");
+            assert("Instruction not supported.");
             break;
         default:
             llvm_unreachable("Illegal opCode");
@@ -198,9 +197,7 @@ ExprPtr EncoderLight::encode(PHINode *phi, BasicBlock *forBlock) {
     // forBlock!=NULL
     if (forBlock) {
         Value *vTaken = phi->getIncomingValueForBlock(forBlock);
-        if (!vTaken) {
-            error("EncoderLight - Phi");
-        }
+        assert(vTaken && "No phi incoming value!");
         // TODO
         //ExprPtr valExpr = ctx->getLocalVariable(phi, vTaken, phi->getBasicBlockIndex(forBlock));
         ExprPtr valExpr = ctx->newVariable(vTaken);
@@ -294,7 +291,7 @@ ExprPtr EncoderLight::encode(BranchInst *br, LoopInfoPass *loops) {
         
         Value *cond = br->getCondition();
         if(!isa<ICmpInst>(cond) && !cond->getType()->isIntegerTy(1)) {
-            error("br instruction with no icmp instruction.");
+            assert("br instruction with no icmp instruction.");
         }
         ExprPtr condExpr = ctx->getLocalVariable(br, cond, 0);
         if(condExpr==NULL) {
@@ -306,10 +303,7 @@ ExprPtr EncoderLight::encode(BranchInst *br, LoopInfoPass *loops) {
         ExprPtr bb_nextbb1Expr = ctx->getTransition(bb, nextBB1);
         ExprPtr bb_nextbb2Expr = ctx->getTransition(bb, nextBB2);
         // Loops: Check if we branch to a loop latch basicblock
-        BasicBlock *headerBB = loops->getLoopLatch(br);
-        if (headerBB) {
-            error("br instruction: loop latch");
-        }
+        assert(!loops->getLoopLatch(br) && "br instruction: loop latch");
         
         // No predecessor (entry block)
         BasicBlock *entryBB = &bb->getParent()->getEntryBlock();
@@ -512,7 +506,7 @@ ExprPtr EncoderLight::encode(SExtInst *sext) {
         expr           = Expression::mkAnd(eqExpr, geExpr);
     }   
     else {
-        error("unsupported type for SExt instruction.");
+        assert("Unsupported type for SExt instruction!");
     }
     return expr; //hard
 }
@@ -549,7 +543,7 @@ ExprPtr EncoderLight::encode(ZExtInst *zext) {
         expr = Expression::mkEq(dst_var, src_var);
     }
     else {
-        error("unsupported type for ZExt instruction.");
+        assert("Unsupported type for ZExt instruction!");
     }
     return expr; //hard
 }
@@ -568,12 +562,8 @@ ExprPtr EncoderLight::encode(CallInst *call, Formula *AS) {
     // Indirect call
     else {
         F = dyn_cast<Function>(call->getCalledValue()->stripPointerCasts());
-        if (F) {
-            functionName = F->getName();
-        } else {
-            std::cout << "warning: unresolvable indirect function call.\n";
-            exit(1);
-        }
+        assert(F && "Unresolvable indirect function call!");
+        functionName = F->getName();
     }
     // Assumes/Asserts
     if(functionName==SNIPER_ASSERT_RETINT_FUN_NAME
@@ -594,7 +584,7 @@ ExprPtr EncoderLight::encode(CallInst *call, Formula *AS) {
         } else if (isa<PHINode>(argOp)) {
             arg_var = ctx->newVariable(argOp);
         } else {
-            error("cannot process assert call");
+            assert("Cannot process assert call!");
         }   
         BasicBlock *bb = call->getParent();
         ExprPtr arg_bb = ctx->getCondVariable(bb); 
@@ -620,7 +610,7 @@ ExprPtr EncoderLight::encode(CallInst *call, Formula *AS) {
             AS->add(eqOne_expr); // Post-condition
             return NULL;
         } else {
-            error("cannot process assert call");
+            assert("Cannot process assert call!");
         }
     } 
     // Concolic profiling functions
@@ -662,10 +652,7 @@ ExprPtr EncoderLight::encode(CallInst *call, Formula *AS) {
             std::vector<io_t>::const_iterator it;
             for (it=inOuts.begin(); it!=inOuts.end(); ++it) {
                 io_t i = *it;
-                if (i.inputs.size()!=1) {
-                    std::cout << "error: call with more than one arg\n";
-                    exit(1);
-                }
+                assert(i.inputs.size()==1 && "Call with more than one arg!");
                 ConstantInt *CI1 = dyn_cast<ConstantInt>(i.inputs[0]);
                 int input = CI1->getSExtValue();
                 ConstantInt *CI2 = dyn_cast<ConstantInt>(i.output);
@@ -703,20 +690,15 @@ ExprPtr EncoderLight::encode(AllocaInst *alloca) {
     // Static integer array
     if(const ArrayType *aty = dyn_cast<ArrayType>(t)) {
         const Type *eltty = aty->getElementType();
-        if (!eltty->isIntegerTy()) {
-            eltty->dump();
-            error("only integer type is supported.");
-        }
+        assert(eltty->isIntegerTy() && "Only integer type is supported!");
         size = aty->getNumElements();
     }
     // Dynamic integer array
     else if (t->isIntegerTy() && alloca->isArrayAllocation()) {
         Value *sizeVal = alloca->getArraySize();
-        if (ConstantInt *CI = dyn_cast<ConstantInt>(sizeVal)) {
-            size = CI->getSExtValue();
-        } else {
-            error("dynamic array allocation not supported.");
-        }
+        ConstantInt *CI = dyn_cast<ConstantInt>(sizeVal);
+        assert(CI && "Dynamic array allocation not supported!");
+        size = CI->getSExtValue();
     }
     // Simple pointer on integer
     else if (t->isIntegerTy()) {
@@ -727,7 +709,7 @@ ExprPtr EncoderLight::encode(AllocaInst *alloca) {
         return NULL;
         
         //t->dump();
-        //error("unsupported pointer.");
+        //assert("unsupported pointer.");
     }
     // Generate a new ID for this pointer
     ctx->addPtrId(alloca, size);
@@ -742,7 +724,7 @@ ExprPtr EncoderLight::encode(StoreInst *store) {
     Value *ptr = store->getPointerOperand();
     GetElementPtrInst *gep = dyn_cast<GetElementPtrInst>(ptr);
     if (gep && isArgv(gep->getPointerOperand())) {     
-        error("Dynamic modifications of the argv array are not allowed.");
+        assert("Dynamic modifications of the argv array are not allowed!");
     }
     // Get the index
     ExprPtr idx_expr = ctx->getVariable(ptr);
@@ -784,7 +766,7 @@ ExprPtr EncoderLight::encode(LoadInst *load, Formula *AS) {
     unsigned memID = ctx->getMemId(load->getParent());
     GetElementPtrInst *gep = dyn_cast<GetElementPtrInst>(ptr);
     if (!gep) {
-        //error("cannot encode load instruction.");
+        //assert("Cannot encode load instruction!");
         std::cout << "warning: cannot encode load instruction.\n";
         load->dump();
         return NULL;
@@ -824,9 +806,7 @@ ExprPtr EncoderLight::encode(GetElementPtrInst *gep) {
     ExprPtr eqExpr = NULL;
     if(AllocaInst *a = dyn_cast<AllocaInst>(gep->getPointerOperand())) {
         // Array (size > 1)
-        if(!gep->hasIndices()) {
-            error("Pointers not supported!");
-        }
+        assert(gep->hasIndices() && "Pointers are not supported!");
         Type *ty = a->getAllocatedType();
         int opId = 0;
         if (ty->isIntegerTy()) {
@@ -834,7 +814,7 @@ ExprPtr EncoderLight::encode(GetElementPtrInst *gep) {
         } else if (ty->isArrayTy()) {
             opId = 2;
         } else {
-            error("Pointers not supported!");
+            assert("Pointers are not supported!");
         }
         // (= tmp (+ id index))
         Value *index = gep->getOperand(opId);
@@ -878,9 +858,7 @@ ExprPtr EncoderLight::encode(GetElementPtrInst *gep) {
     }
     // Argv
     else if (isArgv(gep->getPointerOperand())) {
-        if(!gep->hasIndices()) {
-            error("Pointers not supported!");
-        }
+        assert(gep->hasIndices() && "Pointers are not supported!");
         Value *index = gep->getOperand(1);
         if(ConstantInt *ci = dyn_cast<ConstantInt>(index)) {
             int cst = (int) ci->getSExtValue();
@@ -892,9 +870,9 @@ ExprPtr EncoderLight::encode(GetElementPtrInst *gep) {
     }
     // Global allocation
     else if(isa<GlobalVariable>(gep->getPointerOperand())) {
-        error("global pointer not supported.");
+        assert("Global pointers are not supported!");
     } else {
-        error("chained pointers not supported.");
+        assert("Chained pointers are not supported!");
     }
     return eqExpr; //hard
 }
@@ -903,9 +881,7 @@ ExprPtr EncoderLight::encode(GetElementPtrInst *gep) {
 // encode - ReturnInst
 // =============================================================================
 ExprPtr EncoderLight::encode(ReturnInst *ret) {
-    if (!ret) {
-        error("null pointer");
-    }
+    assert(ret && "Instruction is null!");
     BasicBlock *bb = ret->getParent();
     std::vector<ExprPtr> predTrans;
     for (pred_iterator PI = pred_begin(bb), E = pred_end(bb); PI != E; ++PI) {

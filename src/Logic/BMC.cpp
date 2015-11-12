@@ -110,7 +110,7 @@ void BMC::runBMCWithPathExploration(ProgramProfile *profile) {
                     E->addProgramInput(clause);
                 }
             }*/
-            error("argv not supported");
+            assert("argv not supported");
         }      
         
         // Retrieve all main function arguments ,
@@ -253,7 +253,7 @@ void BMC::runClassicBMC(ProgramProfile *profile) {
             }
         }
      */
-        error("argv not supported");   
+        assert("argv not supported");
     }      
     
     // Retrieve all main function arguments ,

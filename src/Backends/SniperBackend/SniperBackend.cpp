@@ -33,7 +33,7 @@ void SniperBackend::run() {
     ProgramProfile *PP = new ProgramProfile(targetFun);
     
     if (options->ptfUsed() && options->htfUsed()) {
-        error("PFTF and HFTF activated");
+        assert("PFTF and HFTF activated!");
     }
     // Run the program with the given inputs
     std::string tsFilename = options->getTestSuiteFileName();
@@ -151,9 +151,7 @@ void SniperBackend::run() {
     }
     
     // Locate the errors in the input program
-    if (!options->pushPopUsed()) {
-        error("use push & pop optimization!");
-    }
+    assert(options->pushPopUsed() && "Use push & pop optimization!");
     
     IterationAlgorithm *IA =
     new IterationAlgorithm(targetFun, solver, hasArgv, options);

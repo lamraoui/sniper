@@ -525,7 +525,7 @@ void IRInstrumentor::insertExecSelect(Instruction *i) {
     } else if (T->isIntegerTy(32)) {
         IRB.CreateCall4(ExecInst1i1and2i32Fun, arg1, v1, v2, v3);
     } else {
-        error("only integer/boolean types supported");
+        assert("Only integer/boolean types are supported!");
     } 
 }
 
@@ -534,9 +534,7 @@ void IRInstrumentor::insertExecPhi(Instruction *i) {
     // after all the phi instructions
     BasicBlock *bb = i->getParent();
     Instruction *firstI = bb->getFirstNonPHI();
-    if (!firstI) {
-        error("cannot insert sniper_execute for Phi");
-    }
+    assert(firstI && "Cannot insert sniper_execute for Phi!");
     // Build arguments
     IRBuilder<> IRB(llvmMod->getContext());
     Value *arg1 = IRB.getInt64((intptr_t)i);    
@@ -551,7 +549,7 @@ void IRInstrumentor::insertExecPhi(Instruction *i) {
     } /*else if (T->isIntegerTy(64)) {
         IRB.CreateCall2(ExecInst1i64Fun, arg1, v);
     }*/ else {
-        error("only integer/boolean types supported");
+        assert("Only integer/boolean types are supported!");
     } 
 }
 
@@ -603,14 +601,12 @@ bool IRInstrumentor::insertExecCall(Instruction *i, bool isTarget) {
     for (ait = calledFun->arg_begin(); ait != calledFun->arg_end(); ++ait) {
         const unsigned argNo = ait->getArgNo();
         const Type *argTy = FTy->getParamType(argNo);
-        if (!argTy->isIntegerTy()) {
-            error("only integer/boolean type supported");
-        }
+        assert(argTy->isIntegerTy() && "Only integer/boolean types are supported");
     }
     // Check return type
     const Type *retTy = calledFun->getReturnType();
     if (!retTy->isVoidTy() && !retTy->isIntegerTy()) {
-        error("only integer/boolean type supported");
+        assert("only integer/boolean type supported");
     }
     
     /*
@@ -680,7 +676,7 @@ void IRInstrumentor::insertExecBinOp(Instruction *i) {
     } else if (T->isIntegerTy(64)) {
         IRB.CreateCall3(ExecInst2i64Fun, arg1, v1, v2);
     } else {
-        error("only integer/boolean types supported");
+        assert("Only integer/boolean types are supported!");
     } 
 }
 
@@ -757,22 +753,20 @@ void IRInstrumentor::replaceAssertAssumeExitCall(Function *targetFun) {
         Value *addr = NULL;
         // Checking machine's data size
         int n = sizeof(void *);
+        assert((n==4 || n==8) && "Unsupported machine's data size!");
         if(n==8) { // 64Bit
             addr = IRB.getInt64((intptr_t)op0);
         } else if (n==4) { // 32Bit
             addr = IRB.getInt32((intptr_t)op0);
-        } else {
-            error("unsupported machine's data size");
         }
         args.push_back(addr);
         args.push_back(op0);
         Function *calledFun = c->getCalledFunction();
         // Indirect call
         if (!calledFun) {
-            calledFun = dyn_cast<Function>(c->getCalledValue()->stripPointerCasts());
-            if (!calledFun) {
-                error("assume - unresolvable indirect function call");
-            }
+            calledFun =
+            dyn_cast<Function>(c->getCalledValue()->stripPointerCasts());
+            assert(calledFun && "Unresolvable indirect function call!");
         }
         CallInst *newCall = NULL;
         if (calledFun->getReturnType()->isVoidTy()) {
@@ -795,22 +789,20 @@ void IRInstrumentor::replaceAssertAssumeExitCall(Function *targetFun) {
         Value *addr = NULL;
         // Checking machine's data size
         int n = sizeof(void *);
+        assert((n==4 || n==8) && "Unsupported machine's data size!");
         if(n==8) { // 64Bit
             addr = IRB.getInt64((intptr_t)op0);
         } else if (n==4) { // 32Bit
             addr = IRB.getInt32((intptr_t)op0);
-        } else {
-            error("unsupported machine's data size");
         }
         args.push_back(addr);
         args.push_back(op0);
         Function *calledFun = c->getCalledFunction();
         // Indirect call
         if (!calledFun) {
-            calledFun = dyn_cast<Function>(c->getCalledValue()->stripPointerCasts());
-            if (!calledFun) {
-                error("assert - unresolvable indirect function call");
-            }
+            calledFun =
+            dyn_cast<Function>(c->getCalledValue()->stripPointerCasts());
+            assert(calledFun && "Unresolvable indirect function call!");
         }
         CallInst *newCall = NULL;
         if (calledFun->getReturnType()->isVoidTy()) {

@@ -19,6 +19,7 @@
 //#include <dispatch/dispatch.h>
 
 #include "Options.h"
+#include "Utils/Utils.h"
 #include "Utils/HittingSet.h"
 #include "Profile/ProgramTrace.h"
 #include "Profile/ProgramProfile.h"

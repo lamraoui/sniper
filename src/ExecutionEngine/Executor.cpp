@@ -45,10 +45,8 @@ Status Executor::status = IDLE;
 void Executor::init(LoopInfoPass *lip, ProgramProfile *p,
                     bool collectTraces, bool collectBlockTraces,
                     bool disableSymbExe, bool noAssert) {
-    if (status!=IDLE) {
-        std::cerr << status << " != IDLE\n";
-        error("wrong status for Executor");
-    }
+    
+    assert(status==IDLE && "Wrong status for Executor (!=IDLE)!");
     PathLoopInfo        = lip;
     Profile             = p;
     LastRunAssertResult = UNKNOW;
@@ -79,11 +77,11 @@ void Executor::init(LoopInfoPass *lip, ProgramProfile *p,
     status              = INIT;
 }
 
-void Executor::start(Function *f, VariablesPtr vals, LocalVariables *lv, Options *o) {
-    if (status!=INIT && status!=IDLE) {
-        std::cerr << status << " != INIT/IDLE\n";
-        error("wrong status for Executor!");
-    }
+void Executor::start(Function *f, VariablesPtr vals,
+                     LocalVariables *lv, Options *o) {
+
+    assert((status==INIT || status==IDLE) &&
+           "Wrong status for Executor (!=INIT/IDLE)!");
     TargetFun = f;
     if (!DisabledSymbolicExe) {
         // Create a new context and a new
@@ -108,28 +106,20 @@ void Executor::start(Function *f, VariablesPtr vals, LocalVariables *lv, Options
         // Check the type of the argument
         const unsigned argNo = ait->getArgNo();
         const Type *argTy = FTy->getParamType(argNo);
-        if (argTy->isIntegerTy(32)) {
-            if (!DisabledSymbolicExe) {
-                SMAP->addInput(ait);
-            }
-        } else {
-            error("unsuported function arg type!");
+        assert(argTy->isIntegerTy(32) && "Unsuported function arg type!");
+        if (!DisabledSymbolicExe) {
+            SMAP->addInput(ait);
         }
-        if (i<valsVec.size()) {
-            Trace->addProgramInput(valsVec[i++]);
-        } else {
-            error("function arg");
-        }
+        assert(i<valsVec.size() && "Function arg!");
+        Trace->addProgramInput(valsVec[i++]);
     }
     status = START;
 }
 
 // Cast, Phi, Memory operations
 void Executor::ExecuteInst(Instruction *i) {
-    if (status!=START) {
-        std::cerr << status << " != START\n";
-        error("wrong status for Executor!");
-    }
+    
+    assert(status==START && "wrong status for Executor (!=START)!");
     // Add the trace of this instruction
     if (CollectInstTraces) {
         Trace->add(i);
@@ -163,7 +153,7 @@ void Executor::ExecuteInst(Instruction *i) {
             }
             break;
         default:   
-            error("test-executor");
+            assert("test-executor");
     }
     if (expr && !DisabledSymbolicExeCurRun) {
         expr->setHard();
@@ -173,10 +163,8 @@ void Executor::ExecuteInst(Instruction *i) {
 
 // Call, Assert, Branch
 void Executor::ExecuteInst1(Instruction *i, Value *val) {
-    if (status!=START) {
-        std::cerr << status << " != START\n";
-        error("wrong status for Executor!");
-    }
+
+    assert(status==START && "Wrong status for Executor (!=START)!");
     // Add the trace of this instruction
     if (CollectInstTraces) {
         Trace->add(i, val);
@@ -208,19 +196,17 @@ void Executor::ExecuteInst1(Instruction *i, Value *val) {
             }
             break;
         case Instruction::Br: {
-            if (ConstantInt *CI = dyn_cast<ConstantInt>(val)) {
-                const bool cond = CI->getSExtValue();
-                executeBranch(i, cond);
-            } else {
-                error("test-executor");
-            }
+            ConstantInt *CI = dyn_cast<ConstantInt>(val);
+            assert(CI && "Unsupported value!");
+            const bool cond = CI->getSExtValue();
+            executeBranch(i, cond);
         } break;
         // TODO
         case Instruction::Call:
             executeCall(i, 0, 0);
             break;
         default:    
-            error("test-executor");
+            assert("test-executor");
     }
     if (expr && !DisabledSymbolicExeCurRun) {
         expr->setHard();
@@ -230,10 +216,8 @@ void Executor::ExecuteInst1(Instruction *i, Value *val) {
 
 // BinaryOp (Add, ICmp,...), Call
 void Executor::ExecuteInst2(Instruction *i, Value *val1, Value *val2) {
-    if (status!=START) {
-        std::cerr << status << " != START\n";
-        error("wrong status for Executor!");
-    }
+
+    assert(status==START && "wrong status for Executor (!=START)!");
     // Add the trace of this instruction
     if (CollectInstTraces) {
         Trace->add(i, val1, val2);
@@ -270,7 +254,7 @@ void Executor::ExecuteInst2(Instruction *i, Value *val1, Value *val2) {
             executeCall(i, val1, val2);
             break;
         default:    
-            error("test-executor");
+            assert("test-executor");
     }
     if (expr && !DisabledSymbolicExeCurRun) {
         expr->setHard();
@@ -279,11 +263,10 @@ void Executor::ExecuteInst2(Instruction *i, Value *val1, Value *val2) {
 }
 
 // Call
-void Executor::ExecuteInst3(Instruction *i, Value *val1, Value *val2, Value *val3) {
-    if (status!=START) {
-        std::cerr << status << " != START\n";
-        error("wrong status for Executor!");
-    }
+void Executor::ExecuteInst3(Instruction *i, Value *val1,
+                            Value *val2, Value *val3) {
+
+    assert(status==START && "Wrong status for Executor (!=START)!");
     // Add the trace of this instruction
     if (CollectInstTraces) {
         Trace->add(i, val1, val2, val3);
@@ -300,7 +283,7 @@ void Executor::ExecuteInst3(Instruction *i, Value *val1, Value *val2, Value *val
         case Instruction::Call:
             // Call type foo(arg) / void foo(arg1,arg2)
         default:    
-            error("test-executor");
+            assert("test-executor");
     }
     if (expr && !DisabledSymbolicExeCurRun) {
         expr->setHard();
@@ -313,9 +296,7 @@ void Executor::executeGep(Instruction *i) {
         return;
     }
     GetElementPtrInst *gep = (GetElementPtrInst*) i;
-    if (gep->getNumIndices()>2) {
-        error("unsupported gep instruction");
-    }
+    assert(gep->getNumIndices()<=2 & "Unsupported gep instruction");
     if(AllocaInst *a = dyn_cast<AllocaInst>(gep->getPointerOperand())) {
         Type *ty = a->getAllocatedType();
         if (ty->isIntegerTy()) {
@@ -333,7 +314,7 @@ void Executor::executeGep(Instruction *i) {
     if (subTy && subTy->getNumContainedTypes()>0) {
         idx = 1;
     } else {
-        error("unsupported gep instruction");
+        assert("Unsupported gep instruction!");
     }
     Value *ptr = (Value*) i;
     if(gep->hasIndices()) {
@@ -639,9 +620,7 @@ void Executor::executePhi(Instruction *i) {
     PHINode *phi = (PHINode*) i;
     Value *vTaken;
     vTaken = phi->getIncomingValueForBlock(LastExecutedBB);
-    if (!vTaken) {
-        error("sniper_execute for Phi");
-    }
+    assert(vTaken && "sniper_execute for Phi");
     Value *v   = i;
     // vTaken is a constant value 
     if (isa<ConstantInt>(vTaken)) {
@@ -809,11 +788,9 @@ void Executor::PushArgs(Value *arg) {
                 }
             } 
         }
-        if (err) {
-            error("executor:push");
-        }
+        assert(!err && "executor:push");
     } else {
-        error("executor:push, wrong arg");
+        assert("executor:push, wrong arg");
     }
     //std::cout << std::endl;
 }
@@ -824,15 +801,11 @@ void Executor::PopArgs(Value *arg) {
         Function *calledFun = C->getCalledFunction();
         // Indirect call
         if (!calledFun) {
-            calledFun = dyn_cast<Function>(C->getCalledValue()->stripPointerCasts());
-            if (!calledFun) {
-                std::cout << "warning: unresolvable indirect function call.\n";
-                exit(1);
-            }
+            calledFun =
+            dyn_cast<Function>(C->getCalledValue()->stripPointerCasts());
+            assert(calledFun && "Unresolvable indirect function call!");
         }
-        if (argStack.empty()) {
-            error("executor: pop, empty stack");
-        }
+        assert(!argStack.empty() && "executor: pop, empty stack");
         //std::cout << "pop (call:" << calledFun->getName().str() << " ): ";
         SymbolPtr S = argStack.back();
         argStack.pop_back();
@@ -850,9 +823,7 @@ void Executor::PopArgs(Value *arg) {
         Function::arg_iterator ait;
         for (ait = F->arg_begin(); ait != F->arg_end(); ++ait) {
             Value *V = ait;
-            if (argStack.empty()) {
-                error("executor: pop, empty stack");
-            }       
+            assert(!argStack.empty() && "executor: pop, empty stack");
             SymbolPtr S = argStack.back();
             argStack.pop_back();
             if (S) {
@@ -863,7 +834,7 @@ void Executor::PopArgs(Value *arg) {
             }
         }
     } else {
-        error("executor: pop, wrong arg");
+        assert("executor: pop, wrong arg");
     }
     //std::cout << std::endl;
 }
@@ -901,10 +872,8 @@ void Executor::ReportAssume(Value *v, int assumeResult) {
 }
 
 void Executor::ReportEnd() {
-    if (status!=START) {
-        std::cerr << status << " != START\n";
-        error("wrong status for Executor!");
-    }    
+
+    assert(status==START && "wrong status for Executor (!=START)!");
     // Add the trace
     if (LastRunAssertResult==FAIL) {
         Trace->setFailing();
@@ -918,11 +887,8 @@ void Executor::ReportEnd() {
         if (NextBB) {
             ExecutedBlocks.push_back(NextBB);
         } else {
-            if (TargetFun->size()==1) {
-                ExecutedBlocks.push_back(&TargetFun->getEntryBlock());
-            } else {
-                error("cannot get the last executed block");
-            }
+            assert(TargetFun->size()==1 && "Cannot get the last executed block!");
+            ExecutedBlocks.push_back(&TargetFun->getEntryBlock());
         }
         // Update the current trace
         Trace->setExecutedBlocks(ExecutedBlocks);
@@ -982,9 +948,7 @@ bool Executor::areAllLocDefinite() {
 }
 
 void Executor::endOfRun() {
-    if (status!=START) {
-        error("wrong status for Executor!");
-    }
+    assert(status==START && "Wrong status for Executor!");
     AllLocDefinite = true;
     if (!DisabledSymbolicExe) {
         SMAP->clear();

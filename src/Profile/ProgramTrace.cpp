@@ -28,10 +28,8 @@ ProgramTrace::ProgramTrace(Function *_targetFun, AssertResult _type)
 ProgramTrace::ProgramTrace(Function *_targetFun, std::vector<Value*> _inputs, 
 AssertResult _type) : myID(ID++), targetFun(_targetFun), type(_type) { 
 
-    if (_targetFun->arg_size()!=_inputs.size()) {
-        std::cout << "error: wrong execution trace.\n";
-        exit(1);
-    }
+    assert(_targetFun->arg_size()==_inputs.size() &&
+            "Wrong execution trace!");
     unsigned i = 0;
     Function::arg_iterator ait;
     for (ait = targetFun->arg_begin(); ait != targetFun->arg_end(); ++ait) {
@@ -103,31 +101,20 @@ ExprPtr ProgramTrace::getProgramInputsFormula(Formula *formula) {
     // Oracle
     if (expectedOutput!=NULL) {
         // Get the return value of targetFun
-        if (targetFun->doesNotReturn()) {
-            error("expectedOutput set but fun does not return.");
-        }
+        assert(!targetFun->doesNotReturn() &&
+               "expectedOutput set but fun does not return.");
         BasicBlock *lastBlock = &targetFun->back();
-        if (!lastBlock) {
-            error("program trace");
-        }
+        assert(lastBlock && "Basic block is null!");
         Instruction *lastInst = &lastBlock->back();
-        if (!lastInst) {
-            error("program trace");
-        }
+        assert(lastInst && "Instruction is null!");
         ReturnInst *RI = dyn_cast<ReturnInst>(lastInst);
-        if (!RI) {
-            error("program trace");
-        }
+        assert(RI && "No ret instruction!");
         Value *V = RI->getReturnValue();
-        if (!V) { // ret void
-            error("program trace");
-        }
+        assert(V && "No return value!");
         ExprPtr v_expr = Expression::mkIntVar(V->getName().str());
         // Get the concrete value
         ConstantInt *EO = dyn_cast<ConstantInt>(expectedOutput);
-        if (!EO) {
-            error("program trace");
-        }
+        assert(EO && "No concrete value!");
         int oval = (int) EO->getSExtValue();
         ExprPtr oval_expr = Expression::mkSInt32Num(oval);
         // (= ret_var oval)
@@ -171,11 +158,8 @@ void ProgramTrace::add(Instruction *i) {
                 return;
             }
         }
-        const Type *retTy = calledFun->getReturnType();
-        if (!retTy->isVoidTy()) {
-            std::cout << "error: ret call, program trace\n"; 
-            exit(1);
-        }
+        assert(calledFun->getReturnType()->isVoidTy() &&
+               "ret call, program trace");
     }
     InstTracePtr it = std::make_shared<InstructionTrace>(i);
     instructionTraces.push_back(it);
@@ -195,11 +179,8 @@ void ProgramTrace::add(Instruction *i, Value *v) {
                 return;
             }
         }
-        const Type *retTy = calledFun->getReturnType();
-        if (!retTy->isVoidTy()) {
-            std::cout << "error: ret call, program trace\n"; 
-            exit(1);
-        }
+        assert(calledFun->getReturnType()->isVoidTy() &&
+               "ret call, program trace");
     }
     InstTracePtr it = std::make_shared<InstructionTrace>(i, v);
     instructionTraces.push_back(it);
@@ -219,11 +200,8 @@ void ProgramTrace::add(Instruction *i, Value *v1, Value *v2) {
                 return;
             }
         }
-        const Type *retTy = calledFun->getReturnType();
-        if (!retTy->isVoidTy()) {
-            std::cout << "error: ret call, program trace\n"; 
-            exit(1);
-        }
+        assert(calledFun->getReturnType()->isVoidTy() &&
+               "ret call, program trace");
     }
     InstTracePtr it = std::make_shared<InstructionTrace>(i, v1, v2);
     instructionTraces.push_back(it);
@@ -243,11 +221,8 @@ void ProgramTrace::add(Instruction *i, Value *v1, Value *v2, Value *v3) {
                 return;
             }
         }
-        const Type *retTy = calledFun->getReturnType();
-        if (!retTy->isVoidTy()) {
-            std::cout << "error: ret call, program trace\n";
-            exit(1);
-        }
+        assert(calledFun->getReturnType()->isVoidTy() &&
+               "ret call, program trace");
     }
     InstTracePtr it = std::make_shared<InstructionTrace>(i, v1, v2, v3);
     instructionTraces.push_back(it);
@@ -292,27 +267,18 @@ Value* InstructionTrace::getConcrete(Value *v) {
 }
 
 int InstructionTrace::getInt32(Value *v) { 
-    if(ConstantInt *ci = dyn_cast<ConstantInt>(v)) {
-        return (int) ci->getSExtValue();
-    } else {
-        error("no concrete value for variable!");
-        return 0;
-    }
+    ConstantInt *ci = dyn_cast<ConstantInt>(v);
+    assert(CI && "No concrete value for variable!");
+    return (int) ci->getSExtValue();
 }
 
 Value* InstructionTrace::emulateInst(Instruction *i, Value *val1, Value *val2) {
-    int v1 = -1;
-    int v2 = -1;
-    if(ConstantInt *ci1 = dyn_cast<ConstantInt>(val1)) {
-        v1 = (int) ci1->getSExtValue();
-    } else {
-        error("no concrete value for variable!");
-    }
-    if(ConstantInt *ci2 = dyn_cast<ConstantInt>(val2)) {
-        v2 = (int) ci2->getSExtValue();
-    } else {
-        error("no concrete value for variable!");
-    }
+    ConstantInt *ci1 = dyn_cast<ConstantInt>(val1);
+    assert(ci1 && "No concrete value for variable!");
+    int v1 = (int) ci1->getSExtValue();
+    ConstantInt *ci2 = dyn_cast<ConstantInt>(val2);
+    assert(ci2 && "No concrete value for variable!");
+    int v2 = (int) ci2->getSExtValue();
     int v = emulateInst(i, v1, v2);
     LLVMContext &context = getGlobalContext();
     IRBuilder<> IRB(context);
@@ -322,24 +288,15 @@ Value* InstructionTrace::emulateInst(Instruction *i, Value *val1, Value *val2) {
 
 Value* InstructionTrace::emulateInst(Instruction *i, Value *val1, Value *val2,
                                      Value *val3) {
-    int v1 = -1;
-    int v2 = -1;
-    int v3 = -1;
-    if(ConstantInt *ci1 = dyn_cast<ConstantInt>(val1)) {
-        v1 = (int) ci1->getSExtValue();
-    } else {
-        error("no concrete value for variable!");
-    }
-    if(ConstantInt *ci2 = dyn_cast<ConstantInt>(val2)) {
-        v2 = (int) ci2->getSExtValue();
-    } else {
-        error("no concrete value for variable!");
-    }
-    if(ConstantInt *ci3 = dyn_cast<ConstantInt>(val3)) {
-        v3 = (int) ci3->getSExtValue();
-    } else {
-        error("no concrete value for variable!");
-    }
+    ConstantInt *ci1 = dyn_cast<ConstantInt>(val1);
+    assert(ci1 && "No concrete value for variable!");
+    int v1 = (int) ci1->getSExtValue();
+    ConstantInt *ci2 = dyn_cast<ConstantInt>(val2);
+    assert(ci2 && "No concrete value for variable!");
+    int v2 = (int) ci2->getSExtValue();
+    ConstantInt *ci3 = dyn_cast<ConstantInt>(val3);
+    assert(ci3 && "No concrete value for variable!");
+    int v3 = (int) ci3->getSExtValue();
     int v = emulateInst(i, v1, v2, v3);
     LLVMContext &context = getGlobalContext();
     IRBuilder<> IRB(context);

@@ -71,13 +71,13 @@ std::set<BasicBlock*> ProgramProfile::getOtherRunBB() {
 void ProgramProfile::removeNFirstFailingProgramTraces(unsigned n) {
     /*failingTraces.erase(failingTraces.begin(),
     failingTraces.size()>n? failingTraces.begin()+n : failingTraces.end());*/
-    error("ProgramProfile::removeNFirstFailingProgramTraces");
+    assert("ProgramProfile::removeNFirstFailingProgramTraces");
 }
 
 void ProgramProfile::removeNFirstSuccessfulProgramTraces(unsigned n) {
     /*successfulTraces.erase(successfulTraces.begin(),
     successfulTraces.size()>n? successfulTraces.begin()+n : successfulTraces.end());*/
-    error("ProgramProfile::removeNFirstSuccessfulProgramTraces");
+    assert("ProgramProfile::removeNFirstSuccessfulProgramTraces");
 }
 
 void ProgramProfile::computeBugFreeBlocks(Options *o) {
@@ -89,9 +89,8 @@ void ProgramProfile::computeBugFreeBlocks(Options *o) {
         std::cout << "warning: unknown blocks!\n";
         //exit(1);
     }
-    if (bugFreeBlocksComputed) {
-        error("bug free blocks already computed.");
-    }    
+    assert(!bugFreeBlocksComputed && "Bug free blocks already computed!");
+    
     std::set_difference(successfulBlocks.begin(), successfulBlocks.end(),
                         failingBlocks.begin(), failingBlocks.end(),
                         std::inserter(bugFreeBlocks, bugFreeBlocks.end()));
@@ -182,17 +181,13 @@ void ProgramProfile::computeBugFreeBlocks(Options *o) {
 }
 
 bool ProgramProfile::isBugFreeBlock(BasicBlock *bb) {
-    if (!bugFreeBlocksComputed) {
-        error("bug free blocks not yet computed.");
-    }
+    assert(bugFreeBlocksComputed && "Bug free blocks not yet computed!");
     const bool isIn = bugFreeBlocks.find(bb)!=bugFreeBlocks.end();
     return isIn;
 }
 
 std::set<BasicBlock*> ProgramProfile::getBugFreeBlocks() {
-    if (!bugFreeBlocksComputed) {
-        error("bug free blocks not yet computed.");
-    }
+    assert(bugFreeBlocksComputed && "Bug free blocks not yet computed!");
     return bugFreeBlocks;
 }
 
