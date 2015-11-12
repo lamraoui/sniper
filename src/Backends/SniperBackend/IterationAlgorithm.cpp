@@ -41,9 +41,8 @@ void IterationAlgorithm::run(Formula *TF, Formula *AS,
         else if (combineMethod==Combine::PWU) std::cout << "[PWU]";
         else if (combineMethod==Combine::FLA) std::cout << "[FLA]";
         else std::cout << "[NOCOMB]";
-        if (options->ptfUsed())      std::cout << "[PFTF]";
-        else if (options->htfUsed()) std::cout << "[HFTF]";
-        else                         std::cout << "[FFTF]";
+        if (options->htfUsed()) std::cout << "[HFTF]";
+        else                    std::cout << "[FFTF]";
         if (options->lineGranularityLevel()) std::cout << "[Line-lvl]";
         else if (options->instructionGranularityLevel()) std::cout << "[Inst-lvl]";
         else if (options->blockGranularityLevel()) std::cout << "[Block-lvl]";

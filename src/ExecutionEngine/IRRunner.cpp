@@ -1,7 +1,7 @@
 /**
- * PTFRunner.cpp
+ * IRRunner.cpp
  *
- * Same as PTFConcolic without generating new input 
+ * Same as ConcolicProfiler without generating new input
  * value for the program.
  * Values are provided by the user.
  *
@@ -11,10 +11,10 @@
  * @copyright : NII 2013
  */
 
-#include "PTFRunner.h"
+#include "IRRunner.h"
 
 
-PTFRunner::PTFRunner(Module *_llvmMod, Function *_targetFun, Options *_options,
+IRRunner::IRRunner(Module *_llvmMod, Function *_targetFun, Options *_options,
                      const std::string &tsFilename, const std::string &goFilename)
 : ConcolicModule(_llvmMod, _targetFun, _options) {
     this->targetFun = _targetFun;
@@ -24,16 +24,16 @@ PTFRunner::PTFRunner(Module *_llvmMod, Function *_targetFun, Options *_options,
     }
 }
 
-PTFRunner::~PTFRunner() {
+IRRunner::~IRRunner() {
      //delete EE;
 }
 
-void PTFRunner::run(ProgramProfile *profile, LocalVariables *locVars,
+void IRRunner::run(ProgramProfile *profile, LocalVariables *locVars,
                     LoopInfoPass *loopInfo) {
     // Init
     EE = initialize();
     Executor::init(loopInfo, profile,
-                   /*collectTrace*/ options->ptfUsed(),
+                   /*collectTrace*/ false,
                    /*collectBlocks*/ options->htfUsed(),
                    /* desactivate symbolic execution */ true,
                    /* no assert */ true);
@@ -85,7 +85,7 @@ void PTFRunner::run(ProgramProfile *profile, LocalVariables *locVars,
         Executor::endOfRun();
     }
     if (options->dbgMsg()) {
-        std::cout << "\n=== [PTF Runner] terminated ===\n";
+        std::cout << "\n=== [IR Runner] terminated ===\n";
         profile->dump();
     }
     // Cleaning
@@ -93,7 +93,7 @@ void PTFRunner::run(ProgramProfile *profile, LocalVariables *locVars,
 }
 
 
-std::vector<std::vector<Value*> > PTFRunner::parseTestsuiteFile(
+std::vector<std::vector<Value*> > IRRunner::parseTestsuiteFile(
                                 const std::string &filename) {
     std::ifstream infile(filename.c_str());
     assert(infile && "Cannot open the testsuite file!");
@@ -123,7 +123,7 @@ std::vector<std::vector<Value*> > PTFRunner::parseTestsuiteFile(
 }
 
 
-std::vector<Value*> PTFRunner::parseGoldenOutputsFile(const std::string &filename) {
+std::vector<Value*> IRRunner::parseGoldenOutputsFile(const std::string &filename) {
     // Open the file
     std::ifstream infile(filename.c_str());
     assert(infile && "Cannot open the golden outputs file.");

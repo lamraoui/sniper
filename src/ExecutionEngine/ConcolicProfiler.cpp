@@ -1,5 +1,5 @@
 /**
- * PTFConcolic.cpp
+ * ConcolicProfiler.cpp
  *
  * 
  *
@@ -9,20 +9,20 @@
  * @copyright : NII 2013
  */
 
-#include "PTFConcolic.h"
+#include "ConcolicProfiler.h"
 
 
 static unsigned MAX_RUN = 20000; // TODO: --max-time
 static int RND_MIN = -2147483648;
 static int RND_MAX =  2147483647;
 
-PTFConcolic::PTFConcolic(Module *_llvmMod, Function *_targetFun, Options *_options) 
+ConcolicProfiler::ConcolicProfiler(Module *_llvmMod, Function *_targetFun, Options *_options) 
 : ConcolicModule(_llvmMod, _targetFun, _options) {
     this->targetFun = _targetFun;
     srand(time(NULL));
 }
 
-PTFConcolic::~PTFConcolic() {
+ConcolicProfiler::~ConcolicProfiler() {
      //delete EE;
 }
 
@@ -30,7 +30,7 @@ PTFConcolic::~PTFConcolic() {
 // run - Concolic algorithm used in the tools CUTE and DART.
 //
 // =============================================================================
-void PTFConcolic::run(ProgramProfile *profile, LocalVariables *locVars, 
+void ConcolicProfiler::run(ProgramProfile *profile, LocalVariables *locVars, 
                       LoopInfoPass *loopInfo) {
     
     EE = initialize();
@@ -38,7 +38,7 @@ void PTFConcolic::run(ProgramProfile *profile, LocalVariables *locVars,
     terminated = false;
     roundID    = 1;
     Executor::init(loopInfo, profile,
-    /*collectTrace*/ options->ptfUsed(),
+    /*collectTrace*/ false,
     /*collectBlocks*/ options->htfUsed());
 
     while (roundID<=MAX_RUN) 
@@ -111,7 +111,7 @@ void PTFConcolic::run(ProgramProfile *profile, LocalVariables *locVars,
         Executor::endOfRun();
     }
     if (options->dbgMsg()) {
-        std::cout << "\n=== [PTF Concolic] terminated ===\n";
+        std::cout << "\n=== [Concolic Profiler] terminated ===\n";
         profile->dump();
     }
        // Cleaning
@@ -124,7 +124,7 @@ void PTFConcolic::run(ProgramProfile *profile, LocalVariables *locVars,
 //
 // Version 2: no tree, keep only the last path in memory
 // =============================================================================
-VariablesPtr PTFConcolic::generateInputValues() {
+VariablesPtr ConcolicProfiler::generateInputValues() {
     
     VariablesPtr inputs = std::make_shared<Variables>();
     if (terminated) {
@@ -169,7 +169,7 @@ VariablesPtr PTFConcolic::generateInputValues() {
                 path.pop_back();
             }
             hasFailSolution = solve(path, asserts, true, failingInputs);
-            //if (!hasFailSolution || options->ptfUsed()) {
+            //if (!hasFailSolution) {
                 hasSuccSolution = solve(path, asserts, false, inputs);
             //}
             if (hasSuccSolution || hasFailSolution) {
@@ -223,7 +223,7 @@ VariablesPtr PTFConcolic::generateInputValues() {
 // solve
 //
 // =============================================================================
-bool PTFConcolic::solve(std::vector<ExprCellPtr> path, std::vector<ExprCellPtr> asserts,
+bool ConcolicProfiler::solve(std::vector<ExprCellPtr> path, std::vector<ExprCellPtr> asserts,
                          bool genFailing, VariablesPtr inputs) {
     // Create a formula to hold the path constraints
     Formula *formula = new Formula();

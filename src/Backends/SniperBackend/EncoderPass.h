@@ -53,10 +53,6 @@ private:
     void initGlobalVariables();
     void initAssertCalls();
     
-    ExprPtr constructPartialPart_V3();
-    ExprPtr constructPartialPart();
-    ExprPtr constructPartialPart_old();
-    
 };
 //============================================================================
 

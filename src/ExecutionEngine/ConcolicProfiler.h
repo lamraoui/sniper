@@ -1,5 +1,5 @@
 /**
- * PTFConcolic.h
+ * ConcolicProfiler.h
  *
  * 
  *
@@ -10,8 +10,8 @@
  */
 
 
-#ifndef _PTFCONCOLIC_H
-#define _PTFCONCOLIC_H
+#ifndef _CONCOLICPROFILER_H
+#define _CONCOLICPROFILER_H
 
 #include <iostream>
 #include <vector>
@@ -25,15 +25,15 @@
 using namespace llvm;
 
 //============================================================================
-class PTFConcolic : public ConcolicModule {
+class ConcolicProfiler : public ConcolicModule {
        
 private:
     Function *targetFun;
     ExecutionEngine *EE;
     
 public:
-    PTFConcolic(Module *_llvmMod, Function *_targetFun, Options *_options);
-    ~PTFConcolic();
+    ConcolicProfiler(Module *_llvmMod, Function *_targetFun, Options *_options);
+    ~ConcolicProfiler();
     void run(ProgramProfile *profile, LocalVariables *locVars, 
              LoopInfoPass *loopInfo);
 

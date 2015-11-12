@@ -91,9 +91,6 @@ static cl::opt <bool>
 WithoutWeights("ww", cl::desc("Without weights"));
 
 static cl::opt <bool>
-PTF("ptf", cl::desc("Use Partial TF (needs -ce)"));
-
-static cl::opt <bool>
 HTF("htf", cl::desc("Use Hardened TF (needs -ce)"));
 
 static cl::opt <unsigned>
@@ -226,10 +223,6 @@ unsigned Options::getUnrollCount() {
 
 unsigned Options::getMaxDepth() {
     return MaxDepth;
-}
-
-bool Options::ptfUsed() {
-    return PTF;
 }
 
 bool Options::htfUsed() {

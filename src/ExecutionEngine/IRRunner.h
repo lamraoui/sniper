@@ -1,5 +1,5 @@
 /**
- * PTFRunner.h
+ * IRRunner.h
  *
  * 
  *
@@ -10,8 +10,8 @@
  */
 
 
-#ifndef _PTFRUNNER_H
-#define _PTFRUNNER_H
+#ifndef _IRRUNNER_H
+#define _IRRUNNER_H
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -28,7 +28,7 @@
 using namespace llvm;
 
 //============================================================================
-class PTFRunner : public ConcolicModule {
+class IRRunner : public ConcolicModule {
        
 private:
     Function *targetFun;
@@ -37,10 +37,10 @@ private:
     std::vector<Value*> outputValuesVec;
     
 public:
-    PTFRunner(Module *_llvmMod, Function *_targetFun, Options *_options,
+    IRRunner(Module *_llvmMod, Function *_targetFun, Options *_options,
               const std::string &tsFilename,
               /* optional */ const std::string &goFilename = std::string());
-    ~PTFRunner();
+    ~IRRunner();
     void run(ProgramProfile *profile, LocalVariables *locVars,
              LoopInfoPass *loopInfo);
     std::vector<std::vector<Value*> > parseTestsuiteFile(const std::string &filename);

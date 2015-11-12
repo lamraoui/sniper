@@ -32,19 +32,16 @@ void SniperBackend::run() {
     // Create an empty program profile for holding execution info
     ProgramProfile *PP = new ProgramProfile(targetFun);
     
-    if (options->ptfUsed() && options->htfUsed()) {
-        assert("PFTF and HFTF activated!");
-    }
     // Run the program with the given inputs
     std::string tsFilename = options->getTestSuiteFileName();
-    if (/*options->ptfUsed() && */options->methodConcolic() && !tsFilename.empty()) {
+    if (options->methodConcolic() && !tsFilename.empty()) {
         MSTimer ctimer;
         if (options->printDuration()) {
             ctimer.start();
         }
         std::string goFilename = options->getGoldenOutputsFileName();
         ConcolicModule *CR =
-        new PTFRunner(llvmMod, targetFun, options, tsFilename, goFilename);
+        new IRRunner(llvmMod, targetFun, options, tsFilename, goFilename);
         CR->run(PP, LV, LIP);
         delete CR;
         if (options->printDuration()) {
@@ -57,8 +54,8 @@ void SniperBackend::run() {
         if (options->printDuration()) {
             ctimer.start();
         }
-        // Run the concolic algorithm of CUTE/DART (with PTF optimization)
-        ConcolicModule *CM = new PTFConcolic(llvmMod, targetFun, options);
+        // Run the concolic algorithm of CUTE/DART (with profiler)
+        ConcolicModule *CM = new ConcolicProfiler(llvmMod, targetFun, options);
         CM->run(PP, LV, LIP);
         delete CM;
         if (options->printDuration()) {
@@ -88,7 +85,7 @@ void SniperBackend::run() {
             //<< maxSuccTraces << std::endl;
         }
         // Update program profile
-        if (options->ptfUsed() || options->htfUsed()) {
+        if (options->htfUsed()) {
             MSTimer btimer;
             if (options->printDuration()) {
                 btimer.start();

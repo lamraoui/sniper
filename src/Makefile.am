@@ -23,8 +23,8 @@ sniper_SOURCES = Main.cpp \
 		ExecutionEngine/ConcolicModule.cpp \
 		ExecutionEngine/Executor.cpp \
 		ExecutionEngine/IRInstrumentor.cpp \
-		ExecutionEngine/PTFConcolic.cpp \
-		ExecutionEngine/PTFRunner.cpp \
+		ExecutionEngine/ConcolicProfiler.cpp \
+		ExecutionEngine/IRRunner.cpp \
 		ExecutionEngine/Symbol.cpp \
 		ExecutionEngine/SymbolicPath.cpp \
 		ExecutionEngine/SymbolMap.cpp \

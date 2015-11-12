@@ -48,13 +48,6 @@ int main(int argc, char **argv) {
         
 		sys::PrintStackTraceOnErrorSignal();
         
-        // Partial Trace Formula
-        if(opt->ptfUsed() && !opt->methodConcolic()) {
-            errs() << "error: cannot use PTF optimization without ";
-            errs() << "activating Concolic method.\n";
-            exit(1);
-        }
-        
         //===============================================
         if(opt->dbgMsg()) {
             std::cout << std::endl;

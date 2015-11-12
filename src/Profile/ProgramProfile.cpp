@@ -94,33 +94,6 @@ void ProgramProfile::computeBugFreeBlocks(Options *o) {
     std::set_difference(successfulBlocks.begin(), successfulBlocks.end(),
                         failingBlocks.begin(), failingBlocks.end(),
                         std::inserter(bugFreeBlocks, bugFreeBlocks.end()));
-
-    // Remove from the bug free basicblocks the
-    // basicblocks with pointers (gep, load, store)
-    if (o->ptfUsed()) { // Not needed for HFTF
-        if (o->verbose()) {
-            std::cout << "Filtering bug free blocks.\n";
-        }
-        std::set<BasicBlock*>::iterator its;
-        for(its = bugFreeBlocks.begin(); its != bugFreeBlocks.end();) {
-            BasicBlock *bb = *its;
-            bool containsPointerInst = false;
-            for (BasicBlock::iterator i=bb->begin(), e=bb->end(); i!=e; ++i) {
-                Instruction *inst = i;
-                if (isa<GetElementPtrInst>(inst)
-                    || isa<LoadInst>(inst)
-                    || isa<StoreInst>(inst)) {
-                    containsPointerInst = true;
-                    break;
-                }
-            }
-            if (containsPointerInst) {
-                its = bugFreeBlocks.erase(its);
-            } else {
-                ++its;
-            }
-        }
-    }
     
     bugFreeBlocksComputed = true;
     if (o->verbose()) {

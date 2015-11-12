@@ -47,7 +47,6 @@ public:
     bool        methodConcolic();
     unsigned    getUnrollCount();
     unsigned    getMaxDepth();
-    bool        ptfUsed();
     bool        htfUsed();
     unsigned    getMaxFailTraces();
     unsigned    getMaxSuccTraces();

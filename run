@@ -16,33 +16,24 @@ if [ -f $2.bc ]
 then
 	case $3 in
 	"1")
-		# Concolic execution with 
-		# Partial Flow-sensitive Trace Formula (PFTF) - [deprecated]
-   		time ./src/sniper -dbg-msg -v -inst -ce -ptf -function $1 -cfile $2 $2.bc
-   		;;
-	"2")
     	# Concolic execution with 
     	# Full Flow-sensitive Trace Formula (FFTF)
-   		time ./src/sniper -dbg-msg -v -inst -ce -function $1 -cfile $2 $2.bc 
+		time ./src/sniper -dbg-msg -v -inst -ce -function $1 -cfile $2 $2.bc
    		;;
-	"3")
+	"2")
 		# Concolic execution with 
 		# Hardened Flow-sensitive Trace Formula (HFTF)
 		time ./src/sniper -dbg-msg -v -inst -ce -htf -function $1 -cfile $2 $2.bc 
     	;;
-	"4")
+	"3")
     	# BMC
     	time ./src/sniper -dbg-msg -v -inst -bmc -function $1 -cfile $2 $2.bc 
     	;;
-    "5")
+    "4")
     	# TCAS/IO - FFTF
     	time ./src/sniper -dbg-msg -v -inst -ce -function $1 -cfile $2 $2.bc -loc 173 -ts ./examples/tcas_nomain_ret/testcases-argok.txt -go ./examples/tcas_nomain_ret/golden_outputs.txt 
     	;;
-    "6")
-    	# TCAS/IO - PFTF
-    	time ./src/sniper -dbg-msg -v -inst -ce -ptf -function $1 -cfile $2 $2.bc -loc 173 -ts ./examples/tcas_nomain_ret/testcases-argok.txt -go ./examples/tcas_nomain_ret/golden_outputs.txt
-    	;;
-    "7")
+    "5")
     	# TCAS/IO - HFTF
     	time ./src/sniper -dbg-msg -v -inst -ce -htf -function $1 -cfile $2 $2.bc -loc 173 -ts ./examples/tcas_nomain_ret/testcases-argok.txt -go ./examples/tcas_nomain_ret/golden_outputs.txt
     	;;

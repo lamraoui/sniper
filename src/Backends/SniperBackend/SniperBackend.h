@@ -28,8 +28,8 @@
 #include "Logic/BMC.h"
 #include "Logic/ISolver.h"
 #include "Logic/YicesSolver.h"
-#include "ExecutionEngine/PTFConcolic.h"
-#include "ExecutionEngine/PTFRunner.h"
+#include "ExecutionEngine/ConcolicProfiler.h"
+#include "ExecutionEngine/IRRunner.h"
 #include "Utils/Utils.h"
 
 

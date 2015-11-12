@@ -50,7 +50,6 @@ public:
 private:
     void initGlobalVariables();
     void initAssertCalls();
-    ExprPtr constructPartialPart();
     
 };
 //============================================================================
