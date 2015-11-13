@@ -105,9 +105,6 @@ NbLOC("loc", cl::desc("Number of line of code"),
 static cl::opt <bool>
 CheckCFGModel("check-cfg-model", cl::desc("Check CFG model"));
 
-static cl::opt <bool>
-UseDynamicDiagnosesEnum("dde", cl::desc("Use dynamic diagnoses enum"));
-
 static cl::opt <unsigned>
 MCSMaxSize("max-mcs-size", cl::desc("Maximum size of MCSes"),
               cl::init(UINT_MAX), cl::value_desc("MCSMaxSize"));
@@ -240,10 +237,6 @@ unsigned Options::getNbLOC() {
 
 bool Options::checkCFGModel() {
     return CheckCFGModel;
-}
-
-bool Options::useDynamicDiagnosesEnum() {
-    return UseDynamicDiagnosesEnum;
 }
 
 unsigned Options::mcsMaxSize() {

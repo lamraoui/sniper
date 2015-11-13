@@ -52,7 +52,6 @@ public:
     unsigned    getMaxSuccTraces();
     unsigned    getNbLOC();
     bool        checkCFGModel();
-    bool        useDynamicDiagnosesEnum();
     unsigned    mcsMaxSize();
     bool        outputCFGDotFile();
     

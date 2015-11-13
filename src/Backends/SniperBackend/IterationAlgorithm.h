@@ -51,8 +51,6 @@ public:
     
     void run(Formula *TF, Formula *AS, ProgramProfile *prof,
              Combine::Method combineMethod);
-    void run_dynamic(Formula *TF, Formula *AS, ProgramProfile *prof,
-                     Combine::Method combineMethod);
     
     std::vector<SetOfFormulasPtr> allDiagnosis(Formula *TF,
                                                std::vector<ProgramTrace*> traces,

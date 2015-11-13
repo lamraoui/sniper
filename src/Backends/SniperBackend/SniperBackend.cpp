@@ -147,9 +147,6 @@ void SniperBackend::run() {
         }
     }
     
-    // Locate the errors in the input program
-    assert(options->pushPopUsed() && "Use push & pop optimization!");
-    
     IterationAlgorithm *IA =
     new IterationAlgorithm(targetFun, solver, hasArgv, options);
     
@@ -159,9 +156,6 @@ void SniperBackend::run() {
     //Combine::MHS
     Combine::Method CM = Combine::FLA;
     
-    if (options->useDynamicDiagnosesEnum()) {
-        IA->run_dynamic(TF, AS, PP, CM);
-    } else {
-        IA->run(TF, AS, PP, CM);
-    }
+    // Run the fault localization algorithm
+    IA->run(TF, AS, PP, CM);
 }
