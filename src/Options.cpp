@@ -88,9 +88,6 @@ MaxDepth("max-depth", cl::desc("Maximum depth"),
             cl::init(10000), cl::value_desc("depth"));
 
 static cl::opt <bool>
-WithoutWeights("ww", cl::desc("Without weights"));
-
-static cl::opt <bool>
 HTF("htf", cl::desc("Use Hardened TF (needs -ce)"));
 
 static cl::opt <unsigned>
@@ -235,10 +232,6 @@ unsigned Options::getMaxFailTraces() {
 
 unsigned Options::getMaxSuccTraces() {
     return MaxSuccTraces;
-}
-
-bool Options::withoutWeights() {
-    return WithoutWeights;
 }
 
 unsigned Options::getNbLOC() {

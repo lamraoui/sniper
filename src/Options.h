@@ -50,7 +50,6 @@ public:
     bool        htfUsed();
     unsigned    getMaxFailTraces();
     unsigned    getMaxSuccTraces();
-    bool        withoutWeights();
     unsigned    getNbLOC();
     bool        checkCFGModel();
     bool        useDynamicDiagnosesEnum();
