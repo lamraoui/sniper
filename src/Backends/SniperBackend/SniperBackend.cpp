@@ -147,15 +147,9 @@ void SniperBackend::run() {
         }
     }
     
+    // Run the fault localization algorithm
     IterationAlgorithm *IA =
     new IterationAlgorithm(targetFun, solver, hasArgv, options);
-    
-    //Combine::NONE
-    //Combine::FLA
-    //Combine::PWU
-    //Combine::MHS
-    Combine::Method CM = Combine::FLA;
-    
-    // Run the fault localization algorithm
+    Combine::Method CM = (Combine::Method) options->getCombineMethod();
     IA->run(TF, AS, PP, CM);
 }

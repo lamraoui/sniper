@@ -112,6 +112,17 @@ MCSMaxSize("max-mcs-size", cl::desc("Maximum size of MCSes"),
 static cl::opt <bool>
 OutputCFGDotFile("cfg-dot", cl::desc("Output the CFG in a dot file."));
 
+enum CombineMethod {
+    none, fla, pwu, mhs
+};
+cl::opt<CombineMethod>
+ChoosedCombineMethod(cl::desc("Choose a combination method:"),
+    cl::values(
+    clEnumVal(none, "None (default)"),
+    clEnumVal(fla,  "Flatten"),
+    clEnumVal(pwu,  "Pair-wise union"),
+    clEnumVal(mhs,  "Minimal hitting-set"),
+    clEnumValEnd));
 
 /*==== Implementation ====*/
 
@@ -245,6 +256,17 @@ unsigned Options::mcsMaxSize() {
 
 bool Options::outputCFGDotFile() {
     return OutputCFGDotFile;
+}
+
+unsigned Options::getCombineMethod() {
+    if (ChoosedCombineMethod==fla) {
+        return Combine::FLA;
+    } else if (ChoosedCombineMethod==pwu) {
+        return Combine::PWU;
+    } else if (ChoosedCombineMethod==mhs) {
+        return Combine::MHS;
+    }
+    return Combine::NONE;
 }
 
 // Hide unwanted options

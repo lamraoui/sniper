@@ -15,7 +15,10 @@
 
 #include <string>
 #include <iostream>
+
 #include "llvm/Support/CommandLine.h"
+
+#include "Logic/Combine.h"
 
 using namespace llvm;
 
@@ -54,6 +57,7 @@ public:
     bool        checkCFGModel();
     unsigned    mcsMaxSize();
     bool        outputCFGDotFile();
+    unsigned    getCombineMethod();
     
 private:
     void hideOptions();

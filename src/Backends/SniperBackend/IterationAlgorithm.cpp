@@ -62,7 +62,7 @@ void IterationAlgorithm::run(Formula *TF, Formula *AS,
     std::cout << "Nb calls solver  : " << nbCallsToSolver << std::endl;
     
     // Combination methods: PWU, MHS, FLA
-    SetOfFormulasPtr combMCSes;
+    SetOfFormulasPtr combMCSes = NULL;
     switch (combineMethod) {
         case Combine::MHS:
             // Minimal-hitting set
@@ -82,7 +82,7 @@ void IterationAlgorithm::run(Formula *TF, Formula *AS,
         default:
             break;
     }
-    if (!combMCSes->empty()) {
+    if (combMCSes && !combMCSes->empty()) {
         if (options->verbose()) {
             std::cout << "\nCombined MCSes size: ";
             std::cout << combMCSes->size() << std::endl;
@@ -92,7 +92,19 @@ void IterationAlgorithm::run(Formula *TF, Formula *AS,
     } else {
         if (combineMethod==Combine::NONE) {
             if (options->verbose()) {
-                std::cout << "\nNo combination method...\n";
+                std::cout << "\nMCSes size: ";
+                std::cout << MCSes.size() << std::endl;
+                std::cout << "MCSes (not combined):\n";
+                std::cout << "{";
+                std::vector<SetOfFormulasPtr>::iterator it;
+                for (it=MCSes.begin(); it!=MCSes.end(); ++it) {
+                    SetOfFormulasPtr sof = *it;
+                    std::cout << sof << std::endl;
+                    if (std::distance(it, MCSes.end())>1) {
+                        std::cout << ", ";
+                    }
+                }
+                std::cout << "}\n";
             }
         } else {
             std::cout << "SNIPER was unable to localize any root causes.\n";
