@@ -296,7 +296,7 @@ void Executor::executeGep(Instruction *i) {
         return;
     }
     GetElementPtrInst *gep = (GetElementPtrInst*) i;
-    assert(gep->getNumIndices()<=2 & "Unsupported gep instruction");
+    assert(gep->getNumIndices()<=2 && "Unsupported gep instruction");
     if(AllocaInst *a = dyn_cast<AllocaInst>(gep->getPointerOperand())) {
         Type *ty = a->getAllocatedType();
         if (ty->isIntegerTy()) {

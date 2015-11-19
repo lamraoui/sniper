@@ -268,7 +268,7 @@ Value* InstructionTrace::getConcrete(Value *v) {
 
 int InstructionTrace::getInt32(Value *v) { 
     ConstantInt *ci = dyn_cast<ConstantInt>(v);
-    assert(CI && "No concrete value for variable!");
+    assert(ci && "No concrete value for variable!");
     return (int) ci->getSExtValue();
 }
 
