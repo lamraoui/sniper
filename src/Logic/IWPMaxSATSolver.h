@@ -29,7 +29,6 @@ public:
     virtual std::vector<ExprPtr> getUnsatExpressions()          = 0;
     virtual std::vector<ExprPtr> getSatExpressions()            = 0;
     virtual double      getCostAsDouble()                       = 0;
-    virtual void        setHard(Formula *formula, ExprPtr e)    = 0;
     
 };
 //============================================================================

@@ -44,15 +44,14 @@ public:
     virtual int         getValue(std::string name);
     int                 getValueOrZero(std::string name);
     int                 getBoolValue(std::string name); 
-    virtual int         check(Formula *formula);
+    virtual int         check(Formula *f);
     virtual std::string getModel();
     
     // IWPMaxSATSolver
-    virtual int         maxSat(Formula *formula);
+    virtual int         maxSat(Formula *f);
     virtual std::vector<ExprPtr> getUnsatExpressions();
     virtual std::vector<ExprPtr> getSatExpressions();
     virtual double      getCostAsDouble();
-    virtual void        setHard(Formula *formula, ExprPtr e);
     
     // TMP
     int getValue(std::string name, bool &error);
@@ -60,8 +59,6 @@ public:
     int maxSat();
     void addToContext(ExprPtr e);
     void addToContext(Formula *f);
-    assertion_id addToContextRetractable(ExprPtr e);
-    void retractFromContext(assertion_id i);   
     void push();
     void pop();
     void init();
