@@ -234,7 +234,7 @@ void SetOfFormulas::add(FormulaPtr f) {
             ++i;
         }
     }
-    assert((!hasSubsets && !hasSupersets)
+    assert(((hasSubsets != hasSupersets) || (!hasSubsets && !hasSupersets))
            && "Something is wrong with this set of formulas!");
     if (!hasSubsets) {
         this->formulas.push_back(f);
