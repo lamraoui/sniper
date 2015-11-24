@@ -191,13 +191,15 @@ TEST(FormulaTest, FormulaBase) {
     f6->add(E4);
     EXPECT_EQ(f6->size(), 3);
     
-    delete ze0;
-    delete se0;
     delete f;
     delete f2;
     delete f4;
     delete f5;
     delete f6;
+    
+    // TODO: Free parents first
+    //delete ze0;
+    //delete se0;
 }
 
 
@@ -331,6 +333,10 @@ TEST(FormulaTest, SetOfFormulasBase) {
     f5->add(var3bis);
     sf3->add(f5);
     EXPECT_EQ(sf3->size(), 1);
+    
+    // TODO: Free parents first
+    //delete ze0;
+    //delete se0;
 }
 
 
