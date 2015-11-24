@@ -66,7 +66,7 @@ if test X${llvm_version} = X; then
 	AC_MSG_ERROR([Unable to find LLVM])
 fi
 
-# Require LLVM = 3.3 
+# Require LLVM = 3.3
 AC_MSG_CHECKING([llvm version])
 if echo "$llvm_version 3.3 -p" | dc | grep > /dev/null ^-; then
 	AC_MSG_ERROR([Require LLVM version = 3.3])
@@ -82,6 +82,7 @@ fi
 AC_MSG_RESULT([$llvm_mode])
 
 # LLVM preprocessor/link flags
+AC_SUBST(LLVM_CXXFLAGS, $(llvm-config --cxxflags))
 AC_SUBST(LLVM_CPPFLAGS, $(llvm-config --cppflags))
 AC_SUBST(LLVM_LDADD, $(llvm-config --ldflags --libs core linker ipo interpreter mcjit jit native irreader | tr '\n' ' '))
 
