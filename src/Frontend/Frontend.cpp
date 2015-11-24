@@ -30,7 +30,7 @@ bool Frontend::run() {
     
     // Save local variable names before processing the bytecode
     Function *targetFun = getFunction(options->getFunctionName());
-    assert(targetFun==NULL && "Requested function missing");
+    assert(targetFun && "Requested function missing");
     localVars = new LocalVariables(targetFun);
     localVars->processLoadStore();
     
@@ -127,22 +127,22 @@ bool Frontend::run() {
 }
 
 Module *Frontend::getLLVMModule() {
-    assert(llvmMod==NULL && "No LLVM module available");
+    assert(llvmMod && "No LLVM module available");
     return this->llvmMod;
 }
 
 Function *Frontend::getFunction(std::string name) {
-    assert(llvmMod==NULL && "No LLVM module available");
+    assert(llvmMod && "No LLVM module available");
     return llvmMod->getFunction(name);
 }
 
 LocalVariables *Frontend::getLocalVars() {
-    assert(localVars==NULL && "No local variables object");
+    assert(localVars && "No local variables object");
     return localVars;
 }
 
 LoopInfoPass *Frontend::getLoopInfo() {
-    assert(loopInfo==NULL && "No loop info object");
+    assert(loopInfo && "No loop info object");
     return loopInfo;
 }
 

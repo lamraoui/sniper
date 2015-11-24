@@ -23,7 +23,7 @@ void SniperBackend::run() {
         fname = "main";
     }
     Function *targetFun = frontend->getFunction(fname);
-    assert(targetFun==NULL && "Requested function missing");
+    assert(targetFun && "Requested function missing");
     
     LocalVariables *LV = frontend->getLocalVars();
     LoopInfoPass *LIP  = frontend->getLoopInfo();

@@ -499,7 +499,7 @@ bool operator== (ExprPtr e1, ExprPtr e2) {
             if (es1.size()!=es2.size())
                 return false;
             const unsigned n = es1.size();
-            assert(n==0 && "Empty AndExpression");
+            assert(n>0 && "Empty AndExpression");
             if (n==1)
                 return (es1.back()==es2.back());
             for(unsigned i=0; i<n; i++) {
@@ -516,7 +516,7 @@ bool operator== (ExprPtr e1, ExprPtr e2) {
             if (es1.size()!=es2.size())
                 return false;
             const unsigned n = es1.size();
-            assert(n==0 && "Empty MulExpression");
+            assert(n>0 && "Empty MulExpression");
             if (n==1)
                 return (es1.back()==es2.back());
             for(unsigned i=0; i<n; i++) {
@@ -533,7 +533,7 @@ bool operator== (ExprPtr e1, ExprPtr e2) {
             if (es1.size()!=es2.size())
                 return false;
             const unsigned n = es1.size();
-            assert(n==0 && "Empty XorExpression");
+            assert(n>0 && "Empty XorExpression");
             if (n==1)
                 return (es1.back()==es2.back());
             for(unsigned i=0; i<n; i++) {
@@ -550,7 +550,7 @@ bool operator== (ExprPtr e1, ExprPtr e2) {
             if (es1.size()!=es2.size())
                 return false;
             const unsigned n = es1.size();
-            assert(n==0 && "Empty SumExpression");
+            assert(n>0 && "Empty SumExpression");
             if (n==1)
                 return (es1.back()==es2.back());
             for(unsigned i=0; i<n; i++) {
@@ -567,7 +567,7 @@ bool operator== (ExprPtr e1, ExprPtr e2) {
             if (es1.size()!=es2.size())
                 return false;
             const unsigned n = es1.size();
-            assert(n==0 && "Empty SubExpression");
+            assert(n>0 && "Empty SubExpression");
             if (n==1)
                 return (es1.back()==es2.back());
             for(unsigned i=0; i<n; i++) {
@@ -584,7 +584,7 @@ bool operator== (ExprPtr e1, ExprPtr e2) {
             if (es1.size()!=es2.size())
                 return false;
             const unsigned n = es1.size();
-            assert(n==0 && "Empty MulExpression");
+            assert(n>0 && "Empty MulExpression");
             if (n==1)
                 return (es1.back()==es2.back());
             for(unsigned i=0; i<n; i++) {

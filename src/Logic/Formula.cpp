@@ -234,7 +234,7 @@ void SetOfFormulas::add(FormulaPtr f) {
             ++i;
         }
     }
-    assert((hasSubsets && hasSupersets)
+    assert((!hasSubsets && !hasSupersets)
            && "Something is wrong with this set of formulas!");
     if (!hasSubsets) {
         this->formulas.push_back(f);
@@ -261,7 +261,7 @@ bool SetOfFormulas::empty() {
 }
 
 FormulaPtr SetOfFormulas::getAt(unsigned i) {
-    assert((i<0 || i>=formulas.size()) && "Out of bound");
+    assert((i>=0 && i<formulas.size()) && "Out of bound");
     return this->formulas[i];
 }
 
