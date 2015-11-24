@@ -285,8 +285,8 @@ bool ConcolicProfiler::solve(std::vector<ExprCellPtr> path, std::vector<ExprCell
     }
     //formula->dump();
     
-    //solver->init();
     // The formula is satisfiable
+    solver->init();
     int status = solver->check(formula);
     if(status==l_true) {
         //formula->dump();
