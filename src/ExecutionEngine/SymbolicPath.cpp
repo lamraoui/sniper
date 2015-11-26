@@ -69,7 +69,8 @@ void SymbolicPath::addCell(ExprCellPtr n) {
     path.push_back(n);
 }
 
-void SymbolicPath::addBranchCell(SymbolPtr svcond, bool branchTaken, Instruction *i) {
+void SymbolicPath::addBranchCell(SymbolPtr svcond, bool branchTaken,
+                                 Instruction *i) {
     ExprCellPtr n = std::make_shared<BranchExprCell>(svcond,  branchTaken, i);
     addCell(n);
 }
@@ -93,10 +94,8 @@ void SymbolicPath::updateStack(bool branch) {
     // Update branch
     if (nbBranch<stack.size()) {
         // Wrong branch taken
-        if (stack[nbBranch].branch!=branch) {
-            std::cout << "error: invalid stack!\n";
-            exit(1);
-        } else if (nbBranch==(stack.size()-1)) {
+        assert(stack[nbBranch].branch==branch && "Invalid stack!");
+        if (nbBranch==(stack.size()-1)) {
             stack[nbBranch].branch = branch;
             stack[nbBranch].done = true;
         }   

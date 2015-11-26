@@ -68,10 +68,8 @@ void LoopInfoPass::assertLoop(Loop *l) {
 BasicBlock* LoopInfoPass::getLoopLatch(BranchInst *br) {
     // Check if br comes from the same module (not cloned)
     Module *brMod  = br->getParent()->getParent()->getParent();
-    if (brMod!=llvmMod) {
-        std::cout << "error : br come from a different module\n";
-        exit(1);
-    }
+    assert(brMod==llvmMod &&
+           "Expecting branch instruction to come from the same module!");
     std::map<BranchInst*,BasicBlock*>::iterator it = br2header.find(br);
     if(it!=br2header.end()) {
         return it->second;

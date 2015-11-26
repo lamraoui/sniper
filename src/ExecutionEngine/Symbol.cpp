@@ -14,10 +14,7 @@
 unsigned Symbol::ID = 0;
 
 Symbol::Symbol(Value *v) {
-    if (v==NULL) {
-        std::cout << "error: No Value for Symbol!\n";
-        exit(1);
-    }
+    assert(v && "No value for symbol!");
     this->v = v;
     this->currentID = ID++;
 }

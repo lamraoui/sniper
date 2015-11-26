@@ -134,14 +134,11 @@ public:
     SVBinaryOpSymbol(Value *v, SymbolPtr s1, Value *v2) 
     : BinaryOpSymbol(v), s1(s1), v2(v2) { }
     virtual ExprPtr convertToExpr() {
-        if (Instruction *I = dyn_cast<Instruction>(v)) {
-            ExprPtr e1 = s1->convertToExpr();
-            ExprPtr e2 = Expression::getExprFromValue(v2);
-            return Expression::mkOp(e1, e2, I);
-        } else {
-            std::cout << "error: symbol wihout instruction.\n";
-            exit(1);
-        }
+        Instruction *I = dyn_cast<Instruction>(v);
+        assert(I && "Symbol has no instruction!");
+        ExprPtr e1 = s1->convertToExpr();
+        ExprPtr e2 = Expression::getExprFromValue(v2);
+        return Expression::mkOp(e1, e2, I);
     }
     virtual void dump() {
         std::cout << "SVB(";
@@ -162,14 +159,11 @@ public:
     VSBinaryOpSymbol(Value *v, Value *v1, SymbolPtr s2) 
     : BinaryOpSymbol(v), v1(v1), s2(s2) { }
     virtual ExprPtr convertToExpr() {
-        if (Instruction *I = dyn_cast<Instruction>(v)) {
-            ExprPtr e1 = Expression::getExprFromValue(v1);
-            ExprPtr e2 = s2->convertToExpr();
-            return Expression::mkOp(e1, e2, I);
-        } else {
-            std::cout << "error: symbol wihout instruction.\n";
-            exit(1);
-        }
+        Instruction *I = dyn_cast<Instruction>(v);
+        assert(I && "Symbol has no instruction!");
+        ExprPtr e1 = Expression::getExprFromValue(v1);
+        ExprPtr e2 = s2->convertToExpr();
+        return Expression::mkOp(e1, e2, I);
     }
     virtual void dump() {
         std::cout << "SVB(";
@@ -198,15 +192,11 @@ public:
     SSSelectOpSymbol(Value *v, SymbolPtr s1, SymbolPtr s2, SymbolPtr s3) 
     : SelectOpSymbol(v, s1), s2(s2), s3(s3) { }
     virtual ExprPtr convertToExpr() {
-        if (isa<SelectInst>(v)) {
-            ExprPtr e1 = s1->convertToExpr();
-            ExprPtr e2 = s2->convertToExpr();
-            ExprPtr e3 = s3->convertToExpr();
-            return Expression::mkIte(e1, e2, e3);
-        } else {
-            std::cout << "error: symbol wihout instruction.\n";
-            exit(1);
-        }
+        assert(isa<SelectInst>(v) && "Value is not a select instruction!");
+        ExprPtr e1 = s1->convertToExpr();
+        ExprPtr e2 = s2->convertToExpr();
+        ExprPtr e3 = s3->convertToExpr();
+        return Expression::mkIte(e1, e2, e3);
     }
     virtual void dump() {
         std::cout << "SSS(";
@@ -228,15 +218,11 @@ public:
     VSSelectOpSymbol(Value *v, SymbolPtr s1, Value *v2, SymbolPtr s3) 
     : SelectOpSymbol(v, s1), v2(v2), s3(s3) { }
     virtual ExprPtr convertToExpr() {
-        if (isa<SelectInst>(v)) {
-            ExprPtr e1 = s1->convertToExpr();
-            ExprPtr e2 = Expression::getExprFromValue(v2);
-            ExprPtr e3 = s3->convertToExpr();
-            return Expression::mkIte(e1, e2, e3);
-        } else {
-            std::cout << "error: symbol wihout instruction.\n";
-            exit(1);
-        }
+        assert(isa<SelectInst>(v) && "Value is not a select instruction!");
+        ExprPtr e1 = s1->convertToExpr();
+        ExprPtr e2 = Expression::getExprFromValue(v2);
+        ExprPtr e3 = s3->convertToExpr();
+        return Expression::mkIte(e1, e2, e3);
     }
     virtual void dump() {
         std::cout << "VSS(";
@@ -258,15 +244,11 @@ public:
     SVSelectOpSymbol(Value *v, SymbolPtr s1, SymbolPtr s2, Value *v3) 
     : SelectOpSymbol(v, s1), s2(s2), v3(v3) { }
     virtual ExprPtr convertToExpr() {
-        if (isa<SelectInst>(v)) {
-            ExprPtr e1 = s1->convertToExpr();
-            ExprPtr e2 = s2->convertToExpr();
-            ExprPtr e3 = Expression::getExprFromValue(v3);
-            return Expression::mkIte(e1, e2, e3);
-        } else {
-            std::cout << "error: symbol wihout instruction.\n";
-            exit(1);
-        }
+        assert(isa<SelectInst>(v) && "Value is not a select instruction!");
+        ExprPtr e1 = s1->convertToExpr();
+        ExprPtr e2 = s2->convertToExpr();
+        ExprPtr e3 = Expression::getExprFromValue(v3);
+        return Expression::mkIte(e1, e2, e3);
     }
     virtual void dump() {
         std::cout << "SVS(";
@@ -288,15 +270,11 @@ public:
     VVSelectOpSymbol(Value *v, SymbolPtr s1, Value *v2, Value *v3) 
     : SelectOpSymbol(v, s1), v2(v2), v3(v3) { }
     virtual ExprPtr convertToExpr() {
-        if (isa<SelectInst>(v)) {
-            ExprPtr e1 = s1->convertToExpr();
-            ExprPtr e2 = Expression::getExprFromValue(v2);
-            ExprPtr e3 = Expression::getExprFromValue(v3);
-            return Expression::mkIte(e1, e2, e3);
-        } else {
-            std::cout << "error: symbol wihout instruction.\n";
-            exit(1);
-        }
+       assert(isa<SelectInst>(v) && "Value is not a select instruction!");
+        ExprPtr e1 = s1->convertToExpr();
+        ExprPtr e2 = Expression::getExprFromValue(v2);
+        ExprPtr e3 = Expression::getExprFromValue(v3);
+        return Expression::mkIte(e1, e2, e3);
     }
     virtual void dump() {
         std::cout << "SSS(";
@@ -317,32 +295,28 @@ public:
     CastOpSymbol(Value *v, SymbolPtr s1) 
     : Symbol(v), s1(s1) { }
     virtual ExprPtr convertToExpr() {
-        if (Instruction *I = dyn_cast<Instruction>(v)) {
-            Value *v1  = I->getOperand(0);
-            Type *vTy = v->getType();
-            Type *v1Ty = v1->getType();
-            // i1 -> i32
-            if (v1Ty->isIntegerTy(1) && vTy->isIntegerTy(32)) {
-                // v = IF v1 THEN 1 ELSE 0 
-                ExprPtr one = Expression::mkSInt32Num(1);
-                ExprPtr zero = Expression::mkSInt32Num(0);
-                ExprPtr e1 = s1->convertToExpr();
-                return Expression::mkIte(e1, one, zero);
-            }
-            // i32 -> i1
-            else if (v1Ty->isIntegerTy(32) && vTy->isIntegerTy(1)) {
-                // v = (!= v1 0) : IF v1!=0 THEN true ELSE false
-                ExprPtr zero = Expression::mkSInt32Num(0);
-                ExprPtr e1 = s1->convertToExpr();
-                return Expression::mkDiseq(e1, zero);
-            } else {
-                std::cout << "error: unsupported cast operation!\n";
-                exit(1);
-            }
+        Instruction *I = dyn_cast<Instruction>(v);
+        assert(I && "Symbol has no instruction!");
+        Value *v1  = I->getOperand(0);
+        Type *vTy = v->getType();
+        Type *v1Ty = v1->getType();
+        // i1 -> i32
+        if (v1Ty->isIntegerTy(1) && vTy->isIntegerTy(32)) {
+            // v = IF v1 THEN 1 ELSE 0
+            ExprPtr one = Expression::mkSInt32Num(1);
+            ExprPtr zero = Expression::mkSInt32Num(0);
+            ExprPtr e1 = s1->convertToExpr();
+            return Expression::mkIte(e1, one, zero);
+        }
+        // i32 -> i1
+        else if (v1Ty->isIntegerTy(32) && vTy->isIntegerTy(1)) {
+            // v = (!= v1 0) : IF v1!=0 THEN true ELSE false
+            ExprPtr zero = Expression::mkSInt32Num(0);
+            ExprPtr e1 = s1->convertToExpr();
+            return Expression::mkDiseq(e1, zero);
         } else {
-            std::cout << "error: symbol wihout instruction.\n";
-            exit(1);
-        }  
+            assert("Unsupported cast operation!");
+        }
     }
     virtual void dump() {
         std::cout << "SVB(cast ";

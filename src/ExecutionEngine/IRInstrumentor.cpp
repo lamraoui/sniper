@@ -140,7 +140,8 @@ IRInstrumentor::IRInstrumentor(Module *_llvmMod, ExecutionEngine *_EE)
     
     // Register the ExecuteInst functions
     ExecInstFun = 
-    cast<Function>(llvmMod->getOrInsertFunction("sniper_executeInst", voidTy, int64Ty, NULL));
+    cast<Function>(llvmMod->getOrInsertFunction("sniper_executeInst",
+                                                voidTy, int64Ty, NULL));
     EE->addGlobalMapping(ExecInstFun, (void *)sniper_executeInst);
     // Register the ExecuteInst1_i32 functions
     ExecInst1i32Fun = 
@@ -150,17 +151,20 @@ IRInstrumentor::IRInstrumentor(Module *_llvmMod, ExecutionEngine *_EE)
     // Register the ExecuteInst2_i32 functions
     ExecInst2i32Fun = 
     cast<Function>(llvmMod->getOrInsertFunction("sniper_executeInst2_i32", 
-                                                voidTy, int64Ty, int32Ty, int32Ty, NULL));
+                                                voidTy, int64Ty, int32Ty,
+                                                int32Ty, NULL));
     EE->addGlobalMapping(ExecInst2i32Fun, (void *)sniper_executeInst2_i32);  
     // Register the ExecuteInst2_i64 functions
     ExecInst2i64Fun = 
     cast<Function>(llvmMod->getOrInsertFunction("sniper_executeInst2_i64", 
-                                                voidTy, int64Ty, int64Ty, int64Ty, NULL));
+                                                voidTy, int64Ty, int64Ty,
+                                                int64Ty, NULL));
     EE->addGlobalMapping(ExecInst2i64Fun, (void *)sniper_executeInst2_i64);  
     // Register the ExecuteInst3_i32 functions                        
     ExecInst3i32Fun = 
     cast<Function>(llvmMod->getOrInsertFunction("sniper_executeInst3_i32", 
-                                                voidTy, int64Ty, int32Ty, int32Ty, int32Ty, NULL));
+                                                voidTy, int64Ty, int32Ty,
+                                                int32Ty, int32Ty, NULL));
     EE->addGlobalMapping(ExecInst3i32Fun, (void *)sniper_executeInst3_i32);  
     // Register the ExecuteInst1_i1 functions
     ExecInst1i1Fun = 
@@ -170,18 +174,22 @@ IRInstrumentor::IRInstrumentor(Module *_llvmMod, ExecutionEngine *_EE)
     // Register the ExecuteInst2_i1 functions
     ExecInst2i1Fun = 
     cast<Function>(llvmMod->getOrInsertFunction("sniper_executeInst2_i1", 
-                                                voidTy, int64Ty, int1Ty, int1Ty, NULL));
+                                                voidTy, int64Ty, int1Ty,
+                                                int1Ty, NULL));
     EE->addGlobalMapping(ExecInst2i1Fun, (void *)sniper_executeInst2_i1);  
     // Register the ExecuteInst3_i1 functions                        
     ExecInst3i1Fun = 
     cast<Function>(llvmMod->getOrInsertFunction("sniper_executeInst3_i1", 
-                                                voidTy, int64Ty, int1Ty, int1Ty, int1Ty, NULL));
+                                                voidTy, int64Ty, int1Ty,
+                                                int1Ty, int1Ty, NULL));
     EE->addGlobalMapping(ExecInst3i1Fun, (void *)sniper_executeInst3_i1);  
     // Register the ExecuteInst1_i1_2_i32 functions                        
     ExecInst1i1and2i32Fun = 
     cast<Function>(llvmMod->getOrInsertFunction("sniper_executeInst1_i1_2_i32", 
-                                                voidTy, int64Ty, int1Ty, int32Ty, int32Ty, NULL));
-    EE->addGlobalMapping(ExecInst1i1and2i32Fun, (void *)sniper_executeInst1_i1_2_i32);
+                                                voidTy, int64Ty, int1Ty,
+                                                int32Ty, int32Ty, NULL));
+    EE->addGlobalMapping(ExecInst1i1and2i32Fun,
+                         (void *)sniper_executeInst1_i1_2_i32);
     // Register the ReportEnd function
     ReportEndFun = 
     cast<Function>(llvmMod->getOrInsertFunction("sniper_reportEnd", voidTy, NULL));
@@ -207,11 +215,13 @@ IRInstrumentor::IRInstrumentor(Module *_llvmMod, ExecutionEngine *_EE)
     EE->addGlobalMapping(ReportAssumeRetVoidFun, (void *)sniper_v_assume);
     // Register the sniper_pushArgs function
     PushArgsFun = 
-    cast<Function>(llvmMod->getOrInsertFunction("sniper_pushArgs", voidTy, int64Ty, NULL));
+    cast<Function>(llvmMod->getOrInsertFunction("sniper_pushArgs", voidTy,
+                                                int64Ty, NULL));
     EE->addGlobalMapping(PushArgsFun, (void *)sniper_pushArgs); 
     // Register the sniper_popArgs function
     PopArgsFun = 
-    cast<Function>(llvmMod->getOrInsertFunction("sniper_popArgs", voidTy, int64Ty, NULL));
+    cast<Function>(llvmMod->getOrInsertFunction("sniper_popArgs", voidTy,
+                                                int64Ty, NULL));
     EE->addGlobalMapping(PopArgsFun, (void *)sniper_popArgs); 
 }
 
@@ -221,7 +231,6 @@ IRInstrumentor::IRInstrumentor(Module *_llvmMod, ExecutionEngine *_EE)
 //
 void IRInstrumentor::instrumentModule(Module *llvmMod, Function *targetFun) {
 
-    //llvmMod->dump();
     Module::iterator it;
     Module::FunctionListType &functions = llvmMod->getFunctionList();
     for (it=functions.begin(); it!=functions.end(); ++it) {
@@ -241,13 +250,11 @@ void IRInstrumentor::instrumentModule(Module *llvmMod, Function *targetFun) {
         if (!f.isDeclaration() && !f.isIntrinsic()) {
             bool isTarget = (targetFun==&f);
             instrumentFunction(&f, isTarget);
-            //f.dump();
         }
     }
     // Validate the generated code, 
     // checking for consistency.
     verifyModule(*llvmMod);
-    //llvmMod->dump();
 }
 
 
@@ -374,7 +381,6 @@ void IRInstrumentor::instrumentFunction(Function *targetFun, bool isTarget) {
     // Validate the generated code, 
     // checking for consistency.
     verifyFunction(*targetFun);
-    //llvmMod->dump();
 }
 
 void IRInstrumentor::insertExecAlloca(Instruction *i) {

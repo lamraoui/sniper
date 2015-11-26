@@ -298,33 +298,22 @@ bool Frontend::isStandardFunctionSignature(Function *targetFun) {
 // Exit the program if the function signature is not supported.
 // =============================================================================
 void Frontend::checkFunctionSignature(Function *targetFun) {
+    assert(targetFun && "Expecting a function as argument!");
     // Check the number of args
     unsigned size = targetFun->arg_size();
-    if (size==0) {
-        std::cout << "exit: The function " << targetFun->getName().str();
-        std::cout << " does not take any arguments.\n";
-        exit(1);
-    }
+    assert(size>0 && "Expecting function to have arguments!");
     // Check function return type
     const Type *retTy =  targetFun->getReturnType();
-    if (targetFun->isVarArg() || (!retTy->isIntegerTy(32) && !retTy->isVoidTy())) {
-        std::cout << "error: the type of the function ";
-        std::cout << targetFun->getName().str();
-        std::cout << " is not supported.\n";
-        exit(1);
-    }
+    assert((!targetFun->isVarArg() &&
+            (retTy->isIntegerTy(32) || retTy->isVoidTy())) &&
+           "Function return type not supported!");
     // Check the type of the arguments
     const FunctionType *FTy = targetFun->getFunctionType();
     Function::arg_iterator ait;
     for (ait = targetFun->arg_begin(); ait != targetFun->arg_end(); ++ait) {
         const unsigned argNo = ait->getArgNo();
         const Type *argTy = FTy->getParamType(argNo);
-        if (!argTy->isIntegerTy(32)) {
-            std::cout << "error: the type of the function ";
-            std::cout << targetFun->getName().str();
-            std::cout << " is not supported.\n";
-            exit(1);
-        }
+        assert(argTy->isIntegerTy(32) && "Function argument types not supported!");
     }
 }
 

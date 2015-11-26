@@ -36,8 +36,8 @@ ExecutionEngine* ConcolicModule::initialize() {
            .setOptLevel(CodeGenOpt::None);
     ExecutionEngine *EE = builder.create();
     if (!EE) {
-        std::cout << "error: could not create ExecutionEngine: " << errStr << std::endl;
-        exit(1);
+        std::cout << "error: " << errStr << std::endl;
+        assert("Could not create an Execution Engine!");
     }
     // Instrument the target function
     IRInstrumentor *IRI = new IRInstrumentor(llvmMod, EE);
@@ -100,27 +100,22 @@ Value* ConcolicModule::callFunction(ExecutionEngine *EE, Module *m, Function *f,
     // const std::vector<std::string> &argv,
     // const char * const * envp);
     
+    assert((fRetTy->isIntegerTy(32) || fRetTy->isVoidTy()) &&
+           "Function return type not supported!");
     if (fRetTy->isIntegerTy(32)) {
         typedef int (*FuncType)();
         FuncType fFunc = (FuncType)warperAddr;
         int r = fFunc();
         output = IRB->getInt32(r);
         //std::cout << "Ret: " << r << std::endl;
-    } else {
-        if (fRetTy->isVoidTy()) {
-            typedef void (*FuncType)();
-            FuncType fFunc = (FuncType)warperAddr;
-            fFunc();
-            output = NULL;
-            //std::cout << "\n" << "Ret: void" << std::endl;
-        } else {
-            std::cout << "error: the return type of the function ";
-            std::cout << f->getName().str();
-            std::cout << " is not supported.\n";
-            exit(1);
-        }
+    } else if (fRetTy->isVoidTy()) {
+        typedef void (*FuncType)();
+        FuncType fFunc = (FuncType)warperAddr;
+        fFunc();
+        output = NULL;
+        //std::cout << "\n" << "Ret: void" << std::endl;
     }
-    // Deallocate memory used 
+    // Deallocate memory used
     // to code-generate this Function.
     EE->freeMachineCodeForFunction(warper);
     return output;

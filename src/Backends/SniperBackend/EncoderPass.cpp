@@ -256,7 +256,6 @@ Formula* EncoderPass::makeTraceFormula() {
                 default:
                     llvm_unreachable("Illegal opcode!");
             }
-            i->dump();
             assert(expr && "Expression is null!");
             // Atoi checking
             if (isAtoiFunction(i)) {

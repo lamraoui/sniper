@@ -93,7 +93,8 @@ void ConcolicProfiler::run(ProgramProfile *profile, LocalVariables *locVars,
             continue;
         }
         if (options->dbgMsg()) {
-            std::cout << "\n=== (P) RUN " << roundID << " ====================\n";
+            std::cout << "\n=== (P) RUN " << roundID;
+            std::cout << " ====================\n";
         }
         // Prepare the executor
         symbPath->setStack(stack);
@@ -223,12 +224,15 @@ VariablesPtr ConcolicProfiler::generateInputValues() {
 // solve
 //
 // =============================================================================
-bool ConcolicProfiler::solve(std::vector<ExprCellPtr> path, std::vector<ExprCellPtr> asserts,
-                         bool genFailing, VariablesPtr inputs) {
+bool ConcolicProfiler::solve(std::vector<ExprCellPtr> path,
+                             std::vector<ExprCellPtr> asserts,
+                             bool genFailing, VariablesPtr inputs) {
     // Create a formula to hold the path constraints
     Formula *formula = new Formula();
     for (unsigned i=0; i<path.size()-1; i++) {
         ExprCellPtr n = path[i];
+        assert((n->isBranch() || n->isFunCall()) &&
+               "No branching or function call in the Path Condition!");
         // Create and add the constraint
         ExprPtr e;
         // Branch
@@ -243,9 +247,6 @@ bool ConcolicProfiler::solve(std::vector<ExprCellPtr> path, std::vector<ExprCell
         // FunctionCall, Assert
         else if (n->isFunCall()) {
             e = n->getExpr();
-        } else {
-            std::cout << "error: Concolic Module.\n";
-            exit(1);
         }
         e->setHard();
         formula->add(e);
@@ -255,10 +256,8 @@ bool ConcolicProfiler::solve(std::vector<ExprCellPtr> path, std::vector<ExprCell
     // execution was the true branch
     // we negate the selected constraint
     ExprPtr e;
-    BranchExprCellPtr selectedNode = std::static_pointer_cast<BranchExprCell>(path.back());
-    //std::cout << "Selected Node: ";
-    //selectedNode->dump();
-    //std::cout << std::endl;
+    BranchExprCellPtr selectedNode
+    = std::static_pointer_cast<BranchExprCell>(path.back());
     // Negate the last branch
     if (selectedNode->getBranchTaken()) {
         e = selectedNode->getNotExpr();  // negate
@@ -277,19 +276,14 @@ bool ConcolicProfiler::solve(std::vector<ExprCellPtr> path, std::vector<ExprCell
         } else {
             e = n->getExpr();
         }
-        //std::cout << "assert: ";
-        //e->dump();
-        //std::cout << std::endl;
         e->setHard();
         formula->add(e);
     }
-    //formula->dump();
     
     // The formula is satisfiable
     solver->init();
     int status = solver->check(formula);
     if(status==l_true) {
-        //formula->dump();
         // Retrieve all main function arguments ,
         // retrieve their value from the model (of Yices)
         //std::cout << "Input values:\n";
@@ -308,31 +302,27 @@ bool ConcolicProfiler::solve(std::vector<ExprCellPtr> path, std::vector<ExprCell
                     val = 0 + rand() % (4 - 0);
                 }
                 //std::cout << argName << " = " << val << "(err)" << std::endl;
-                if (i<lastInputsVec.size()) {
-                    //inputs->add(ait, val);
-                    //inputs->add(ait, 0));
-                    inputs->add(lastInputsVec[i]);
-                } else {
-                    std::cout << "error: Concolic Module.\n";
-                    exit(1);
-                }
+                assert(i<lastInputsVec.size() && "Out of bound!");
+                //inputs->add(ait, val);
+                //inputs->add(ait, 0));
+                inputs->add(lastInputsVec[i]);
             } else {
                 //std::cout << argName << " = " << val << std::endl;
                 inputs->add(ait, val);
             }
             i++;
         }
-        //solver->clean();
+        solver->clean();
         delete formula;
         return true; // found a solution
     } else if (status==l_false) {
         // The formula is unsatisfiable
-        //solver->clean();
+        solver->clean();
         delete formula;
         return false; // no solution
     } else {
         // The formula is undef
-        //solver->clean();
+        solver->clean();
         delete formula;
         std::cout << "error: solver (status " << status << ")\n";
         exit(1);
