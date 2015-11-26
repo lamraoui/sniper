@@ -50,76 +50,7 @@ public:
 private:
     void initGlobalVariables();
     void initAssertCalls();
-    
-};
-//============================================================================
-
-
-//============================================================================
-// Static path from bb1 to bb2
-// The block pred is the block executed before bb1
-// The block next is the block executed after bb2;
-class Path {
-    
-public:
-    BasicBlock *pred;
-    BasicBlock *bb1;
-    std::vector<ExprPtr> clauses;
-    BasicBlock *bb2;
-    BasicBlock *next;
-
-public:
-    
-    bool equal(Path *p) {
-        if (p==NULL)       return false;
-        if (pred!=p->pred) return false;
-        if (bb1!=p->bb1)   return false;
-        if (bb2!=p->bb2)   return false;
-        if (next!=p->next) return false;
-        if (clauses.size()!=p->clauses.size()) return false;
-        for (unsigned i=0; i<clauses.size(); i++) {
-            if (clauses[i] != p->clauses[i]) {
-                return false;
-            }
-        }
-        return true;
-    }
-    // Return true iff p has the same entry transition
-    bool hasSameEntryTrans(Path *p) {
-        if (p==NULL) return false;
-        return (pred==p->pred && bb1==p->bb1);
-    }
-    // Return true iff p has the same exit transition
-    bool hasSameExitTrans(Path *p) {
-        if (p==NULL) return false;
-        return (bb2==p->bb2 && next==p->next);
-    }
-    void dump() {
-        if (pred) {
-            std::cout << pred->getName().str() << "_";
-        } else {
-            std::cout << "null_";
-        }
-        if (bb1) {
-            std::cout << bb1->getName().str() << " : ";
-        } else {
-            std::cout << "null : ";
-        }
-        for (ExprPtr e : clauses) {
-            e->dump();
-            std::cout << " ";
-        }
-        if (bb2) {
-            std::cout << " : " << bb2->getName().str() << "_";
-        } else {
-            std::cout << " : null_";
-        }
-        if (next) {
-            std::cout << next->getName().str() << std::endl;
-        } else {
-            std::cout << "null\n";
-        }
-    }
+    bool isAtoiFunction(Instruction *I);
     
 };
 //============================================================================

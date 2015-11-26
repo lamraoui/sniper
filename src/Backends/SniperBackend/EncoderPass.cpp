@@ -47,8 +47,9 @@ void EncoderPass::initAssertCalls() {
             // Indirect function call
             else { 
                 F = dyn_cast<Function>(C->getCalledValue()->stripPointerCasts());
-                if (F) 
+                if (F) {
                     calledFunName = F->getName();
+                }
             }
             if (calledFunName==Encoder::SNIPER_ASSERT_RETINT_FUN_NAME
                 || calledFunName==Encoder::SNIPER_ASSERT_RETVOID_FUN_NAME
@@ -189,6 +190,10 @@ Formula* EncoderPass::makeTraceFormula() {
                     break;
                 case Instruction::Call:
                     expr = encoder->encode(cast<CallInst>(i), AS);
+                    if (!expr) {
+                        // Do not encode sniper_x functions.
+                        continue;
+                    }
                     isWeigted = false;
                     break;
                 case Instruction::Alloca:
@@ -217,7 +222,8 @@ Formula* EncoderPass::makeTraceFormula() {
                     break;
                 case Instruction::Ret:
                 case Instruction::Unreachable:
-                    break;
+                    // Do not encode.
+                    continue;
                 case Instruction::PtrToInt: {
                     // Instruction added by SNIPER
                     std::string instName = i->getName().str();
@@ -250,57 +256,50 @@ Formula* EncoderPass::makeTraceFormula() {
                 default:
                     llvm_unreachable("Illegal opcode!");
             }
-            if (expr) {
-                // Atoi checking
-                if(i->getOpcode()==Instruction::Add 
-                   && i->getName().substr(0, 1) == "_") {
-                    CallInst *call = dyn_cast<CallInst>(i->getOperand(0));
-                    if(call && call->getNumArgOperands()==1) {
-                        Function *F = call->getCalledFunction();
-                        if (F && F->getName()=="atoi") {
-                            isWeigted = false;
-                        }
-                    }
-                }
-                // Instruction with line number
-                if (isWeigted) {
-                    // Add each instruction separately
-                    if (options->instructionGranularityLevel()) {
-                        expr->setInstruction(i);
-                        expr->setSoft();
-                        formula->add(expr);
-                    }
-                    // Pack and add all instructions from
-                    // the same line number
-                    else if (options->lineGranularityLevel()) {
-                        assert(line>0 && "Illegal line number!");
-                        // New line, Add the collect constraints to the formula
-                        if (line!=oldLine && oldLine!=0) {
-                            assert(!currentConstraits.empty() &&
-                                   "No constraints!");
-                            assert(lastInstruction && "Instruction is null!");
-                            ExprPtr e = Expression::mkAnd(currentConstraits);
-                            e->setInstruction(lastInstruction);
-                            e->setSoft();
-                            formula->add(e);
-                            currentConstraits.clear();
-                        }
-                        currentConstraits.push_back(expr);
-                        oldLine = line;
-                        lastInstruction = i;
-                    }
-                    // Block level
-                    else if (options->blockGranularityLevel()) {
-                        currentConstraits.push_back(expr);
-                    } else {
-                        assert("EncodePass!");
-                    }
-                }
-                // Instruction with no line number
-                else {
-                    expr->setHard();
+            i->dump();
+            assert(expr && "Expression is null!");
+            // Atoi checking
+            if (isAtoiFunction(i)) {
+                isWeigted = false;
+            }
+            // Instruction with line number
+            if (isWeigted) {
+                // Add each instruction separately
+                if (options->instructionGranularityLevel()) {
+                    expr->setInstruction(i);
+                    expr->setSoft();
                     formula->add(expr);
                 }
+                // Pack and add all instructions from
+                // the same line number
+                else if (options->lineGranularityLevel()) {
+                    assert(line>0 && "Illegal line number!");
+                    // New line, Add the collect constraints to the formula
+                    if (line!=oldLine && oldLine!=0) {
+                        assert(!currentConstraits.empty() &&
+                               "No constraints!");
+                        assert(lastInstruction && "Instruction is null!");
+                        ExprPtr e = Expression::mkAnd(currentConstraits);
+                        e->setInstruction(lastInstruction);
+                        e->setSoft();
+                        formula->add(e);
+                        currentConstraits.clear();
+                    }
+                    currentConstraits.push_back(expr);
+                    oldLine = line;
+                    lastInstruction = i;
+                }
+                // Block level
+                else if (options->blockGranularityLevel()) {
+                    currentConstraits.push_back(expr);
+                } else {
+                    assert("Unknow granularity level!");
+                }
+            }
+            // Instruction with no line number
+            else {
+                expr->setHard();
+                formula->add(expr);
             }
         }
         // End of basic block iteration
@@ -326,7 +325,7 @@ Formula* EncoderPass::makeTraceFormula() {
         currentConstraits.clear();
     }
     if(options->printDuration()) {
-        //timer1.stop("Trace Formula Encoding Time");
+        timer1.stop("Trace Formula Encoding Time");
     }
     return formula;
 }
@@ -356,4 +355,22 @@ void EncoderPass::initGlobalVariables() {
         // Set the version of the variable
         //this->gv2v[gv] = 0; 
     }*/  
+}
+
+// =============================================================================
+// isAtoiFunction
+//
+// Return true if I is a atoi function, otherwise false.
+// =============================================================================
+bool EncoderPass::isAtoiFunction(Instruction *I) {
+    if(I->getOpcode()==Instruction::Add && I->getName().substr(0, 1) == "_") {
+        CallInst *call = dyn_cast<CallInst>(I->getOperand(0));
+        if(call && call->getNumArgOperands()==1) {
+            Function *F = call->getCalledFunction();
+            if (F && F->getName()=="atoi") {
+                return true;
+            }
+        }
+    }
+    return false;
 }

@@ -52,6 +52,7 @@ private:
     void modelControlFlow();
     void initGlobalVariables();
     void initAssertCalls();
+    bool isAtoiFunction(Instruction *I);
     
 };
 //============================================================================
