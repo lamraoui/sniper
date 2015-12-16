@@ -43,6 +43,7 @@ TEST(YicesSolverTest, YicesSolverCheck) {
     EXPECT_EQ(res2, l_false);
     
     solver->clean();
+    delete solver;
 }
 
 TEST(YicesSolverTest, YicesSolverMaxsat) {
@@ -81,11 +82,10 @@ TEST(YicesSolverTest, YicesSolverMaxsat) {
     solver->addToContext(e3);
     const int res3 = solver->maxSat();
     EXPECT_EQ(res3, l_false);
+    
     solver->clean();
-    
-    
+    delete solver;
 }
-
 
 GTEST_API_ int main(int argc, char **argv) {
     printf("Running main() from gtest_main.cc\n");
