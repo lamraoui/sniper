@@ -46,6 +46,8 @@ void Executor::init(LoopInfoPass *lip, ProgramProfile *p,
                     bool collectTraces, bool collectBlockTraces,
                     bool disableSymbExe, bool noAssert) {
     
+    assert(lip && "Expecting a loopinfo pass!");
+    assert(p && "Expecting a program profile!");
     assert(status==IDLE && "Wrong status for Executor (!=IDLE)!");
     PathLoopInfo        = lip;
     Profile             = p;
@@ -80,6 +82,9 @@ void Executor::init(LoopInfoPass *lip, ProgramProfile *p,
 void Executor::start(Function *f, VariablesPtr vals,
                      LocalVariables *lv, Options *o) {
 
+    assert(f && "Expecting a function!");
+    assert((vals && lv) && "Expecting variables!");
+    assert(o && "Expecting options!");
     assert((status==INIT || status==IDLE) &&
            "Wrong status for Executor (!=INIT/IDLE)!");
     TargetFun = f;
@@ -119,6 +124,7 @@ void Executor::start(Function *f, VariablesPtr vals,
 // Cast, Phi, Memory operations
 void Executor::ExecuteInst(Instruction *i) {
     
+    assert(i && "Expecting an instruction!");
     assert(status==START && "wrong status for Executor (!=START)!");
     // Add the trace of this instruction
     if (CollectInstTraces) {
@@ -164,6 +170,8 @@ void Executor::ExecuteInst(Instruction *i) {
 // Call, Assert, Branch
 void Executor::ExecuteInst1(Instruction *i, Value *val) {
 
+    assert(i && "Expecting an instruction!");
+    assert(val && "Expecting a value!");
     assert(status==START && "Wrong status for Executor (!=START)!");
     // Add the trace of this instruction
     if (CollectInstTraces) {
@@ -217,6 +225,8 @@ void Executor::ExecuteInst1(Instruction *i, Value *val) {
 // BinaryOp (Add, ICmp,...), Call
 void Executor::ExecuteInst2(Instruction *i, Value *val1, Value *val2) {
 
+    assert(i && "Expecting an instruction!");
+    assert((val1 && val2) && "Expecting values!");
     assert(status==START && "wrong status for Executor (!=START)!");
     // Add the trace of this instruction
     if (CollectInstTraces) {
@@ -266,6 +276,8 @@ void Executor::ExecuteInst2(Instruction *i, Value *val1, Value *val2) {
 void Executor::ExecuteInst3(Instruction *i, Value *val1,
                             Value *val2, Value *val3) {
 
+    assert(i && "Expecting an instruction!");
+    assert((val1 && val2 && val3) && "Expecting values!");
     assert(status==START && "Wrong status for Executor (!=START)!");
     // Add the trace of this instruction
     if (CollectInstTraces) {
@@ -295,6 +307,7 @@ void Executor::executeGep(Instruction *i) {
     if (DisabledSymbolicExeCurRun) {
         return;
     }
+    assert(i && "Expecting an instruction!");
     GetElementPtrInst *gep = (GetElementPtrInst*) i;
     assert(gep->getNumIndices()<=2 && "Unsupported gep instruction");
     if(AllocaInst *a = dyn_cast<AllocaInst>(gep->getPointerOperand())) {
@@ -352,6 +365,7 @@ void Executor::executeStore(Instruction *i, Value *addr) {
     if (DisabledSymbolicExeCurRun) {
         return;
     }
+    assert(i && "Expecting an instruction!");
     StoreInst *store = (StoreInst*) i;
     Value *val = store->getValueOperand();
     // val is a constant value 
@@ -376,6 +390,8 @@ void Executor::executeLoad(Instruction *i, Value *addr) {
     if (DisabledSymbolicExeCurRun) {
         return;
     }
+    assert(i && "Expecting an instruction!");
+    assert(addr && "Expecting an address!");
     Value *val = (Value*) i;
     // ptr in domain(P)
     if (PMAP->contains(addr)) {
@@ -395,6 +411,7 @@ void Executor::executeCast(Instruction *i) {
     if (DisabledSymbolicExeCurRun) {
         return;
     }
+    assert(i && "Expecting an instruction!");
     Value *v   = i;
     Value *v1  = i->getOperand(0);
     std::string name = i->getName().str();
@@ -425,6 +442,8 @@ void Executor::executeCast(Instruction *i) {
 }
 
 void Executor::executeCall(Instruction *i, Value *input, Value *output) {
+    assert(i && "Expecting an instruction!");
+    assert((input && output) && "Expecting values!");
     if (!DisabledSymbolicExeCurRun) {
         // (v = val) 
         Value *v = i;
@@ -447,6 +466,9 @@ void Executor::executeCall(Instruction *i, Value *input, Value *output) {
 
 static const std::string prefix("_");
 void Executor::executeBinaryOp(Instruction *i, Value *value1, Value *value2) {
+    
+    assert(i && "Expecting an instruction!");
+    assert((value1 && value2) && "Expecting values!");
     
     // TMP
     ConstantInt *CI1 = dyn_cast<ConstantInt>(value1);
@@ -544,10 +566,14 @@ void Executor::executeBinaryOp(Instruction *i, Value *value1, Value *value2) {
 
 // Select
 // (v = v1 ? v2 : v3)
-void Executor::executeSelect(Instruction *i, Value *cond, Value *trueval, Value *falseval) {
+void Executor::executeSelect(Instruction *i, Value *cond,
+                             Value *trueval, Value *falseval) {
     if (DisabledSymbolicExeCurRun) {
         return;
     }
+    
+    assert(i && "Expecting an instruction!");
+    assert((cond && trueval && falseval) && "Expecting values!");
     Value *v   = i;
     Value *v1  = i->getOperand(0); // condition
     Value *v2  = i->getOperand(1); // true-value
@@ -611,16 +637,16 @@ void Executor::executeSelect(Instruction *i, Value *cond, Value *trueval, Value 
 
 
 void Executor::executePhi(Instruction *i) {
-    if (!LastExecutedBB) {
-        std::cout << "error: sniper_execute for Phi\n";
-    }
+    
+    assert(LastExecutedBB && "Something wrong with sniper_execute for Phi!");
     if (DisabledSymbolicExeCurRun) {
         return;
     }
+    assert(i && "Expecting an instruction!");
     PHINode *phi = (PHINode*) i;
     Value *vTaken;
     vTaken = phi->getIncomingValueForBlock(LastExecutedBB);
-    assert(vTaken && "sniper_execute for Phi");
+    assert(vTaken && "Something wrong with sniper_execute for Phi!");
     Value *v   = i;
     // vTaken is a constant value 
     if (isa<ConstantInt>(vTaken)) {
@@ -683,6 +709,8 @@ void Executor::executePhi(Instruction *i) {
 }
 
 void Executor::executeBranch(Instruction *i, bool cond) {
+    
+    assert(i && "Expecting an instruction!");
     LastExecutedBB = i->getParent(); 
     if (CollectBlockTraces) {
         ExecutedBlocks.push_back(LastExecutedBB);
@@ -748,6 +776,7 @@ void Executor::executeBranch(Instruction *i, bool cond) {
 }
 
 void Executor::PushArgs(Value *arg) {
+    assert(arg && "Expecting a value!");
     // Push before a call
     if (CallInst *C = dyn_cast<CallInst>(arg)) {
         // Check invoke count
@@ -796,6 +825,7 @@ void Executor::PushArgs(Value *arg) {
 }
 
 void Executor::PopArgs(Value *arg) {
+    assert(arg && "Expecting a value!");
     // Pop after a call
     if (CallInst *C = dyn_cast<CallInst>(arg)) {
         Function *calledFun = C->getCalledFunction();
@@ -840,6 +870,7 @@ void Executor::PopArgs(Value *arg) {
 }
 
 void Executor::ReportAssert(Value *v, int assertResult) {
+    assert(v && "Expecting a value!");
     LastRunAssertResult = (assertResult ? SUCCESS : FAIL);
     if (DisabledSymbolicExeCurRun) {
         return;
@@ -855,6 +886,7 @@ void Executor::ReportAssert(Value *v, int assertResult) {
 }
 
 void Executor::ReportAssume(Value *v, int assumeResult) {
+    assert(v && "Expecting a value!");
     if (DisabledSymbolicExeCurRun) {
         return;
     }
@@ -921,6 +953,7 @@ void Executor::ReportEnd() {
 // Check if the operation performed by i
 // is non-linear.
 bool Executor::isNonLinear(Instruction *i) {
+    assert(i && "Expecting an instruction!");
     Value *v1 = i->getOperand(0);
     Value *v2 = i->getOperand(1);
     int opCode = i->getOpcode();
