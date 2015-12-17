@@ -242,15 +242,38 @@ private:
     Function *targetFun;
     std::vector<InstTracePtr> instructionTraces;
     std::set<BasicBlock*> executedBlocks;
-    //std::vector<std::string> argvs;
     VariablesPtr inputVars;
     Value *expectedOutput; // oracle
     AssertResult type;
     
 public:
-    ProgramTrace(Function *_targetFun);
-    ProgramTrace(Function *_targetFun, AssertResult _type);
-    ProgramTrace(Function *_targetFun, std::vector<Value*> _inputs, AssertResult _type);
+    ProgramTrace(Function *_targetFun)
+    : myID(ID++), targetFun(_targetFun), type(UNKNOW) {
+        inputVars = std::make_shared<Variables>();
+        expectedOutput = NULL;
+    }
+    
+    ProgramTrace(Function *_targetFun, AssertResult _type)
+    : myID(ID++), targetFun(_targetFun), type(_type) {
+        inputVars = std::make_shared<Variables>();
+        expectedOutput = NULL;
+    }
+    
+    ProgramTrace(Function *_targetFun, std::vector<Value*> _inputs,
+                 AssertResult _type)
+    : myID(ID++), targetFun(_targetFun), type(_type) {
+        assert(_targetFun->arg_size()==_inputs.size() &&
+               "Wrong execution trace!");
+        unsigned i = 0;
+        Function::arg_iterator ait;
+        for (ait = targetFun->arg_begin(); ait != targetFun->arg_end(); ++ait) {
+            Value *origin = ait;
+            Value *concrete = _inputs[i++];
+            addProgramInput(origin, concrete);
+        }
+        expectedOutput = NULL;
+    }
+    
     ~ProgramTrace() {  }
     
     // Input values
@@ -297,30 +320,10 @@ public:
         return (inputVars==other.inputVars);
     }
     
-    void dump() {
-        dumpProgramInputs();
-        std::string st = "unknow";
-        if (type==FAIL) {
-            st = "failing";
-        } else if (type==SUCCESS) {
-            st = "successful";
-        }
-        std::cout << " (ID=" << myID << ")  [" << st << "]\n";
-        std::vector<InstTracePtr>::const_iterator cit;
-        for (cit=instructionTraces.begin(); cit!=instructionTraces.end(); ++cit) {
-            InstTracePtr i = *cit;
-            /*i->dump();
-            std::cout << " (" << i->getInstruction()->getParent()->getName().str() << ")";
-            std::cout << std::endl;
-            */
-            if (i->getInstruction()->getParent()->getName().str()=="bb45" ||
-                i->getInstruction()->getParent()->getName().str()=="bb43") {
-                i->dump();
-                std::cout << " (" << i->getInstruction()->getParent()->getName().str() << ")";
-                std::cout << std::endl;
-            }
-        }
-    }
+    void dump();
+    
+private:
+    void checkCallInst(Instruction *i);
     
 };
 //============================================================================

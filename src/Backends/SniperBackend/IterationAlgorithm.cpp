@@ -26,7 +26,7 @@ void IterationAlgorithm::run(Formula *TF, Formula *AS,
         timer.start();
     }
     std::vector<ProgramTrace*>
-    failingTraces = prof->getFailingProgramTraces(options);
+    failingTraces = prof->getFailingProgramTraces();
     
     // Add the pre- and post-conditions to the context
     for (ExprPtr e : AS->getExprs()) {

@@ -51,8 +51,6 @@ public:
     unsigned    getUnrollCount();
     unsigned    getMaxDepth();
     bool        htfUsed();
-    unsigned    getMaxFailTraces();
-    unsigned    getMaxSuccTraces();
     unsigned    getNbLOC();
     bool        checkCFGModel();
     unsigned    mcsMaxSize();

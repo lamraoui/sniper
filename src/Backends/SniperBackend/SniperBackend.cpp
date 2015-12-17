@@ -63,26 +63,9 @@ void SniperBackend::run() {
         }
     }
     if (options->methodConcolic()) {
-        if (PP->getFailingProgramTraces(options).size()==0) {
+        if (PP->getFailingProgramTraces().size()==0) {
             std::cout << "VERIFICATION SUCCESSFUL\n";
             exit(0);
-        }
-        // Fitler traces depending on option values
-        unsigned maxFailTraces = options->getMaxFailTraces();
-        if (maxFailTraces>0) {
-            // Randomly remove exceeding traces
-            unsigned n = PP->getFailingProgramTraces(options).size();
-            PP->removeNFirstFailingProgramTraces(n-maxFailTraces);
-            //std::cout << "Removing fail. traces: "
-            //<< maxFailTraces << std::endl;
-        }
-        unsigned maxSuccTraces = options->getMaxSuccTraces();
-        if (maxSuccTraces>0) {
-            // Randomly remove exceeding traces
-            unsigned n = PP->getSuccessfulProgramTraces().size();
-            PP->removeNFirstSuccessfulProgramTraces(n-maxSuccTraces);
-            //std::cout << "Removing succ. traces: "
-            //<< maxSuccTraces << std::endl;
         }
         // Update program profile
         if (options->htfUsed()) {

@@ -13,55 +13,27 @@
 
 unsigned ProgramTrace::ID = 0;
 
-ProgramTrace::ProgramTrace(Function *_targetFun)
-: myID(ID++), targetFun(_targetFun), type(UNKNOW) {
-    inputVars = std::make_shared<Variables>();
-    expectedOutput = NULL;
-}
-
-ProgramTrace::ProgramTrace(Function *_targetFun, AssertResult _type) 
-: myID(ID++), targetFun(_targetFun), type(_type) { 
-    inputVars = std::make_shared<Variables>();
-     expectedOutput = NULL;
-}
-
-ProgramTrace::ProgramTrace(Function *_targetFun, std::vector<Value*> _inputs, 
-AssertResult _type) : myID(ID++), targetFun(_targetFun), type(_type) { 
-
-    assert(_targetFun->arg_size()==_inputs.size() &&
-            "Wrong execution trace!");
-    unsigned i = 0;
-    Function::arg_iterator ait;
-    for (ait = targetFun->arg_begin(); ait != targetFun->arg_end(); ++ait) {
-        Value *origin = ait;
-        Value *concrete = _inputs[i++];
-        addProgramInput(origin, concrete);
-    }
-     expectedOutput = NULL;
-}
-
 void ProgramTrace::setExecutedBlocks(std::vector<BasicBlock*> &bb) {
     std::copy(bb.begin(), bb.end(),
               std::inserter(executedBlocks, executedBlocks.end()));
 }
 
 void ProgramTrace::addProgramInput(Value *origin, Value *val) {
+    assert((origin && val) && "Expecting values!");
     InputVarTracePtr vt = std::make_shared<InputVariableTrace>(origin, val);
     inputVars->add(vt);
 }
 
 void ProgramTrace::addProgramInput(Value *origin, int val) {
+    assert(origin && "Expecting a value!");
     InputVarTracePtr vt =  std::make_shared<InputVariableTrace>(origin, val);
     inputVars->add(vt);
 }
 
 void ProgramTrace::addProgramInput(InputVarTracePtr ivt) {
+    assert(ivt && "Expecting an input variable trace!");
     inputVars->add(ivt);
 }
-
-/*void ProgramTrace::addProgramInput(std::string argvValue) {
- argvs.push_back(argvValue);
- }*/
 
 std::set<BasicBlock*> ProgramTrace::getExecutedBB() {
     if (!executedBlocks.empty()) {
@@ -71,7 +43,8 @@ std::set<BasicBlock*> ProgramTrace::getExecutedBB() {
     BasicBlock *last = NULL;
     for (InstTracePtr i : instructionTraces) {
         Instruction *inst = i->getInstruction();
-        if (inst && inst->getParent()!=last) {
+        assert(inst && "No instruction for trace!");
+        if (inst->getParent()!=last) {
             bbs.insert(inst->getParent());
             last = inst->getParent();
         }
@@ -83,21 +56,14 @@ std::set<BasicBlock*> ProgramTrace::getExecutedBB() {
 // (and (= var1 val1) (= var2 val2) ...) 
 ExprPtr ProgramTrace::getProgramInputsFormula(Formula *formula) {
 
+    assert(formula && "Expecting a formula!");
     std::vector<ExprPtr> and_args;   
     std::vector<InputVarTracePtr> vars = inputVars->getVector();
-    std::vector<InputVarTracePtr>::iterator it;
-    for(it=vars.begin(); it!=vars.end(); ++it) {
-        InputVarTracePtr v = *it;
+    for(InputVarTracePtr v : vars) {
         ExprPtr val_expr = Expression::mkSInt32Num(v->getInt32());    
         ExprPtr d_expr = Expression::mkIntVar(v->getName());
         and_args.push_back(Expression::mkEq(d_expr, val_expr));
     }
-    /*std::vector<std::string>::iterator it2;
-    for(it2=argvs.begin(); it2!=argvs.end(); ++it2) {
-        std::string s = *it2;  
-        ExprPtr e = Expression::parseExpression(s);
-        and_args.push_back(e);
-    }*/
     // Oracle
     if (expectedOutput!=NULL) {
         // Get the return value of targetFun
@@ -134,19 +100,10 @@ ExprPtr ProgramTrace::getProgramInputsFormula(Formula *formula) {
 
 void ProgramTrace::dumpProgramInputs() {
     inputVars->dump();
-    /*std::vector<std::string>::iterator it2;
-    for(it2=argvs.begin(); it2!=argvs.end(); ++it2) {
-        std::string s = *it2; 
-        std::cout << s;
-        if (it2+1!=argvs.end()) {
-            std::cout << " ";
-        }
-    }*/
 }
 
-// RHS-noarg
-void ProgramTrace::add(Instruction *i) {
-    if(i->getOpcode()==Instruction::Call) {
+void ProgramTrace::checkCallInst(Instruction *i) {
+    if(i && i->getOpcode()==Instruction::Call) {
         // Check return type
         CallInst *call = cast<CallInst>(i);
         Function *calledFun = call->getCalledFunction();
@@ -161,69 +118,39 @@ void ProgramTrace::add(Instruction *i) {
         assert(calledFun->getReturnType()->isVoidTy() &&
                "ret call, program trace");
     }
+}
+
+// RHS-noarg
+void ProgramTrace::add(Instruction *i) {
+    assert(i && "Expecting an instruction!");
+    checkCallInst(i);
     InstTracePtr it = std::make_shared<InstructionTrace>(i);
     instructionTraces.push_back(it);
 }
 
 // RHS-1arg
 void ProgramTrace::add(Instruction *i, Value *v) {
-    if(i->getOpcode()==Instruction::Call) {
-        // Check return type
-        CallInst *call = cast<CallInst>(i);
-        Function *calledFun = call->getCalledFunction();
-        // Indirect call
-        if (!calledFun) {
-            calledFun = dyn_cast<Function>(call->getCalledValue()->stripPointerCasts());
-            if (!calledFun) {
-                std::cout << "warning: unresolvable indirect function call.\n";
-                return;
-            }
-        }
-        assert(calledFun->getReturnType()->isVoidTy() &&
-               "ret call, program trace");
-    }
+    assert(i && "Expecting an instruction!");
+    assert(v && "Expecting a value!");
+    checkCallInst(i);
     InstTracePtr it = std::make_shared<InstructionTrace>(i, v);
     instructionTraces.push_back(it);
 }
 
 // RHS-2arg
 void ProgramTrace::add(Instruction *i, Value *v1, Value *v2) {
-    if(i->getOpcode()==Instruction::Call) {
-        // Check return type
-        CallInst *call = cast<CallInst>(i);
-        Function *calledFun = call->getCalledFunction();
-        // Indirect call
-        if (!calledFun) {
-            calledFun = dyn_cast<Function>(call->getCalledValue()->stripPointerCasts());
-            if (!calledFun) {
-                std::cout << "warning: unresolvable indirect function call.\n";
-                return;
-            }
-        }
-        assert(calledFun->getReturnType()->isVoidTy() &&
-               "ret call, program trace");
-    }
+    assert(i && "Expecting an instruction!");
+    assert((v1 && v2) && "Expecting values!");
+    checkCallInst(i);
     InstTracePtr it = std::make_shared<InstructionTrace>(i, v1, v2);
     instructionTraces.push_back(it);
 }
 
 // RHS-1ret-2arg
 void ProgramTrace::add(Instruction *i, Value *v1, Value *v2, Value *v3) {
-    if(i->getOpcode()==Instruction::Call) {
-        // Check return type
-        CallInst *call = cast<CallInst>(i);
-        Function *calledFun = call->getCalledFunction();
-        // Indirect call
-        if (!calledFun) {
-            calledFun = dyn_cast<Function>(call->getCalledValue()->stripPointerCasts());
-            if (!calledFun) {
-                std::cout << "warning: unresolvable indirect function call.\n";
-                return;
-            }
-        }
-        assert(calledFun->getReturnType()->isVoidTy() &&
-               "ret call, program trace");
-    }
+    assert(i && "Expecting an instruction!");
+    assert((v1 && v2 && v3) && "Expecting values!");
+    checkCallInst(i);
     InstTracePtr it = std::make_shared<InstructionTrace>(i, v1, v2, v3);
     instructionTraces.push_back(it);
 }
@@ -234,9 +161,9 @@ std::vector<InstTracePtr> ProgramTrace::getInstructionTraces() {
 
 // Return the concrete value taken by "v" in this trace
 Value* ProgramTrace::getConcreteValue(Value *v) {
+    assert(v && "Expecting a value!");
     std::vector<InstTracePtr>::iterator it;
-    for (it=instructionTraces.begin(); it!=instructionTraces.end(); ++it) {
-        InstTracePtr i = *it;
+    for (InstTracePtr i : instructionTraces) {
         Value *c = i->getConcrete(v);        
         if (c!=NULL) {
             return c;
@@ -245,11 +172,30 @@ Value* ProgramTrace::getConcreteValue(Value *v) {
     return NULL;
 }
 
+void ProgramTrace::dump() {
+    dumpProgramInputs();
+    std::string st = "unknow";
+    if (type==FAIL) {
+        st = "failing";
+    } else if (type==SUCCESS) {
+        st = "successful";
+    }
+    std::cout << " (ID=" << myID << ")  [" << st << "]\n";
+    std::vector<InstTracePtr>::const_iterator cit;
+    for (InstTracePtr i : instructionTraces) {
+        i->dump();
+        std::cout << " (";
+        std::cout << i->getInstruction()->getParent()->getName().str();
+        std::cout << ")" << std::endl;
+    }
+}
+
 
 // ====== InstructionTrace ======
 
 
 Value* InstructionTrace::getConcrete(Value *v) {
+    assert(v && "Expecting a value!");
     std::string vname = v->getName().str();
     if (inst && vname==inst->getName()) {
         return resVal;
@@ -266,13 +212,16 @@ Value* InstructionTrace::getConcrete(Value *v) {
     return NULL;
 }
 
-int InstructionTrace::getInt32(Value *v) { 
+int InstructionTrace::getInt32(Value *v) {
+    assert(v && "Expecting a value!");
     ConstantInt *ci = dyn_cast<ConstantInt>(v);
     assert(ci && "No concrete value for variable!");
     return (int) ci->getSExtValue();
 }
 
 Value* InstructionTrace::emulateInst(Instruction *i, Value *val1, Value *val2) {
+    assert(i && "Expecting an instruction!");
+    assert((val1 && val2) && "Expecting values!");
     ConstantInt *ci1 = dyn_cast<ConstantInt>(val1);
     assert(ci1 && "No concrete value for variable!");
     int v1 = (int) ci1->getSExtValue();
@@ -288,6 +237,8 @@ Value* InstructionTrace::emulateInst(Instruction *i, Value *val1, Value *val2) {
 
 Value* InstructionTrace::emulateInst(Instruction *i, Value *val1, Value *val2,
                                      Value *val3) {
+    assert(i && "Expecting an instruction!");
+    assert((val1 && val2 && val3) && "Expecting values!");
     ConstantInt *ci1 = dyn_cast<ConstantInt>(val1);
     assert(ci1 && "No concrete value for variable!");
     int v1 = (int) ci1->getSExtValue();
@@ -305,6 +256,7 @@ Value* InstructionTrace::emulateInst(Instruction *i, Value *val1, Value *val2,
 }
 
 int InstructionTrace::emulateInst(Instruction *i, int val1, int val2) {
+    assert(i && "Expecting an instruction!");
     int r;
     switch (i->getOpcode()) {
         case Instruction::Add:
@@ -371,6 +323,7 @@ int InstructionTrace::emulateInst(Instruction *i, int val1, int val2) {
 }
 
 int InstructionTrace::emulateInst(Instruction *i, int val1, int val2, int val3) {
+    assert(i && "Expecting an instruction!");
     int r;
     switch (i->getOpcode()) {
         case Instruction::Select:

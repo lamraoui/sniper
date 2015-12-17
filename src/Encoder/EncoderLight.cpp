@@ -35,62 +35,11 @@ ExprPtr EncoderLight::encode(BinaryOperator *bo) {
     Value *arg1 = bo->getOperand(0);
     Value *arg2 = bo->getOperand(1);
     // Non-linear arithmetic checking
-    if((opCode==Instruction::Mul || opCode==Instruction::FMul ||
-        opCode==Instruction::UDiv || opCode==Instruction::SDiv ||
-        opCode==Instruction::FDiv) 
-        && !isa<ConstantInt>(arg1) && !isa<ConstantInt>(arg2)) {
-
-        // Declare the virtual variables
-        ExprPtr rVar = ctx->newVariable(r);
-        ExprPtr arg1Var = ctx->getLocalVariable(bo, arg1, 0);
-        if(arg1Var==NULL)
-            arg1Var = ctx->newVariable(arg1);
-        ExprPtr arg2Var = ctx->getLocalVariable(bo, arg2, 1);
-        if(arg2Var==NULL)
-            arg2Var = ctx->newVariable(arg2);
-        
-        ExprPtr expr = NULL; 
-        NLOperationSummary *NOS = NULL;//profile->getNLOpSummary(bo);
-        if (NOS) {
-            // (or (x1=y1*z1) (x2=y2*z2) (xn=yn*zn))
-            
-            // (or (and (x1=v1_1) (y1=v1_2) (z1=v1_3)) 
-            //     (and (x2=v2_1) (y1=v2_2) (z1=v2_3))
-            // ...)
-            // with n the n'ieme summary
-            std::vector<ExprPtr> orExprs;
-            std::vector<std::pair<Value*,Value*> > values = NOS->getValues();
-            std::vector<std::pair<Value*,Value*> >::const_iterator it;
-            for (it=values.begin(); it!=values.end(); ++it) {
-                std::pair<Value*,Value*> v = *it;
-                ConstantInt *CI1 = dyn_cast<ConstantInt>(v.first);
-                int x = CI1->getSExtValue();
-                ConstantInt *CI2 = dyn_cast<ConstantInt>(v.second);
-                int y = CI2->getSExtValue();
-                unsigned c;
-                // Mult
-                if (opCode==Instruction::Mul) {
-                    c = x * y;
-                } 
-                // Div
-                else if (opCode==Instruction::UDiv || opCode==Instruction::SDiv){
-                    c = x / y;
-                } else {
-                    assert("Encode binary operator!");
-                }
-                ExprPtr v1 = Expression::mkSInt32Num(c);
-                ExprPtr v2 = Expression::mkSInt32Num(x);
-                ExprPtr v3 = Expression::mkSInt32Num(y);
-                std::vector<ExprPtr> exprs;
-                exprs.push_back(Expression::mkEq(rVar, v1));
-                exprs.push_back(Expression::mkEq(arg1Var, v2));
-                exprs.push_back(Expression::mkEq(arg2Var, v3));
-                ExprPtr andExpr = Expression::mkAnd(exprs);
-                orExprs.push_back(andExpr);
-            }
-            expr = Expression::mkOr(orExprs);
-        }
-        return expr;
+    if(opCode==Instruction::Mul || opCode==Instruction::FMul ||
+       opCode==Instruction::UDiv || opCode==Instruction::SDiv ||
+       opCode==Instruction::FDiv) {
+        assert((isa<ConstantInt>(arg1) && isa<ConstantInt>(arg2)) &&
+               "Non-linear arithmetic not supported!");
     }
     // Declare the virtual variables
     ExprPtr rVar = ctx->newVariable(r);
@@ -638,49 +587,20 @@ ExprPtr EncoderLight::encode(CallInst *call, Formula *AS) {
         //ExprPtr e = new Expression(eqExpr, true, call);
         return eqExpr; // hard
     } else {
-        // Check if we collected info about the called function
-        FunctionSummary *fs = NULL;//profile->getFunSummary(F);
-        if (fs) {
-            Value *arg = call->getArgOperand(0);
-            ExprPtr argExpr = ctx->newVariable(arg);
-            ExprPtr callExpr = ctx->newVariable(call);            
-            // (or (and (= x in1) (= y out1))
-            //     (and (= x in2) (= y out2))
-            // )
-            std::vector<ExprPtr> orExprs;
-            std::vector<io_t> inOuts = fs->getInputOutputs();
-            std::vector<io_t>::const_iterator it;
-            for (it=inOuts.begin(); it!=inOuts.end(); ++it) {
-                io_t i = *it;
-                assert(i.inputs.size()==1 && "Call with more than one arg!");
-                ConstantInt *CI1 = dyn_cast<ConstantInt>(i.inputs[0]);
-                int input = CI1->getSExtValue();
-                ConstantInt *CI2 = dyn_cast<ConstantInt>(i.output);
-                int output = CI2->getSExtValue();
-                ExprPtr out = Expression::mkSInt32Num(output);
-                ExprPtr eqExpr1 = Expression::mkEq(callExpr, out);
-                ExprPtr in = Expression::mkSInt32Num(input);
-                ExprPtr eqExpr2 = Expression::mkEq(argExpr, in);
-                ExprPtr andExpr = Expression::mkAnd(eqExpr1, eqExpr2);
-                orExprs.push_back(andExpr);
-            }
-            return Expression::mkOr(orExprs);
-        } else {
-            // Calls to other functions
-            unsigned line = 0;
-            if (MDNode *N = call->getMetadata("dbg")) { 
-                DILocation Loc(N); 
-                line = Loc.getLineNumber();
-            }
-            std::cout << "warning: the function " << functionName.str();
-            std::cout << " (line " << line << ") was not inlined!\n";
-            //exit(1);
-            return NULL;
+        // Calls to other functions
+        unsigned line = 0;
+        if (MDNode *N = call->getMetadata("dbg")) {
+            DILocation Loc(N);
+            line = Loc.getLineNumber();
         }
+        std::cout << "warning: the function " << functionName.str();
+        std::cout << " (line " << line << ") was not inlined!\n";
+        //exit(1);
+        return NULL;
     }
     return NULL;
 }
-       
+
 // =============================================================================
 // encode - AllocaInst
 // =============================================================================

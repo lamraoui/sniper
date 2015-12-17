@@ -91,14 +91,6 @@ static cl::opt <bool>
 HTF("htf", cl::desc("Use Hardened TF (needs -ce)"));
 
 static cl::opt <unsigned>
-MaxFailTraces("max-fail", cl::desc("Maximum number of failing traces to use"),
-         cl::init(0), cl::value_desc("maxFailTraces"));
-
-static cl::opt <unsigned>
-MaxSuccTraces("max-succ", cl::desc("Maximum number of successful traces to use"),
-         cl::init(0), cl::value_desc("maxSuccTraces"));
-
-static cl::opt <unsigned>
 NbLOC("loc", cl::desc("Number of line of code"),
             cl::init(0), cl::value_desc("loc"));
 
@@ -232,14 +224,6 @@ unsigned Options::getMaxDepth() {
 
 bool Options::htfUsed() {
     return HTF;
-}
-
-unsigned Options::getMaxFailTraces() {
-    return MaxFailTraces;
-}
-
-unsigned Options::getMaxSuccTraces() {
-    return MaxSuccTraces;
 }
 
 unsigned Options::getNbLOC() {
