@@ -57,7 +57,6 @@ private:
     static bool         Terminated;
     static unsigned     MaxDepth;
     static unsigned     AllLocDefinite;
-    static bool         CollectInstTraces;
     static bool         CollectBlockTraces;
     static bool         NoAssert;
     static unsigned     RunID;;
@@ -89,14 +88,16 @@ public:
     Executor() { }
     ~Executor() { }
     static void init(LoopInfoPass *lip , ProgramProfile *p,
-                     bool collectTrace, bool collectBlockTraces,
+                     bool collectBlockTraces,
                      bool disableSymbExe = false, bool noAssert = false);
-    static void start(Function *f, VariablesPtr vals, LocalVariables *lv, Options *o);
+    static void start(Function *f, VariablesPtr vals,
+                      LocalVariables *lv, Options *o);
     
     static void ExecuteInst (Instruction *i);
     static void ExecuteInst1(Instruction *i, Value *val);
     static void ExecuteInst2(Instruction *i, Value *val1, Value *val2);
-    static void ExecuteInst3(Instruction *i, Value *val1, Value *val2, Value *val3);
+    static void ExecuteInst3(Instruction *i,
+                             Value *val1, Value *val2, Value *val3);
     
     static void ReportAssert(Value *i, int assertResult);
     static void ReportAssume(Value *i, int assumeResult);
@@ -116,7 +117,8 @@ private:
     static void executeCast(Instruction *i);
     static void executeCall(Instruction *i, Value *input, Value *output);
     static void executeBinaryOp(Instruction *i, Value *val1, Value *val2);
-    static void executeSelect(Instruction *i, Value *cond, Value *trueval, Value *falseval);
+    static void executeSelect(Instruction *i,
+                              Value *cond, Value *trueval, Value *falseval);
     static void executePhi(Instruction *i);
     static void executeBranch(Instruction *i, bool cond);
         

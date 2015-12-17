@@ -33,7 +33,6 @@ enum AssertResult {
     UNKNOW
 };
 
-
 class Variables;
 typedef std::shared_ptr<Variables> VariablesPtr;
 class InputVariableTrace;
@@ -169,70 +168,7 @@ public:
     }*/
 };
 
-class InstructionTrace {
-protected:
-    Instruction *inst;
-    Value *resVal; // concrete value
-    std::vector<Value*> argVals; // concrete values
-public:
-    InstructionTrace(Instruction *i) : inst(i) {
-        resVal = NULL;
-    }
-    InstructionTrace(Instruction *i, Value *c) : inst(i) {
-        if (i->isTerminator()) {
-            resVal = NULL;
-            argVals.push_back(c);
-        }
-        else if (isa<PHINode>(i)) {
-            resVal = c;
-            argVals.push_back(c);
-        }
-        else if (isa<StoreInst>(i) || isa<LoadInst>(i)) {
-            argVals.push_back(c);
-        }
-        else {
-            i->dump();
-            llvm_unreachable("InstructionTrace");
-        }
-    }
-    InstructionTrace(Instruction *i, Value *c1, Value *c2) : inst(i) {
-        assert(i->mayReturn() && i->getNumOperands()==2 && "InstructionTrace");
-        resVal = emulateInst(i, c1, c2);
-        argVals.push_back(c1);
-        argVals.push_back(c2);
-    }
-    InstructionTrace(Instruction *i, Value *c1, Value *c2, Value *c3) : inst(i) {
-        assert(i->mayReturn() && i->getNumOperands()==3 && "InstructionTrace");
-        resVal = emulateInst(i, c1, c2, c3);
-        argVals.push_back(c1);
-        argVals.push_back(c2);
-        argVals.push_back(c3);
-    }
-    ~InstructionTrace() {
-        /* BUG
-        delete resVal;
-        while (!argVals.empty()) {
-            Value *v = argVals.back();
-            argVals.pop_back();
-            delete v;
-        }*/
-    }
-    Instruction* getInstruction() { return inst; }
-    void setInstruction(Instruction *i) { inst = i; }
-    Value* getConcrete(Value *v);
-    void dump();
-    
-private:
-    int getInt32(Value *v);
-    static int    emulateInst(Instruction *i, int val1, int val2);
-    static int    emulateInst(Instruction *i, int val1, int val2, int val3);
-    static Value* emulateInst(Instruction *i, Value *val1, Value *val2);
-    static Value* emulateInst(Instruction *i, Value *val1, Value *val2,
-                              Value *val3);
-    
-};
 
-typedef std::shared_ptr<InstructionTrace> InstTracePtr;
 
 class ProgramTrace {
 
@@ -240,7 +176,6 @@ private:
     static unsigned ID;
     const unsigned myID;
     Function *targetFun;
-    std::vector<InstTracePtr> instructionTraces;
     std::set<BasicBlock*> executedBlocks;
     VariablesPtr inputVars;
     Value *expectedOutput; // oracle
@@ -277,24 +212,16 @@ public:
     ~ProgramTrace() {  }
     
     // Input values
-    void    addProgramInput(Value *origin, Value *val);
-    void    addProgramInput(Value *origin, int val);
-    void    addProgramInput(InputVarTracePtr ivt);
-    void    dumpProgramInputs() ;
-    ExprPtr getProgramInputsFormula(Formula *formula);
-    VariablesPtr getInputVariables() { return inputVars; }
-    //void     addProgramInput(std::string argvValue);
+    void            addProgramInput(Value *origin, Value *val);
+    void            addProgramInput(Value *origin, int val);
+    void            addProgramInput(InputVarTracePtr ivt);
+    //void          addProgramInput(std::string argvValue);
+    ExprPtr         getProgramInputsFormula(Formula *formula);
+    VariablesPtr    getInputVariables() { return inputVars; }
+    void            dumpProgramInputs() ;
     
     // Block profile
     void setExecutedBlocks(std::vector<BasicBlock*> &bb);
-    
-    // Instruction profiles
-    void add(Instruction *i);
-    void add(Instruction *i, Value *v);
-    void add(Instruction *i, Value *v1, Value *v2);
-    void add(Instruction *i, Value *v1, Value *v2, Value *v3);
-    std::vector<InstTracePtr> getInstructionTraces();
-    Value* getConcreteValue(Value *v);
     std::set<BasicBlock*> getExecutedBB();
     
     // Trace type (outcome)
@@ -309,8 +236,7 @@ public:
     void setExpectedOutput(Value *o) { expectedOutput = o; }
     Value *getExpectedOutput() { return expectedOutput; }
     
-    // Misealous
-    void clearInstructionTraces() { instructionTraces.clear(); }
+    // Miscellaneous
     unsigned getID() { return myID;}
     
     bool operator<(const ProgramTrace &other) const { 
@@ -321,9 +247,6 @@ public:
     }
     
     void dump();
-    
-private:
-    void checkCallInst(Instruction *i);
     
 };
 //============================================================================

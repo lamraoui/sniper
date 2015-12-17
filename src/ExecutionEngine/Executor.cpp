@@ -16,7 +16,6 @@ unsigned        Executor::MaxDepth;
 unsigned        Executor::AllLocDefinite;
 bool            Executor::DisabledSymbolicExe;
 bool            Executor::DisabledSymbolicExeCurRun;
-bool            Executor::CollectInstTraces;
 bool            Executor::CollectBlockTraces;
 bool            Executor::NoAssert;
 unsigned        Executor::RunID;
@@ -43,7 +42,7 @@ Status Executor::status = IDLE;
 
 
 void Executor::init(LoopInfoPass *lip, ProgramProfile *p,
-                    bool collectTraces, bool collectBlockTraces,
+                    bool collectBlockTraces,
                     bool disableSymbExe, bool noAssert) {
     
     assert(lip && "Expecting a loopinfo pass!");
@@ -57,26 +56,25 @@ void Executor::init(LoopInfoPass *lip, ProgramProfile *p,
     GotoCount           = 0;
     InvokeCount         = 0;
     AllLocDefinite      = true;
-    CollectInstTraces   = collectTraces;
     CollectBlockTraces  = collectBlockTraces;
     DisabledSymbolicExe = disableSymbExe; // default: false
     DisabledSymbolicExeCurRun = DisabledSymbolicExe;
     if (!DisabledSymbolicExe) {
-        SMAP                = new SymbolMap();
-        PMAP                = new SymbolMap();
-        Path                = new SymbolicPath();
+        SMAP = new SymbolMap();
+        PMAP = new SymbolMap();
+        Path = new SymbolicPath();
     } else {
         SMAP = NULL;
         PMAP = NULL;
         Path = NULL;
     }
-    LastExecutedBB      = NULL;
-    NextBB              = NULL;
-    PathFormula         = NULL;
-    PathEncoder         = NULL;
-    PathContext         = NULL;
-    Trace               = NULL;
-    status              = INIT;
+    LastExecutedBB = NULL;
+    NextBB         = NULL;
+    PathFormula    = NULL;
+    PathEncoder    = NULL;
+    PathContext    = NULL;
+    Trace          = NULL;
+    status         = INIT;
 }
 
 void Executor::start(Function *f, VariablesPtr vals,
@@ -126,10 +124,6 @@ void Executor::ExecuteInst(Instruction *i) {
     
     assert(i && "Expecting an instruction!");
     assert(status==START && "wrong status for Executor (!=START)!");
-    // Add the trace of this instruction
-    if (CollectInstTraces) {
-        Trace->add(i);
-    }
     ExprPtr expr = NULL;
     switch (i->getOpcode()) {
         case Instruction::SExt:
@@ -173,10 +167,6 @@ void Executor::ExecuteInst1(Instruction *i, Value *val) {
     assert(i && "Expecting an instruction!");
     assert(val && "Expecting a value!");
     assert(status==START && "Wrong status for Executor (!=START)!");
-    // Add the trace of this instruction
-    if (CollectInstTraces) {
-        Trace->add(i, val);
-    }
     ExprPtr expr = NULL;
     switch (i->getOpcode()) {
         case Instruction::GetElementPtr:
@@ -228,10 +218,6 @@ void Executor::ExecuteInst2(Instruction *i, Value *val1, Value *val2) {
     assert(i && "Expecting an instruction!");
     assert((val1 && val2) && "Expecting values!");
     assert(status==START && "wrong status for Executor (!=START)!");
-    // Add the trace of this instruction
-    if (CollectInstTraces) {
-        Trace->add(i, val1, val2);
-    }
     ExprPtr expr = NULL;
     switch (i->getOpcode()) {
         case Instruction::Add:
@@ -279,10 +265,6 @@ void Executor::ExecuteInst3(Instruction *i, Value *val1,
     assert(i && "Expecting an instruction!");
     assert((val1 && val2 && val3) && "Expecting values!");
     assert(status==START && "Wrong status for Executor (!=START)!");
-    // Add the trace of this instruction
-    if (CollectInstTraces) {
-        Trace->add(i, val1, val2, val3);
-    }
     ExprPtr expr = NULL;
     switch (i->getOpcode()) {
         case Instruction::Select:
@@ -927,7 +909,7 @@ void Executor::ReportEnd() {
         ExecutedBlocks.clear();
         Profile->addProgramTrace(Trace);
     }
-    else if (CollectInstTraces || NoAssert) {
+    else if (NoAssert) {
         Profile->addProgramTrace(Trace);
     } else {
         // Only save failing traces when not using PTF

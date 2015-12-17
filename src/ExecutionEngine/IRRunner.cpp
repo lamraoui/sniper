@@ -32,8 +32,7 @@ void IRRunner::run(ProgramProfile *profile, LocalVariables *locVars,
                     LoopInfoPass *loopInfo) {
     // Init
     EE = initialize();
-    Executor::init(loopInfo, profile,
-                   /*collectTrace*/ false,
+    Executor::init(loopInfo, profile, 
                    /*collectBlocks*/ options->htfUsed(),
                    /* desactivate symbolic execution */ true,
                    /* no assert */ true);

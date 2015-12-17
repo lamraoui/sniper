@@ -38,7 +38,6 @@ void ConcolicProfiler::run(ProgramProfile *profile, LocalVariables *locVars,
     terminated = false;
     roundID    = 1;
     Executor::init(loopInfo, profile,
-    /*collectTrace*/ false,
     /*collectBlocks*/ options->htfUsed());
 
     while (roundID<=MAX_RUN) 
@@ -147,9 +146,10 @@ VariablesPtr ConcolicProfiler::generateInputValues() {
             inputs->add(ait, 0);
         }
         return inputs;
-    }   
+    }
     // Get the deepset path to an unexplored branch node
     SymbolicPath *symbPath = Executor::getSymbPath();
+    assert(symbPath && "No symbolic path!");
     std::vector<ExprCellPtr> path = symbPath->getPath();
     // There is no more unexplored path if the path is empty
     if (path.empty()) {
