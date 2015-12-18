@@ -1,12 +1,17 @@
 /**
  * Encoder.h
  *
- * 
+ * This class can be used to encode LLVM instructions
+ * into logic formulas.
+ *
+ * Note: This is the light version of Encoder.
+ * In this version, the control flow only consists
+ * of constraints encoded from branch and phi instructions.
  *
  * @author : Si-Mohamed Lamraoui
- * @contact : simo@nii.ac.jp
- * @date : 2014/04/11
- * @copyright : NII 2014
+ * @contact : simohamed.lamraoui@gmail.com
+ * @date : 2015/12/18
+ * @copyright : NII 2014 & Hosei 2015
  */
 
 #ifndef _ENCODER_H
@@ -65,7 +70,7 @@ public:
     Encoder(Context *_ctx) : ctx(_ctx)  { }
     ~Encoder() { }
     
-    ExprPtr encodeControlFlow(Function *targetFun);
+    void    prepareControlFlow(Function *targetFun);
     ExprPtr encode(BinaryOperator *bo);
     ExprPtr encode(SelectInst *select);
     ExprPtr encode(PHINode *phi, BasicBlock *forBlock = NULL);
@@ -79,6 +84,7 @@ public:
     ExprPtr encode(SExtInst *sext);
     ExprPtr encode(ZExtInst *zext);
     ExprPtr encode(CallInst *call, Formula *AS);
+    ExprPtr encode(ReturnInst *i);
     
     // Not implemented
     ExprPtr encode(FenceInst *i);
@@ -91,8 +97,7 @@ public:
     ExprPtr encode(ShuffleVectorInst *i);    
     ExprPtr encode(ExtractValueInst *i);    
     ExprPtr encode(InsertValueInst *i);    
-    ExprPtr encode(LandingPadInst *i);    
-    ExprPtr encode(ReturnInst *i);   
+    ExprPtr encode(LandingPadInst *i);
     ExprPtr encode(IndirectBrInst *i);
     ExprPtr encode(InvokeInst *i);  
     ExprPtr encode(ResumeInst *i);  

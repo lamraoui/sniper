@@ -1,93 +1,39 @@
 /**
- * Pass.cpp
+ * EncoderPass.cpp
  *
- * 
+ * This class can be used to encode an LLVM function 
+ * into a logic formula.
+ *
+ * Note: This class uses a light version of Encoder.
+ * In the light version, the control flow only consists
+ * of contraints of branch and phi instructions.
  *
  * @author : Si-Mohamed Lamraoui
- * @contact : simo@nii.ac.jp
- * @date : 2012/03/11
- * @copyright : NII 2012
+ * @contact : simohamed.lamraoui@gmail.com
+ * @date : 2015/12/18
+ * @copyright : NII 2014 & Hosei 2015
  */
 
 
 #include "EncoderPass.h"
 
 
-EncoderPass::EncoderPass(Function *_targetFun, Context *_ctx, LoopInfoPass *_loops, 
-                         ProgramProfile *_profile, Options *_options) 
-: targetFun(_targetFun), ctx(_ctx), loops(_loops), profile(_profile), options(_options) { 
-    this->encoder = new Encoder(ctx);
-    // Create an empty AS formula (for pre- and post-condition)
-    this->AS = new Formula();
-}
-
-EncoderPass::~EncoderPass() { 
-    delete encoder;
-}
 
 // =============================================================================
-// initAssertCalls
-//
-// Check the line number to see if the current instruction is used in a 
-// call to assert function. If it is the case, we have to put the related 
-// constraints as hard.
-// =============================================================================
-void EncoderPass::initAssertCalls() {
-    bool hasAsserts = false;
-    inst_iterator ii0;
-    for (ii0 = inst_begin(targetFun); ii0!=inst_end(targetFun); ii0++) {
-        Instruction &I = *ii0;
-        if (CallInst *C = dyn_cast<CallInst>(&I)) {
-            StringRef calledFunName;
-            Function *F = C->getCalledFunction();
-            // Direct call
-            if (F) {
-                calledFunName = F->getName();
-            } 
-            // Indirect function call
-            else { 
-                F = dyn_cast<Function>(C->getCalledValue()->stripPointerCasts());
-                if (F) {
-                    calledFunName = F->getName();
-                }
-            }
-            if (calledFunName==Encoder::SNIPER_ASSERT_RETINT_FUN_NAME
-                || calledFunName==Encoder::SNIPER_ASSERT_RETVOID_FUN_NAME
-                || calledFunName==Encoder::SNIPER_ASSUME_RETINT_FUN_NAME
-                || calledFunName==Encoder::SNIPER_ASSUME_RETVOID_FUN_NAME
-                || calledFunName==Encoder::ASSERT_FUN_NAME 
-                || calledFunName==Encoder::ASSUME_FUN_NAME) {
-                hasAsserts = true;
-                if (MDNode *N = I.getMetadata("dbg")) { 
-                    DILocation Loc(N); 
-                    unsigned line = Loc.getLineNumber();
-                    ctx->setAssertCallLine(line);
-                }
-            }
-        }
-    }
-    // No post-condition and no oracle?
-    assert((hasAsserts || !options->getGoldenOutputsFileName().empty()) &&
-           "No call to assert function nor oracle!");
-}
-
-// =============================================================================
-// makeTraceFormula
+// makeFormula
 // 
 // Encode the target function into a partial SMT formula.
 // =============================================================================
 Formula* EncoderPass::makeTraceFormula() {
-    
+
     MSTimer timer1;
     if(options->printDuration()) {
-        //timer1.start();
+        timer1.start();
     }
-    // Create an empty formula
+    // Create an empty trace formula
     Formula *formula = new Formula();
-    // Model the CFG formula
-    ExprPtr cfExpr = encoder->encodeControlFlow(targetFun);
-    cfExpr->setHard();
-    formula->add(cfExpr);
+    // Prepare the CFG variables
+    encoder->prepareControlFlow(targetFun);
     // Pre-process the global variables
     initGlobalVariables();
     // Save the line numbers of the call to assert 
@@ -111,7 +57,7 @@ Formula* EncoderPass::makeTraceFormula() {
             e->setHard();
             formula->add(e);
         }
-        // HFTF: Do not encode bug free blocks
+        // HFTF: Encode bug free blocks as hard
         bool doEncodeBB = true;
         if (options->htfUsed()) {
             if(profile->isBugFreeBlock(bb)) {
@@ -119,29 +65,26 @@ Formula* EncoderPass::makeTraceFormula() {
             }
         }
         // Iterate through the basicblocks
-        for (BasicBlock::iterator iti=bb->begin(), eti=bb->end(); iti!=eti; ++iti) {
+        for (BasicBlock::iterator iti=bb->begin(), eti=bb->end();
+             iti!=eti; ++iti) {
             Instruction *i = iti;
+            bool doEncodeInst = doEncodeBB;
             // Check the line number
             unsigned line = 0;
-            bool doEncodeInst = doEncodeBB;
             if (MDNode *N = i->getMetadata("dbg")) {
                 DILocation Loc(N); 
                 line = Loc.getLineNumber();
+                // Instruction related to an assert
                 if (ctx->isAssertCall(line)) {
                     isWeigted = false;
                     doEncodeInst = true;
                 } else {
+                    // Instruction with line number
+                    // (not related to an assert)
                     isWeigted = true;
                 }
             } else {
-                isWeigted = false;
-            }
-            // If i is a store/load/gep instruction
-            // encoded (as hard) in any cases
-            if(isa<GetElementPtrInst>(i)
-               || isa<LoadInst>(i)
-               || isa<StoreInst>(i)) {
-                doEncodeInst = true;
+                // Instruction with no line number
                 isWeigted = false;
             }
             // Hardened Trace Formula
@@ -202,11 +145,9 @@ Formula* EncoderPass::makeTraceFormula() {
                     break;
                 case Instruction::Store:
                     expr = encoder->encode(cast<StoreInst>(i));
-                    //isWeigted = true;
                     break;
                 case Instruction::Load:
                     expr = encoder->encode(cast<LoadInst>(i), AS);
-                    //isWeigted = true;
                     break;
                 case Instruction::GetElementPtr:
                     expr = encoder->encode(cast<GetElementPtrInst>(i));
@@ -221,6 +162,9 @@ Formula* EncoderPass::makeTraceFormula() {
                     isWeigted = false;
                     break;
                 case Instruction::Ret:
+                    expr = encoder->encode(cast<ReturnInst>(i));
+                    isWeigted = false;
+                    break;
                 case Instruction::Unreachable:
                     // Do not encode.
                     continue;
@@ -251,7 +195,7 @@ Formula* EncoderPass::makeTraceFormula() {
                 case Instruction::ExtractValue:
                 case Instruction::InsertValue:
                     i->dump();
-                    assert("Unsupported LLVM instruction!");
+                    assert("unsupported LLVM instruction!\n");
                     break;
                 default:
                     llvm_unreachable("Illegal opcode!");
@@ -275,8 +219,7 @@ Formula* EncoderPass::makeTraceFormula() {
                     assert(line>0 && "Illegal line number!");
                     // New line, Add the collect constraints to the formula
                     if (line!=oldLine && oldLine!=0) {
-                        assert(!currentConstraits.empty() &&
-                               "No constraints!");
+                        assert(!currentConstraits.empty() && "No constraints!");
                         assert(lastInstruction && "Instruction is null!");
                         ExprPtr e = Expression::mkAnd(currentConstraits);
                         e->setInstruction(lastInstruction);
@@ -332,29 +275,68 @@ Formula* EncoderPass::makeTraceFormula() {
 // =============================================================================
 // getASFormula
 //
-// Return a formula representating the pre- and post-conditions
+// Return a formula representating the pre- and post-conditions.
 // =============================================================================
-Formula* EncoderPass::getASFormula() {
+Formula *EncoderPass::getASFormula() {
     return AS;
 }
 
 // =============================================================================
-// init_globalValues 
+// initAssertCalls
+//
+// Check the line number to see if the current instruction is used in a
+// call to assert function. If it is the case, we have to put the related
+// constraints as hard.
+// =============================================================================
+void EncoderPass::initAssertCalls() {
+    bool hasAsserts = false;
+    inst_iterator ii0;
+    for (ii0 = inst_begin(targetFun); ii0!=inst_end(targetFun); ii0++) {
+        Instruction &I = *ii0;
+        if (CallInst *C = dyn_cast<CallInst>(&I)) {
+            StringRef calledFunName;
+            Function *F = C->getCalledFunction();
+            // Direct call
+            if (F) {
+                calledFunName = F->getName();
+            }
+            // Indirect function call
+            else {
+                F = dyn_cast<Function>(C->getCalledValue()->stripPointerCasts());
+                if (F) {
+                    calledFunName = F->getName();
+                }
+            }
+            if (calledFunName==Encoder::SNIPER_ASSERT_RETINT_FUN_NAME
+                || calledFunName==Encoder::SNIPER_ASSERT_RETVOID_FUN_NAME
+                || calledFunName==Encoder::SNIPER_ASSUME_RETINT_FUN_NAME
+                || calledFunName==Encoder::SNIPER_ASSUME_RETVOID_FUN_NAME
+                || calledFunName==Encoder::ASSERT_FUN_NAME
+                || calledFunName==Encoder::ASSUME_FUN_NAME) {
+                hasAsserts = true;
+                if (MDNode *N = I.getMetadata("dbg")) {
+                    DILocation Loc(N);
+                    unsigned line = Loc.getLineNumber();
+                    ctx->setAssertCallLine(line);
+                }
+            }
+        }
+    }
+    // No post-condition and no oracle?
+    assert((hasAsserts || !options->getGoldenOutputsFileName().empty()) &&
+           "No call to assert function nor oracle!");
+}
+
+
+// =============================================================================
+// init_globalValues
 // =============================================================================
 void EncoderPass::initGlobalVariables() {
+    // TODO: support for gloabl variables
     Module *llvmMod = this->targetFun->getParent();
     //assert(llvmMod->global_empty() && "Global variables are not supported!");
-    
-    // TODO : initializer
-    /* Module *m = this->targetFun->getParent();
-    Module::global_iterator iter = m->global_begin();
-    Module::global_iterator end = m->global_end();
-    for (; iter != end; ++iter) {
-        Value *gv = iter;
-        // Set the version of the variable
-        //this->gv2v[gv] = 0; 
-    }*/  
 }
+
 
 // =============================================================================
 // isAtoiFunction

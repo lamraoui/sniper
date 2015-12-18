@@ -80,8 +80,7 @@ void SniperBackend::run() {
         }
     }
     // Encode the IR into a partial weighted formula
-    Context     *C       = new Context(LV, options);
-    //EncoderLightPass *EP = new EncoderLightPass(targetFun, C, LIP, PP, options);
+    Context     *C  = new Context(LV, options);
     EncoderPass *EP = new EncoderPass(targetFun, C, LIP, PP, options);
     Formula     *TF = EP->makeTraceFormula();
     Formula     *AS = EP->getASFormula();

@@ -1,12 +1,17 @@
 /**
  * EncoderPass.h
  *
- * 
+ * This class can be used to encode an LLVM function
+ * into a logic formula.
+ *
+ * Note: This class uses a light version of Encoder.
+ * In the light version, the control flow only consists
+ * of contraints of branch and phi instructions.
  *
  * @author : Si-Mohamed Lamraoui
- * @contact : simo@nii.ac.jp
- * @date : 2013/04/04
- * @copyright : NII 2013
+ * @contact : simohamed.lamraoui@gmail.com
+ * @date : 2015/12/18
+ * @copyright : NII 2014 & Hosei 2015
  */
 
 #ifndef _ENCODERPASS_H
@@ -41,21 +46,27 @@ private:
     Formula *AS;
 
 public:
-    EncoderPass(Function *_targetFun, Context *_ctx, LoopInfoPass *_loops, 
-                ProgramProfile *profile, Options *options);
-    ~EncoderPass();
+    EncoderPass(Function *_targetFun, Context *_ctx, LoopInfoPass *_loops,
+                ProgramProfile *_profile, Options *_options)
+                : targetFun(_targetFun), ctx(_ctx), loops(_loops),
+                profile(_profile), options(_options) {
+        this->encoder = new Encoder(ctx);
+        // Create an empty AS formula (for pre- and post-condition)
+        this->AS = new Formula();
+    }
     
+    EncoderPass() {
+        delete encoder;
+    }
     Formula* makeTraceFormula();
     Formula* getASFormula();
     
 private:
-    void modelControlFlow();
     void initGlobalVariables();
     void initAssertCalls();
     bool isAtoiFunction(Instruction *I);
     
 };
 //============================================================================
-
 
 #endif

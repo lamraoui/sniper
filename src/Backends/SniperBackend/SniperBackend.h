@@ -22,7 +22,6 @@
 #include "Frontend/Frontend.h"
 #include "Backends/SniperBackend/IterationAlgorithm.h"
 #include "Backends/SniperBackend/EncoderPass.h"
-#include "Backends/SniperBackend/EncoderLightPass.h"
 #include "Encoder/Context.h"
 #include "Logic/Combine.h"
 #include "Logic/BMC.h"

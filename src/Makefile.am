@@ -5,7 +5,8 @@ AUTOMAKE_OPTIONS = subdir-objects
 ACLOCAL_AMFLAGS = ${ACLOCAL_FLAGS}
 
 AM_CPPFLAGS = $(EXTRA_CXXFLAGS) $(LLVM_CPPFLAGS)
-AM_CXXFLAGS = -Wall -O3 -fno-rtti -std=c++0x
+AM_CXXFLAGS = $(LLVM_CXXFLAGS) -fexceptions
+#-Wall -O3 -fno-rtti -fexceptions -stdlib=libc++ -mmacosx-version-min=10.7    #-std=c++11 -stdlib=libc++ -stdlib=libstdc++
 #AM_LDFLAGS = -lyices
 
 sniper_LDADD = $(LLVM_LDADD) -lyices
@@ -13,13 +14,11 @@ sniper_LDADD = $(LLVM_LDADD) -lyices
 bin_PROGRAMS = sniper
 sniper_SOURCES = Main.cpp \
 		Options.cpp \
-		Backends/SniperBackend/EncoderLightPass.cpp \
 		Backends/SniperBackend/EncoderPass.cpp \
 		Backends/SniperBackend/IterationAlgorithm.cpp \
 		Backends/SniperBackend/SniperBackend.cpp \
 		Encoder/Context.cpp \
 		Encoder/Encoder.cpp \
-		Encoder/EncoderLight.cpp \
 		ExecutionEngine/ConcolicModule.cpp \
 		ExecutionEngine/Executor.cpp \
 		ExecutionEngine/IRInstrumentor.cpp \

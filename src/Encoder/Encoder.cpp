@@ -1,12 +1,17 @@
 /**
  * Encoder.cpp
  *
- * 
+ * This class can be used to encode LLVM instructions 
+ * into logic formulas.
+ *
+ * Note: This is the light version of Encoder.
+ * In this version, the control flow only consists 
+ * of constraints encoded from branch and phi instructions.
  *
  * @author : Si-Mohamed Lamraoui
- * @contact : simo@nii.ac.jp
- * @date : 2014/04/11
- * @copyright : NII 2014
+ * @contact : simohamed.lamraoui@gmail.com
+ * @date : 2015/12/18
+ * @copyright : NII 2014 & Hosei 2015
  */
 
 
@@ -36,8 +41,8 @@ ExprPtr Encoder::encode(BinaryOperator *bo) {
     Value *arg2 = bo->getOperand(1);
     // Non-linear arithmetic checking
     if(opCode==Instruction::Mul || opCode==Instruction::FMul ||
-        opCode==Instruction::UDiv || opCode==Instruction::SDiv ||
-        opCode==Instruction::FDiv) {
+       opCode==Instruction::UDiv || opCode==Instruction::SDiv ||
+       opCode==Instruction::FDiv) {
         assert((isa<ConstantInt>(arg1) && isa<ConstantInt>(arg2)) &&
                "Non-linear arithmetic not supported!");
     }
@@ -158,39 +163,42 @@ ExprPtr Encoder::encode(PHINode *phi, BasicBlock *forBlock) {
     if (phi->getParent()->getName()=="alt_sep_test.exit") {
         ctx->setTCASAssertVarName(dyn_cast<Value>(phi)->getName().str());
     }
-    // # <bb>
-    // # x2 = phi [x0, <bb0>] [x1, <bb1>] 
-    // (= x2 (ite bb0 x0 x1))
-    Value *last_val = phi->getIncomingValue(phi->getNumIncomingValues()-1);
-    ExprPtr last_valExpr = ctx->getLocalVariable(phi, last_val, phi->getNumOperands()-1);
-    if(last_valExpr==NULL) {
-        last_valExpr = ctx->newVariable(last_val);
-    }
+    
     // One incoming edge
-    // (= phivar x)
+    // # <bb>
+    // # x2 = phi [x0, <bb0>]
+    // (= x2 x0)
     if(phi->getNumIncomingValues()==1) {
+        Value *last_val = phi->getIncomingValue(phi->getNumIncomingValues()-1);
+        ExprPtr valExpr = ctx->getLocalVariable(phi, last_val, phi->getNumOperands()-1);
+        if(valExpr==NULL) {
+            valExpr = ctx->newVariable(last_val);
+        }
         ExprPtr phiExpr = ctx->newVariable(dyn_cast<Value>(phi));
-        ExprPtr eqExpr = Expression::mkEq(phiExpr, last_valExpr);
+        ExprPtr eqExpr = Expression::mkEq(phiExpr, valExpr);
         return eqExpr; // hard
     }
+    
     // More than one incoming edge
+    // # <bb>
+    // # x2 = phi [x0, <bb0>] [x1, <bb1>]
+    // (= x2 (ite bb0_bb x0 (ite bb1_bb x1 x2)))
+    ExprPtr phiExpr = ctx->newVariable(dyn_cast<Value>(phi));
+    ExprPtr last_valExpr = phiExpr;
     BasicBlock *bb = phi->getParent();
     ExprPtr iteExpr = NULL;
-    for (int i = phi->getNumIncomingValues()-2; i >=0; i-=1) {
+    for (int i = phi->getNumIncomingValues()-1; i >=0; i-=1) { // reverse
         Value *val = phi->getIncomingValue(i);
         BasicBlock *predbb = phi->getIncomingBlock(i);
-        //ExprPtr predbbExpr = ctx->getCondVariable(predbb);
         ExprPtr valExpr = ctx->getLocalVariable(phi, val, i);
         if(valExpr==NULL) {
             valExpr = ctx->newVariable(val);
         }
         ExprPtr predbb_bbExpr = ctx->getTransition(predbb, bb); // t(predbb,b)
-        //ExprPtr andExpr = Expression::mkAnd(predbbExpr ,predbb_bbExpr);
         iteExpr = Expression::mkIte(predbb_bbExpr, valExpr, last_valExpr);
         last_valExpr = iteExpr;
     }
     // (= x (ITE ... ))
-    ExprPtr phiExpr = ctx->newVariable(dyn_cast<Value>(phi));
     ExprPtr eqExpr = Expression::mkEq(phiExpr, iteExpr);
     return eqExpr; //har
 }
@@ -201,169 +209,87 @@ ExprPtr Encoder::encode(PHINode *phi, BasicBlock *forBlock) {
 // =============================================================================
 ExprPtr Encoder::encode(BranchInst *br, LoopInfoPass *loops) {
 
-    BasicBlock *bb = br->getParent(); 
-    ExprPtr bbExpr = ctx->getCondVariable(bb);
-    ExprPtr notbbExpr = Expression::mkNot(bbExpr);
-    // Unconditional branching
+    ExprPtr brExpr = NULL;
+    BasicBlock *bb = br->getParent();
+    
+    // --- Unconditional branching ---
     if(br->isUnconditional()) {
-        // # <bb>
-        // # br label <nextbb>
-        // (= bb bb_nextbb)
-        BasicBlock *nextbb = br->getSuccessor(0);
-        ExprPtr bb_nextbbExpr = ctx->getTransition(bb, nextbb);        
-        ExprPtr eqExpr = Expression::mkEq(bbExpr, bb_nextbbExpr);
-        return eqExpr; //hard
-    }
-    // Conditional branching
-    Value *cond = br->getCondition();
-    assert((isa<ICmpInst>(cond) && cond->getType()->isIntegerTy(1)) &&
-            "br instruction with no icmp instruction.");
-    BasicBlock *nextBB1 = br->getSuccessor(0);
-    BasicBlock *nextBB2 = br->getSuccessor(1);
-    
-    // Loops: Check if we branch to a loop latch basicblock
-    bool nextBB1isLoopHeader = false;
-    bool nextBB2isLoopHeader = false;
-    BasicBlock *headerBB = loops->getLoopLatch(br);
-    if (headerBB && headerBB==nextBB1) {
-        // CASE1: If cond is true, got back to the loop latch block
-        
-        // # <bb>
-        // # br i1 <cond>, label <loopLatchBB>, label <nextbb2>  
-        
-        // (or (and cond       -          (not bb_nextbb2))  
-        //     (and (not cond) bb_nextbb2 (not bb_nextbb1))
-        //     (and (not bb) (not bb_nextbb1) (not bb_nextbb2))
-        // )  
-        nextBB1isLoopHeader = true;
-    } else if(headerBB && headerBB==nextBB2) {
-        // CASE2: If cond is false, got back to the loop latch block
-        
-        // # <bb>
-        // # br i1 <cond>, label <nextbb1>, label <loopLatchBB>  
-        
-        // (or (and cond       bb_nextbb1 (not bb_nextbb2))  
-        //     (and (not cond) -          (not bb_nextbb1))
-        //     (and (not bb) (not bb_nextbb1) (not bb_nextbb2))
-        // )  
-        nextBB2isLoopHeader = true;
-    }
-    
-    
-    // # <bb>
-    // # br i1 <cond>, label <nextbb1>, label <nextbb2>  
-    // (or (and bb       cond             bb_nextbb1 nextbb1 (not bb_nextbb2))  
-    //     (and bb       (not cond)       bb_nextbb2 nextbb2 (not bb_nextbb1))
-    //     (and (not bb) (not bb_nextbb1) (not bb_nextbb2))
-    // ) 
-    ExprPtr condExpr = ctx->getLocalVariable(br, cond, 0);
-    if(condExpr==NULL) {
-        condExpr = ctx->newVariable(cond);
-    }
-    ExprPtr notCondExpr = Expression::mkNot(condExpr);
-    ExprPtr bb_nextbb1Expr = ctx->getTransition(bb, nextBB1);
-    ExprPtr bb_nextbb2Expr = ctx->getTransition(bb, nextBB2);
-    ExprPtr notbb_nextbb1Expr = Expression::mkNot(bb_nextbb1Expr);
-    ExprPtr notbb_nextbb2Expr = Expression::mkNot(bb_nextbb2Expr);
-        
-      
-    /*
-    // Loops: Check if we branch to a loop latch basicblock
-    BasicBlock *headerBB = loops->getLoopLatch(br);
-    if (headerBB && (headerBB==nextBB1 || headerBB==nextBB2)) {
-        ExprPtr andExpr;
-        
-        // CASE1: If cond is true, got back to the loop latch block
-        // # <bb>
-        // # br i1 <cond>, label <loopLatchBB>, label <nextbb2>  
-        // (or (and bb       cond             -          -       (not bb_nextbb2))  
-        //     (and bb       (not cond)       bb_nextbb2 nextbb2 (not bb_nextbb1))
-        //     (and (not bb) -                (not bb_nextbb2))
-        // )   
-        
-        // (or (and cond       -          (not bb_nextbb2))  
-        //     (and (not cond) bb_nextbb2 (not bb_nextbb1))
-        //     (and (not bb) (not bb_nextbb1) (not bb_nextbb2))
-        // ) 
-        if (headerBB==nextBB1) {
-            std::vector<ExprPtr> andVec1;
-            andVec1.push_back(bbExpr);
-            andVec1.push_back(condExpr);
-            andVec1.push_back(notbb_nextbb2Expr);
-            andExpr1 = Expression::mkAnd(andVec1);
-            
-            std::vector<ExprPtr> andVec2;
-            andVec2.push_back(bbExpr);
-            andVec2.push_back(notCondExpr);
-            andVec2.push_back(bb_nextbb2Expr);
-            andVec2.push_back(nextbb2Expr);
-            andExpr2 = Expression::mkAnd(andVec1);
-            
-        } 
-        // CASE2: If cond is false, got back to the loop latch block
-        // # <bb>
-        // # br i1 <cond>, label <nextbb1>, label <loopLatchBB>  
-        // (or (and bb       cond             bb_nextbb1 nextbb1 (not bb_nextbb2))  
-        //     (and bb       (not cond)       -          -       (not bb_nextbb1))
-        //     (and (not bb) (not bb_nextbb1) -)
-        // ) 
-        else if(headerBB==nextBB2) {
-            loopAssertExpr = condExpr; 
-            // (and loopAssrtExpr
-            // (or (and cond       bb_nextbb1 (not bb_nextbb2))  
-            //     ((not bb_nextbb1) (not bb_nextbb2))
-            // ))
-            std::vector<ExprPtr> and1;
-            and1.push_back(condExpr);
-            and1.push_back(bb_nextbb1Expr);
-            and1.push_back(notbb_nextbb2Expr);
-            andExpr = Expression::mkAnd(and1); 
+        BasicBlock *nextbb       = br->getSuccessor(0);
+        ExprPtr    bb_nextbbExpr = ctx->getTransition(bb, nextbb);
+        // No predecessor (entry block)
+        BasicBlock *entryBB = &bb->getParent()->getEntryBlock();
+        if (bb==entryBB) {
+            // # bb:
+            // # br label <nextbb>
+            // (= bb_nextbb true)
+            ExprPtr trueExpr = Expression::mkTrue();
+            brExpr = Expression::mkEq(bb_nextbbExpr, trueExpr);
         }
-        std::vector<ExprPtr> and3;
-        and3.push_back(notbbExpr);
-        and3.push_back(notbb_nextbb1Expr);
-        and3.push_back(notbb_nextbb2Expr);
-        ExprPtr and3Expr = Expression::mkAnd(and3);
-        std::vector<ExprPtr> or1;
-        or1.push_back(andExpr);
-        or1.push_back(and3Expr);
-        ExprPtr or1Expr = Expression::mkOr(or1);
-        ExprPtr expr = Expression::mkAnd(loopAssertExpr, or1Expr);
-        AS->addLoopAssert(loopAssertExpr);
-        return expr; // hard
-    }*/
-    
-    
-    
-    // (or (and cond       bb_nextbb1 (not bb_nextbb2))  
-    //     (and (not cond) bb_nextbb2 (not bb_nextbb1))
-    //     (and (not bb) (not bb_nextbb1) (not bb_nextbb2))
-    // )  
-    std::vector<ExprPtr> and1;
-    and1.push_back(condExpr);
-    if (!nextBB1isLoopHeader) {
-        and1.push_back(bb_nextbb1Expr);
+        // One or more predecessors
+        else {
+            // # bb:         ; preds = %predbb1,..., predbbn
+            // # br label <nextbb>
+            // (= bb_nextbb (or predbb1_bb ... predbbn_bb))
+            std::vector<ExprPtr> predTrans;
+            for (pred_iterator PI = pred_begin(bb), E = pred_end(bb); PI != E; ++PI) {
+                BasicBlock *pred = *PI;
+                ExprPtr    predbbi_bbExpr = ctx->getTransition(pred, bb);
+                predTrans.push_back(predbbi_bbExpr);
+            }
+            ExprPtr orExpr = Expression::mkOr(predTrans);
+            brExpr = Expression::mkEq(bb_nextbbExpr, orExpr);
+        }
     }
-    and1.push_back(notbb_nextbb2Expr);
-    ExprPtr and1Expr = Expression::mkAnd(and1);
-    std::vector<ExprPtr> and2;
-    and2.push_back(notCondExpr);
-    if (!nextBB2isLoopHeader) {
-        and2.push_back(bb_nextbb2Expr);
+    // --- Conditional branching ---
+    else {
+        
+        Value *cond = br->getCondition();
+        if(!isa<ICmpInst>(cond) && !cond->getType()->isIntegerTy(1)) {
+            assert("br instruction with no icmp instruction.");
+        }
+        ExprPtr condExpr = ctx->getLocalVariable(br, cond, 0);
+        if(condExpr==NULL) {
+            condExpr = ctx->newVariable(cond);
+        }
+        ExprPtr notCondExpr = Expression::mkNot(condExpr);
+        BasicBlock *nextBB1 = br->getSuccessor(0);
+        BasicBlock *nextBB2 = br->getSuccessor(1);
+        ExprPtr bb_nextbb1Expr = ctx->getTransition(bb, nextBB1);
+        ExprPtr bb_nextbb2Expr = ctx->getTransition(bb, nextBB2);
+        // Loops: Check if we branch to a loop latch basicblock
+        assert(!loops->getLoopLatch(br) && "br instruction: loop latch");
+        
+        // No predecessor (entry block)
+        BasicBlock *entryBB = &bb->getParent()->getEntryBlock();
+        if (bb==entryBB) {
+            // # bb:
+            // # br cond <nextbb1> <nextbb2>
+            // (and (= bb_nextbb1 cond) (= bb_nextbb2 (not cond)))
+            ExprPtr e1 = Expression::mkEq(bb_nextbb1Expr, condExpr);
+            ExprPtr e2 = Expression::mkEq(bb_nextbb2Expr, notCondExpr);
+            brExpr = Expression::mkAnd(e1, e2);
+        }
+        // One or more predecessors
+        else {
+            // # bb:         ; preds = %predbb1,..., predbbn
+            // # br cond <nextbb1> <nextbb2>
+            // (and (= bb_nextbb1 (and cond       (or predbb1_bb ... predbbn_bb)))
+            //      (= bb_nextbb2 (and (not cond) (or predbb1_bb ... predbbn_bb))))
+            std::vector<ExprPtr> predTrans;
+            for (pred_iterator PI = pred_begin(bb), E = pred_end(bb); PI != E; ++PI) {
+                BasicBlock *pred = *PI;
+                ExprPtr    predbbi_bbExpr = ctx->getTransition(pred, bb);
+                predTrans.push_back(predbbi_bbExpr);
+            }
+            ExprPtr orExpr = Expression::mkOr(predTrans);
+            ExprPtr e1 = Expression::mkAnd(condExpr,    orExpr);
+            ExprPtr e2 = Expression::mkAnd(notCondExpr, orExpr);
+            ExprPtr e11 = Expression::mkEq(bb_nextbb1Expr, e1);
+            ExprPtr e22 = Expression::mkEq(bb_nextbb2Expr, e2);
+            brExpr = Expression::mkAnd(e11, e22);
+        }
     }
-    and2.push_back(notbb_nextbb1Expr);
-    ExprPtr and2Expr = Expression::mkAnd(and2);
-    std::vector<ExprPtr> and3;
-    and3.push_back(notbbExpr);
-    and3.push_back(notbb_nextbb1Expr);
-    and3.push_back(notbb_nextbb2Expr);
-    ExprPtr and3Expr = Expression::mkAnd(and3);
-    std::vector<ExprPtr> or1;
-    or1.push_back(and1Expr);
-    or1.push_back(and2Expr);
-    or1.push_back(and3Expr);
-    ExprPtr or1Expr = Expression::mkOr(or1);   
-    return or1Expr; // hard
+    return brExpr;
 }
 
 
@@ -708,7 +634,7 @@ ExprPtr Encoder::encode(AllocaInst *alloca) {
         return NULL;
         
         //t->dump();
-        //assert("Unsupported pointer!");
+        //assert("unsupported pointer.");
     }
     // Generate a new ID for this pointer
     ctx->addPtrId(alloca, size);
@@ -832,14 +758,27 @@ ExprPtr Encoder::encode(GetElementPtrInst *gep) {
             arraySizeExpr = ctx->newVariable(arraySizeVal);
         }
         ExprPtr ltSizeExpr = Expression::mkLt(indexExpr, arraySizeExpr);
-        // TCAS : (and (= x (tab index) (ite bb (< index size) true))
+        
+        //ExprPtr zero = Expression::mkSInt32Num(0);
+        //ExprPtr geSizeExpr = Expression::mkGe(indexExpr, zero);
+        //ExprPtr sizeExpr = Expression::mkAnd(geSizeExpr, ltSizeExpr);
+        
+        // TCAS : (and (= x (tab index) (ite (or predbb0_bb..predbbn_bb) (< index size) true))
         BasicBlock *bb = gep->getParent();
-        ExprPtr bbExpr = ctx->getCondVariable(bb);
-        if (!bbExpr) {
-            bbExpr = ctx->newVariable(bb);
+        std::vector<ExprPtr> predTrans;
+        for (pred_iterator PI = pred_begin(bb), E = pred_end(bb); PI != E; ++PI) {
+            BasicBlock *pred = *PI;
+            ExprPtr    predbbi_bbExpr = ctx->getTransition(pred, bb);
+            predTrans.push_back(predbbi_bbExpr);
         }
-        ExprPtr iteExpr = Expression::mkIte(bbExpr, ltSizeExpr, Expression::mkTrue());
-        ExprPtr andExpr = Expression::mkAnd(assignExpr, iteExpr);
+        ExprPtr sizeCheckExpr = NULL;
+        if (predTrans.empty()) {
+            sizeCheckExpr = ltSizeExpr;
+        } else {
+            ExprPtr orExpr = Expression::mkOr(predTrans);
+            sizeCheckExpr  = Expression::mkIte(orExpr, ltSizeExpr, Expression::mkTrue());
+        }
+        ExprPtr andExpr = Expression::mkAnd(assignExpr, sizeCheckExpr);
         eqExpr = andExpr;
     }
     // Argv
@@ -858,85 +797,46 @@ ExprPtr Encoder::encode(GetElementPtrInst *gep) {
     else if(isa<GlobalVariable>(gep->getPointerOperand())) {
         assert("Global pointers are not supported!");
     } else {
-        assert("Chained pointers are not supported.");
+        assert("Chained pointers are not supported!");
     }
     return eqExpr; //hard
 }
 
-
+// =============================================================================
+// encode - ReturnInst
+// =============================================================================
+ExprPtr Encoder::encode(ReturnInst *ret) {
+    assert(ret && "Instruction is null!");
+    BasicBlock *bb = ret->getParent();
+    std::vector<ExprPtr> predTrans;
+    for (pred_iterator PI = pred_begin(bb), E = pred_end(bb); PI != E; ++PI) {
+        BasicBlock *pred = *PI;
+        ExprPtr t = ctx->getTransition(pred, bb); // t(b',b)
+        predTrans.push_back(t);
+    }
+    if (!predTrans.empty()) {
+        ExprPtr e = Expression::mkOr(predTrans);
+        return e;
+    } else {
+        return NULL;
+    }
+}
 
 // =============================================================================
-// encodeControlFlow 
+// prepareControlFlow
+//
+// Create all transitions variables to be available
+// for encoding the BR and PHI instructions
 // =============================================================================
-ExprPtr Encoder::encodeControlFlow(Function *targetFun) {
-    
-    // (= entry true)
-    BasicBlock *entry = &targetFun->getEntryBlock();
-    ExprPtr entryVar = ctx->newVariable(dyn_cast<Value>(entry));
-    ExprPtr trueVar = Expression::mkTrue();
-    ExprPtr eqExpr = Expression::mkEq(entryVar, trueVar);
-    // Assert as hard
-    std::vector<ExprPtr> cfgAndExpr;
-    cfgAndExpr.push_back(eqExpr);
-    
-    // Iterating over the BasicBlocks to create 
-    // all the basicblock variables and the transition variables
+void Encoder::prepareControlFlow(Function *targetFun) {
+    // Iterate over the BasicBlocks to
+    // create the transition variables
     for (Function::iterator i = targetFun->begin(), e = targetFun->end(); i != e; ++i) {
-        ExprPtr bbExpr = ctx->newVariable(dyn_cast<Value>(i)); 
-        ExprPtr notbbExpr = Expression::mkNot(bbExpr);
-        std::vector<ExprPtr> predbbTrans;
-        std::vector<ExprPtr> prednotbbTrans;
         for (pred_iterator PI = pred_begin(i), E = pred_end(i); PI != E; ++PI) {
             BasicBlock *pred = *PI;
-            ExprPtr bb_predbbExpr = ctx->newTransition(pred, i); // t(b',b)
-            predbbTrans.push_back(bb_predbbExpr);
-            ExprPtr notbb_predbbExpr = Expression::mkNot(bb_predbbExpr);
-            prednotbbTrans.push_back(notbb_predbbExpr);
-        }
-        if (predbbTrans.size()==0) {
-            // No predecessors!
-        } else {
-            // (or (and bb       E0_bb       (not E1_bb) ... (not En_bb))
-            //     (and bb       (not E0_bb) E1_bb       ... (not En_bb))
-            //     ...
-            //     (and bb       (not E0_bb) (not E1_bb) ... En_bb)
-            //     (and (not bb) (not E0_bb) (not E1_bb) ... (not E2_bb))
-            // )
-            std::vector<ExprPtr> orVec;
-            for (unsigned i = 0; i<predbbTrans.size(); i++) {
-                ExprPtr E1 = predbbTrans[i];
-                // (and bb ... )
-                std::vector<ExprPtr> andVec;
-                andVec.push_back(bbExpr);
-                for ( unsigned j = 0; j<predbbTrans.size(); j++) {
-                    ExprPtr E2 = predbbTrans[j];
-                    if (E1==E2) {
-                        andVec.push_back(E2);
-                    } else {
-                        ExprPtr notE2 = prednotbbTrans[j];
-                        andVec.push_back(notE2);
-                    } 
-                }
-                ExprPtr andExpr = Expression::mkAnd(andVec);
-                orVec.push_back(andExpr);
-            }
-            // (and (not bb) (not E0_bb) (not E1_bb) ... (not E2_bb))
-            std::vector<ExprPtr> andVec;
-            andVec.push_back(notbbExpr);
-            std::vector<ExprPtr>::iterator itp3;
-            for (itp3=prednotbbTrans.begin(); itp3!=prednotbbTrans.end(); ++itp3) {
-                ExprPtr notE3 = *itp3;
-                andVec.push_back(notE3);
-            }
-            ExprPtr andExpr = Expression::mkAnd(andVec);
-            orVec.push_back(andExpr);
-            // (or ... )
-            ExprPtr orExpr = Expression::mkOr(orVec);
-            // Assert as hard
-            cfgAndExpr.push_back(orExpr);
+            ctx->newTransition(pred, i); // t(b',b)
         }
     }
-    return Expression::mkAnd(cfgAndExpr);
 }
 
 // =============================================================================
