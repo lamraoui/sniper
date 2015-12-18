@@ -41,6 +41,16 @@ int main(int argc, char **argv) {
         // Tool options
         Options *opt = new Options(argc, argv);
         
+        
+        // Tell user if NDEBUG is defined and do assert
+        if(opt->dbgMsg()) {
+#if defined(NDEBUG)
+            std::cout << "NDEBUG is defined. Assert disabled,\n";
+#else
+            std::cout << "NDEBUG is not defined. Assert enabled.\n";
+#endif
+        }
+        
         MSTimer timer;
         if(opt->printDuration()) {
             timer.start();
