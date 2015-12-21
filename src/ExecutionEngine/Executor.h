@@ -90,8 +90,7 @@ public:
     static void init(LoopInfoPass *lip , ProgramProfile *p,
                      bool collectBlockTraces,
                      bool disableSymbExe = false, bool noAssert = false);
-    static void start(Function *f, VariablesPtr vals,
-                      LocalVariables *lv, Options *o);
+    static void start(Function *f, VariablesPtr vals, LocalVariables *lv);
     
     static void ExecuteInst (Instruction *i);
     static void ExecuteInst1(Instruction *i, Value *val);

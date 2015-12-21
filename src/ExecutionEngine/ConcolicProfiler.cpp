@@ -52,7 +52,7 @@ void ConcolicProfiler::run(ProgramProfile *profile, LocalVariables *locVars,
             std::cout << "\n=== (S/F) RUN " << roundID << " ====================\n";
         }
         // Prepare the executor
-        Executor::start(targetFun, inputValues, locVars, options);
+        Executor::start(targetFun, inputValues, locVars);
         // Call the function f with the input values as argument
         std::vector<Value*> args = inputValues->getValues();
         callFunction(EE, llvmMod, targetFun, args);
@@ -97,7 +97,7 @@ void ConcolicProfiler::run(ProgramProfile *profile, LocalVariables *locVars,
         }
         // Prepare the executor
         symbPath->setStack(stack);
-        Executor::start(targetFun, inputValues, locVars, options);
+        Executor::start(targetFun, inputValues, locVars);
         // Call the function f with the input values as argument
         std::vector<Value*> args = inputValues->getValues();
         callFunction(EE, llvmMod, targetFun, args);

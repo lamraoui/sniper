@@ -35,7 +35,6 @@ class Context {
 
 private:
     LocalVariables *locVar;
-    Options *options;
     bool is64Bit;
     unsigned phiCounter;
     unsigned memPtr, memID;
@@ -64,7 +63,9 @@ private:
     std::vector<ExprPtr> arrayCheckExprs;
     
 public:
-    Context(LocalVariables *_locVar, Options *_options);
+    Context(LocalVariables *_locVar)
+    : locVar(_locVar), phiCounter(0), memPtr(0), memID(0),
+      argvMaxIndex(0), /*TCAS*/ arrayCheckId(0) {}
     ~Context() { }
     
     void    propagatePointers(BasicBlock *bb, BasicBlock *predbb);

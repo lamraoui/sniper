@@ -49,7 +49,7 @@ void IRRunner::run(ProgramProfile *profile, LocalVariables *locVars,
             int val = (int) ci->getSExtValue();
             inputs->add(ait++, val);
         }
-        Executor::start(targetFun, inputs, locVars, options);
+        Executor::start(targetFun, inputs, locVars);
         // Call the function f with the input values as argument
         Value *output = callFunction(EE, llvmMod, targetFun, IV);
         // Get the expected output (if any)

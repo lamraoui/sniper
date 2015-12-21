@@ -77,19 +77,17 @@ void Executor::init(LoopInfoPass *lip, ProgramProfile *p,
     status         = INIT;
 }
 
-void Executor::start(Function *f, VariablesPtr vals,
-                     LocalVariables *lv, Options *o) {
+void Executor::start(Function *f, VariablesPtr vals, LocalVariables *lv) {
 
     assert(f && "Expecting a function!");
     assert((vals && lv) && "Expecting variables!");
-    assert(o && "Expecting options!");
     assert((status==INIT || status==IDLE) &&
            "Wrong status for Executor (!=INIT/IDLE)!");
     TargetFun = f;
     if (!DisabledSymbolicExe) {
         // Create a new context and a new
         // formula to hold the next path
-        PathContext = new Context(lv, o);
+        PathContext = new Context(lv);
         PathEncoder = new Encoder(PathContext);
         PathFormula = new Formula();
         // Reset symbolic path

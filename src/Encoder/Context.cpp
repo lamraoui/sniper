@@ -13,16 +13,6 @@
 #include "Context.h"
 
 
-Context::Context(LocalVariables *_locVar, Options *_options)
-: locVar(_locVar), options(_options) {
-    this->phiCounter = 0;
-    this->memPtr = 0;
-    this->memID = 0;
-    this->argvMaxIndex = 0;
-    // TCAS
-    this->arrayCheckId = 0;
-}
-
 // =============================================================================
 // getLocalVariable
 // =============================================================================
@@ -62,9 +52,9 @@ ExprPtr Context::getLocalVariable(Instruction *i, Value *arg, int pos) {
     // Assert the local variable initialization
     if(arg->getValueID()!=Value::UndefValueVal) {
         
-        if (options->dbgMsg()) {
-            std::cout << "[REMOVED CODE]:[Context:68]" << std::endl;
-        }
+
+        std::cout << "[REMOVED CODE]:[Context:68]" << std::endl;
+        
         
         /* ExprPtr argExpr = newVariable(arg);
          ExprPtr eqExpr = Expression::mkEq(localVar, argExpr);
