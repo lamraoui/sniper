@@ -13,17 +13,6 @@
 
 
 // =============================================================================
-// LocalVariables 
-// 
-// Constructor
-// 
-// =============================================================================
-LocalVariables::LocalVariables(Function *_mainFun) {
-    this->mainFun = _mainFun;
-}
-
-
-// =============================================================================
 // process
 //
 // =============================================================================
@@ -196,10 +185,8 @@ void LocalVariables::processPhi() {
 // 
 // =============================================================================
 std::string LocalVariables::getPtr(Instruction *i, int pos) {
-    
-    std::vector<varArg_t>::iterator it;
-    for(it = vars.begin(); it != vars.end(); ++it) {
-        varArg_t v = *it;
+    assert(i && "Expecting an instruction!");
+    for(varArg_t v : vars) {
         if (v.inst==i && v.pos==pos) {
             return v.name;
         } 
@@ -221,7 +208,8 @@ unsigned LocalVariables::getLine(std::string name) {
 // 
 // =============================================================================
 void LocalVariables::set(Instruction *i, LoadInst *load, int pos) {
-    
+    assert(i && "Expecting an instruction!");
+    assert(load && "Expecting a load instruction!");
     varArg_t v;
     v.inst = i;
     v.pos = pos;
@@ -235,14 +223,12 @@ void LocalVariables::set(Instruction *i, LoadInst *load, int pos) {
 // hasEnding
 //
 // =============================================================================
-bool LocalVariables::hasEnding(std::string const &fullString, std::string const &ending) {
+bool LocalVariables::hasEnding(std::string const &fullString,
+                               std::string const &ending) {
     if (fullString.length() >= ending.length()) {
-        return (0 == fullString.compare (fullString.length() - ending.length(), ending.length(), ending));
+        return (0 == fullString.compare (fullString.length() - ending.length(),
+                                         ending.length(),  ending));
     } else {
         return false;
     }
-}
-
-LocalVariables::~LocalVariables() {
-
 }

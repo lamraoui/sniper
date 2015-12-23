@@ -51,12 +51,13 @@ private:
     std::map<std::string, unsigned> ptr2line;
     
 public:
-    LocalVariables(Function *_mainFun);
-    void processLoadStore();
-    void processPhi();
+    LocalVariables(Function *_mainFun) : mainFun(_mainFun) { }
+    ~LocalVariables() { }
+   
+    void        processLoadStore();
+    void        processPhi();
     std::string getPtr(Instruction *i, int pos);
-    unsigned getLine(std::string name);
-    ~LocalVariables();
+    unsigned    getLine(std::string name);
     
 private:
     void set(Instruction *i, LoadInst *load, int pos);
