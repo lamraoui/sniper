@@ -111,6 +111,7 @@ ExprPtr Encoder::encode(BinaryOperator *bo) {
     }
     // (= r (op arg1 arg2))
     ExprPtr eqExpr = Expression::mkEq(rVar, opExpr);
+    eqExpr->setInstruction(bo);
     return eqExpr; // hard or soft
 }
 
@@ -139,6 +140,7 @@ ExprPtr Encoder::encode(SelectInst *select) {
     // result = (ITE cond THEN trueVal ELSE falseVal)
     ExprPtr selectExpr = Expression::mkIte(condVar, trueValVar, falseValVar);
     ExprPtr eqExpr = Expression::mkEq(resultVar, selectExpr);
+    eqExpr->setInstruction(select);
     return eqExpr; // hard or soft
 }  
 
@@ -157,6 +159,7 @@ ExprPtr Encoder::encode(PHINode *phi, BasicBlock *forBlock) {
         ExprPtr valExpr = ctx->newVariable(vTaken);
         ExprPtr phiExpr = ctx->newVariable(dyn_cast<Value>(phi));
         ExprPtr eqExpr = Expression::mkEq(phiExpr, valExpr);
+        eqExpr->setInstruction(phi);
         return eqExpr;
     }
     // TCAS
@@ -176,6 +179,7 @@ ExprPtr Encoder::encode(PHINode *phi, BasicBlock *forBlock) {
         }
         ExprPtr phiExpr = ctx->newVariable(dyn_cast<Value>(phi));
         ExprPtr eqExpr = Expression::mkEq(phiExpr, valExpr);
+        eqExpr->setInstruction(phi);
         return eqExpr; // hard
     }
     
@@ -200,6 +204,7 @@ ExprPtr Encoder::encode(PHINode *phi, BasicBlock *forBlock) {
     }
     // (= x (ITE ... ))
     ExprPtr eqExpr = Expression::mkEq(phiExpr, iteExpr);
+    eqExpr->setInstruction(phi);
     return eqExpr; //har
 }
 
@@ -289,6 +294,7 @@ ExprPtr Encoder::encode(BranchInst *br, LoopInfoPass *loops) {
             brExpr = Expression::mkAnd(e11, e22);
         }
     }
+    brExpr->setInstruction(br);
     return brExpr;
 }
 
@@ -321,13 +327,15 @@ ExprPtr Encoder::encode(SwitchInst *s) {
     // switch i32 0, label %dest [ ]
     if (numCase==0) {
         // (bb_defaultbb true)
-        return Expression::mkEq(defTransVar, trueVar);
+        ExprPtr eqExpr = Expression::mkEq(defTransVar, trueVar);
+        eqExpr->setInstruction(s);
+        return eqExpr;
     }
     ExprPtr falseVar = Expression::mkFalse();
     ExprPtr condVar  = ctx->getLocalVariable(s, cond, 0);
-    if(condVar==NULL)
+    if(condVar==NULL) {
         condVar = ctx->newVariable(cond);
-    
+    }
     // Create the case value variables and the transition variables
     std::vector<ExprPtr> caseVars;
     std::vector<ExprPtr> trueTransVars;
@@ -370,6 +378,7 @@ ExprPtr Encoder::encode(SwitchInst *s) {
         iteExpr = Expression::mkIte(condExpr, andExpr, lastValVar);
         lastValVar = iteExpr;
     }
+    iteExpr->setInstruction(s);
     return iteExpr; // hard or soft
 }
 
@@ -422,6 +431,7 @@ ExprPtr Encoder::encode(ICmpInst *icmp) {
     // Make the expression for the comparison (icmp)
     // (assert+ (= cond_var (op rhs_var lhs_var)) w)
     ExprPtr eqExpr = Expression::mkEq(cond_var, op_expr);
+    eqExpr->setInstruction(icmp);
     return eqExpr; // hard or soft
 }
 
@@ -462,6 +472,7 @@ ExprPtr Encoder::encode(SExtInst *sext) {
     else {
         assert("Unsupported type for SExt instruction!");
     }
+    expr->setInstruction(sext);
     return expr; //hard
 }
 
@@ -499,6 +510,7 @@ ExprPtr Encoder::encode(ZExtInst *zext) {
     else {
         assert("Unsupported type for ZExt instruction!");
     }
+    expr->setInstruction(zext);
     return expr; //hard
 }
    
@@ -554,6 +566,7 @@ ExprPtr Encoder::encode(CallInst *call, Formula *AS) {
             || functionName==SNIPER_ASSUME_RETVOID_FUN_NAME
             || functionName==ASSUME_FUN_NAME) {
             //ExprPtr and_expr = Expression::mkAnd(arg_bb, eqOne_expr);
+            eqOne_expr->setInstruction(call);
             return eqOne_expr; // hard
         }
         // Post-condition
@@ -576,6 +589,7 @@ ExprPtr Encoder::encode(CallInst *call, Formula *AS) {
         BasicBlock *bb = call->getParent();
         ExprPtr arg_bb = ctx->getCondVariable(bb); 
         ExprPtr notbb_expr = Expression::mkNot(arg_bb);
+        notbb_expr->setInstruction(call);
         return notbb_expr; // hard
     } 
     // Calls to llvm function (instrinsic)
@@ -590,6 +604,7 @@ ExprPtr Encoder::encode(CallInst *call, Formula *AS) {
         ExprPtr eqExpr = Expression::mkEq(callExpr, argExpr);
         // Assert as soft
         //ExprPtr e = new Expression(eqExpr, true, call);
+        eqExpr->setInstruction(call);
         return eqExpr; // hard
     } else {
         // Calls to other functions
@@ -678,6 +693,7 @@ ExprPtr Encoder::encode(StoreInst *store) {
     ExprPtr update_expr = 
     Expression::mkFunctionUpdate(mem_expr1, idx_expr, val_expr);
     ExprPtr eqExpr = Expression::mkEq(mem_expr2, update_expr);
+    eqExpr->setInstruction(store);
     return eqExpr; // soft
 }
 
@@ -721,6 +737,7 @@ ExprPtr Encoder::encode(LoadInst *load, Formula *AS) {
     ExprPtr appargExpr = ctx->getVariable(ptr);
     ExprPtr app_expr = Expression::mkApp(mem_expr, appargExpr); 
     ExprPtr eqExpr = Expression::mkEq(lhs_expr, app_expr);
+    eqExpr->setInstruction(load);
     return eqExpr; // hard or soft
 }
 
@@ -799,6 +816,7 @@ ExprPtr Encoder::encode(GetElementPtrInst *gep) {
     } else {
         assert("Chained pointers are not supported!");
     }
+    eqExpr->setInstruction(gep);
     return eqExpr; //hard
 }
 
@@ -816,6 +834,7 @@ ExprPtr Encoder::encode(ReturnInst *ret) {
     }
     if (!predTrans.empty()) {
         ExprPtr e = Expression::mkOr(predTrans);
+        e->setInstruction(ret);
         return e;
     } else {
         return NULL;
