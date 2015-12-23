@@ -98,6 +98,7 @@ AC_CONFIG_FILES([
 	unittests/Formula/Makefile
 	unittests/YicesSolver/Makefile
 	unittests/Combine/Makefile
+	unittests/Encoder/Makefile
 ])
 AC_OUTPUT
 
