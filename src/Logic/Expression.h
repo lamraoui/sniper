@@ -132,7 +132,7 @@ protected:
     static unsigned NbBoolVariables;
 protected:
     Expression()
-    : currentID(ID++), soft(false), valid(true), instruction(NULL), line(0) { }
+    : currentID(ID++), soft(true), valid(true), instruction(NULL), line(0) { }
     virtual ~Expression() { }
     
 public:
