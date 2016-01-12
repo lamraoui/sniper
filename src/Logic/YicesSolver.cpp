@@ -1,198 +1,12 @@
 /**
- * YicesSolver.cpp
+ * \file YicesSolver.cpp
  *
- * 
- *
- * @author : Si-Mohamed Lamraoui
- * @contact : simo@nii.ac.jp
- * @date : 2013/07/05
- * @copyright : NII 2013
+ * \author Si-Mohamed Lamraoui
+ * \date   5 July 2012
  */
 
 #include "YicesSolver.h"
 
-
-void YicesSolver::addToContext(ExprPtr e) {
-    assert(ctx && "Context is null!");
-    yices_expr expr = makeYicesExpression(e);
-    if (e->isHard()) {
-        // Hard assert
-        yices_assert(ctx, expr);
-    } else {
-        // Soft assert
-        assertion_id i = yices_assert_weighted(ctx, expr, 1);
-        expr2ids[e]    = i;
-        expr2yexpr[e]  = expr;
-    }
-}
-
-void YicesSolver::addToContext(Formula *f) {
-    assert(f && "Expecting a valid formula!");
-    std::vector<ExprPtr> E = f->getExprs();
-    for(ExprPtr e : E) {
-        addToContext(e);
-    }
-}
-
-int YicesSolver::maxSat() {
-    assert(ctx && "Context is null!");
-    // Solve the formula
-    int val = yices_max_sat(ctx);
-    // Save the model
-    model = yices_get_model(ctx);
-    return val;
-}
-int YicesSolver::check() {
-    assert(ctx && "Context is null!");
-    // Solve the formula
-    int val = yices_check(ctx);
-    // Save the model
-    model = yices_get_model(ctx);
-    return val;
-}
-void YicesSolver::push() { 
-    yices_push(ctx);
-}
-
-void YicesSolver::pop() {
-    yices_pop(ctx);
-}
-
-int YicesSolver::maxSat(Formula *f) {
-    assert(f && "Expecting a valid formula!");
-    assert(ctx && "Context is null!");
-    // Construct and assert the Yices expression
-    addToContext(f);
-    // Solve the formula
-    int val = yices_max_sat(ctx);
-    // Save the model
-    model = yices_get_model(ctx);
-    return val;
-}
-
-int YicesSolver::check(Formula *f) {
-    assert(f && "Expecting a valid formula!");
-    assert(ctx && "Context is null!");
-    // Construct and assert the Yices expression
-    addToContext(f);
-    // Solve the formula
-    int val = yices_check(ctx);
-    // Save the model
-    model = yices_get_model(ctx);
-    return val;
-}
-
-std::string YicesSolver::getModel() {
-    assert(model && "Model is empty!");
-    // Save the model into a string
-    std::stringstream buffer;
-    std::streambuf *old = std::cout.rdbuf(buffer.rdbuf());
-    yices_display_model(model); // printed into buffer
-    std::string model_str = buffer.str();
-    std::cout.rdbuf(old);
-    return model_str;
-}
-
-int YicesSolver::getValue(std::string name) { 
-    assert(model && "Model is empty!");
-    assert(ctx && "Context is null!");
-    yices_var_decl d = yices_get_var_decl_from_name(ctx, name.c_str());
-    assert(d!=0 && "yices_get_var_decl_from_name");
-    long value;
-    int error = yices_get_int_value(model, d, &value);
-    assert(error!=1 && "cannot extract value from model:\n" &&
-                        "v is not a proper declaration or not the" &&
-                        "declaration of a numerical variable\n" &&
-                        "v has no value assigned in model m (typically," &&
-                        " this means that v does not occur in the"
-                        " asserted constraints)\n" &&
-                        "v has a value that cannot be converted to long," &&
-                        " because it is rational or too big\n");
-    return value;
-}
-
-int YicesSolver::getValue(std::string name, bool &error) {
-    assert(ctx && "Context is null!");
-    if (model==NULL) {
-        error = true;
-        return 0;
-    }
-    yices_var_decl d = yices_get_var_decl_from_name(ctx, name.c_str());
-    if (d!=0) {
-        long value;
-        int e = yices_get_int_value(model, d, &value);
-        if (e==1) {
-            error = false;
-            return value;
-        }
-    }
-    error = true;
-    return 0;
-}
-
-int YicesSolver::getBoolValue(std::string name) {
-    assert(model && "Model is empty!");
-    assert(ctx && "Context is null!");
-    yices_var_decl d = 
-    yices_get_var_decl_from_name(ctx, name.c_str());
-    if (d!=0) { 
-        lbool val = yices_get_value(model, d);
-        return val;
-    } else {
-        std::cout << ">> " << name << std::endl;
-        std::cerr << "error: yices_get_var_decl_from_name\n";
-        return -3;
-    }
-}
-
-int YicesSolver::getValueOrZero(std::string name) {
-    assert(ctx && "Context is null!");
-    if (model==NULL) {
-        return 0;
-    }
-    yices_var_decl d = yices_get_var_decl_from_name(ctx, name.c_str());
-    if (d!=0) { 
-        long value;
-        int error = yices_get_int_value(model, d, &value);                 
-        if (error==1) {
-            return value;
-        }
-    }
-    return 0;
-}
-
-double YicesSolver::getCostAsDouble() {
-    assert(model && "Model is empty!");
-    return yices_get_cost_as_double(model);
-}
-
-std::vector<ExprPtr> YicesSolver::getUnsatExpressions() {
-    assert(model && "Model is empty!");
-    std::vector<ExprPtr> unsatExprs;
-    std::map<ExprPtr, assertion_id>::iterator it;
-    for(it = expr2ids.begin(); it != expr2ids.end(); it++) {
-        ExprPtr e = it->first;
-        assertion_id i = it->second;
-        if(!yices_get_assertion_value(model, i)) {
-            unsatExprs.push_back(e);
-        }
-    }
-    return unsatExprs;
-}
-
-std::vector<ExprPtr> YicesSolver::getSatExpressions() {
-    assert(model && "Model is empty!");
-    std::vector<ExprPtr> satExprs;
-    std::map<ExprPtr, assertion_id>::iterator it;
-    for(it = expr2ids.begin(); it != expr2ids.end(); it++) {
-        ExprPtr e = it->first;
-        assertion_id i = it->second;
-        if(yices_get_assertion_value(model, i)) {
-            satExprs.push_back(e);
-        }
-    }
-    return satExprs;
-}
 
 void YicesSolver::init() {
     
@@ -233,10 +47,198 @@ void YicesSolver::init() {
     yices_var_decl intdiv_decl = yices_get_var_decl_from_name(ctx, "div");
     this->intdiv_op = yices_mk_var_from_decl(ctx, intdiv_decl);
     yices_var_decl intmod_decl = yices_get_var_decl_from_name(ctx, "mod");
-    this->intmod_op = yices_mk_var_from_decl(ctx, intmod_decl);    
+    this->intmod_op = yices_mk_var_from_decl(ctx, intmod_decl);
     // Inform Yices that only the arithmetic theory is going to be used.
     // yices_set_arith_only (int flag);
     this->model = NULL;
+}
+
+void YicesSolver::addToContext(ExprPtr e) {
+    assert(ctx && "Context is null!");
+    yices_expr expr = makeYicesExpression(e);
+    if (e->isHard()) {
+        // Hard assert
+        yices_assert(ctx, expr);
+    } else {
+        // Soft assert
+        assertion_id i = yices_assert_weighted(ctx, expr, 1);
+        expr2ids[e]    = i;
+        expr2yexpr[e]  = expr;
+    }
+}
+
+void YicesSolver::addToContext(Formula *f) {
+    assert(f && "Expecting a valid formula!");
+    std::vector<ExprPtr> E = f->getExprs();
+    for(ExprPtr e : E) {
+        addToContext(e);
+    }
+}
+
+int YicesSolver::check() {
+    assert(ctx && "Context is null!");
+    // Solve the formula
+    int val = yices_check(ctx);
+    // Save the model
+    model = yices_get_model(ctx);
+    return val;
+}
+
+int YicesSolver::check(Formula *f) {
+    assert(f && "Expecting a valid formula!");
+    assert(ctx && "Context is null!");
+    // Construct and assert the Yices expression
+    addToContext(f);
+    // Solve the formula
+    int val = yices_check(ctx);
+    // Save the model
+    model = yices_get_model(ctx);
+    return val;
+}
+
+int YicesSolver::maxSat() {
+    assert(ctx && "Context is null!");
+    // Solve the formula
+    int val = yices_max_sat(ctx);
+    // Save the model
+    model = yices_get_model(ctx);
+    return val;
+}
+
+int YicesSolver::maxSat(Formula *f) {
+    assert(f && "Expecting a valid formula!");
+    assert(ctx && "Context is null!");
+    // Construct and assert the Yices expression
+    addToContext(f);
+    // Solve the formula
+    int val = yices_max_sat(ctx);
+    // Save the model
+    model = yices_get_model(ctx);
+    return val;
+}
+
+std::string YicesSolver::getModel() {
+    assert(model && "Model is empty!");
+    // Save the model into a string
+    std::stringstream buffer;
+    std::streambuf *old = std::cout.rdbuf(buffer.rdbuf());
+    yices_display_model(model); // printed into buffer
+    std::string model_str = buffer.str();
+    std::cout.rdbuf(old);
+    return model_str;
+}
+
+double YicesSolver::getCostAsDouble() {
+    assert(model && "Model is empty!");
+    return yices_get_cost_as_double(model);
+}
+
+int YicesSolver::getValue(std::string name) { 
+    assert(model && "Model is empty!");
+    assert(ctx && "Context is null!");
+    yices_var_decl d = yices_get_var_decl_from_name(ctx, name.c_str());
+    assert(d!=0 && "yices_get_var_decl_from_name");
+    long value;
+    int error = yices_get_int_value(model, d, &value);
+    assert(error!=1 && "cannot extract value from model:\n" &&
+                        "v is not a proper declaration or not the" &&
+                        "declaration of a numerical variable\n" &&
+                        "v has no value assigned in model m (typically," &&
+                        " this means that v does not occur in the"
+                        " asserted constraints)\n" &&
+                        "v has a value that cannot be converted to long," &&
+                        " because it is rational or too big\n");
+    return value;
+}
+
+int YicesSolver::getValue(std::string name, bool &error) {
+    assert(ctx && "Context is null!");
+    if (model==NULL) {
+        error = true;
+        return 0;
+    }
+    yices_var_decl d = yices_get_var_decl_from_name(ctx, name.c_str());
+    if (d!=0) {
+        long value;
+        int e = yices_get_int_value(model, d, &value);
+        if (e==1) {
+            error = false;
+            return value;
+        }
+    }
+    error = true;
+    return 0;
+}
+
+int YicesSolver::getValueOrZero(std::string name) {
+    assert(ctx && "Context is null!");
+    if (model==NULL) {
+        return 0;
+    }
+    yices_var_decl d = yices_get_var_decl_from_name(ctx, name.c_str());
+    if (d!=0) {
+        long value;
+        int error = yices_get_int_value(model, d, &value);
+        if (error==1) {
+            return value;
+        }
+    }
+    return 0;
+}
+
+int YicesSolver::getBoolValue(std::string name) {
+    assert(model && "Model is empty!");
+    assert(ctx && "Context is null!");
+    yices_var_decl d = 
+    yices_get_var_decl_from_name(ctx, name.c_str());
+    if (d!=0) { 
+        lbool val = yices_get_value(model, d);
+        return val;
+    } else {
+        std::cout << ">> " << name << std::endl;
+        std::cerr << "error: yices_get_var_decl_from_name\n";
+        return -3;
+    }
+}
+
+std::vector<ExprPtr> YicesSolver::getUnsatExpressions() {
+    assert(model && "Model is empty!");
+    std::vector<ExprPtr> unsatExprs;
+    std::map<ExprPtr, assertion_id>::iterator it;
+    for(it = expr2ids.begin(); it != expr2ids.end(); it++) {
+        ExprPtr e = it->first;
+        assertion_id i = it->second;
+        // Add e to unsatExprs if the assertion of the
+        // given i is not satisfied in model.
+        if(!yices_get_assertion_value(model, i)) {
+            unsatExprs.push_back(e);
+        }
+    }
+    return unsatExprs;
+}
+
+std::vector<ExprPtr> YicesSolver::getSatExpressions() {
+    assert(model && "Model is empty!");
+    std::vector<ExprPtr> satExprs;
+    std::map<ExprPtr, assertion_id>::iterator it;
+    for(it = expr2ids.begin(); it != expr2ids.end(); it++) {
+        ExprPtr e = it->first;
+        assertion_id i = it->second;
+        // Add e to unsatExprs if the assertion of the
+        // given i is satisfied in model.
+        if(yices_get_assertion_value(model, i)) {
+            satExprs.push_back(e);
+        }
+    }
+    return satExprs;
+}
+
+void YicesSolver::push() {
+    yices_push(ctx);
+}
+
+void YicesSolver::pop() {
+    yices_pop(ctx);
 }
 
 void YicesSolver::clean() {

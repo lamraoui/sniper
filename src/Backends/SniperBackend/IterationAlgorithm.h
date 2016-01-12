@@ -24,7 +24,6 @@
 #include "Profile/ProgramTrace.h"
 #include "Profile/ProgramProfile.h"
 #include "Logic/GenPath.h"
-#include "Logic/IWPMaxSATSolver.h"
 #include "Logic/Formula.h"
 #include "Logic/YicesSolver.h"
 #include "Logic/Combine.h"
@@ -38,12 +37,12 @@ class IterationAlgorithm {
     
 private:
     Function *targetFun;
-    IWPMaxSATSolver *solver; 
+    YicesSolver *solver;
     bool hasArgv;
     Options *options;
     
 public:
-    IterationAlgorithm(Function *_targetFun, IWPMaxSATSolver *_solver,
+    IterationAlgorithm(Function *_targetFun, YicesSolver *_solver,
                        bool _hasArgv, Options *_options) :
                        targetFun(_targetFun), solver(_solver),
                        hasArgv(_hasArgv), options(_options) { }

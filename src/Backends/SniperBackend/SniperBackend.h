@@ -25,7 +25,6 @@
 #include "Encoder/Context.h"
 #include "Logic/Combine.h"
 #include "Logic/BMC.h"
-#include "Logic/ISolver.h"
 #include "Logic/YicesSolver.h"
 #include "ExecutionEngine/ConcolicProfiler.h"
 #include "ExecutionEngine/IRRunner.h"

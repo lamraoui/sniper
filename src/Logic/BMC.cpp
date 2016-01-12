@@ -12,7 +12,7 @@
 #include "BMC.h"
 
 
-BMC::BMC(Function *_targetFun, ISolver *_solver, Formula *_TF, Formula *_AS,
+BMC::BMC(Function *_targetFun, YicesSolver *_solver, Formula *_TF, Formula *_AS,
          LoopInfoPass *_loopInfo, Options *_options, bool _hasArgv) 
 : targetFun(_targetFun), solver(_solver), TF(_TF), AS(_AS),
 loopInfo(_loopInfo), options(_options), hasArgv(_hasArgv) { 

@@ -92,7 +92,7 @@ void SniperBackend::run() {
     }
     
     // Create a partial weighted MaxSMT solver
-    IWPMaxSATSolver *solver = new YicesSolver();
+    YicesSolver *solver = new YicesSolver();
     
     // Generate program executions
     if (options->methodConcolic()) {
