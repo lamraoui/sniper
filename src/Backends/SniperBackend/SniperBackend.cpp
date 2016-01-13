@@ -102,18 +102,6 @@ void SniperBackend::run() {
     else {
         BMC *bmc = new BMC(targetFun, solver, TF, AS, LIP, options, hasArgv);
         bool ok = true;
-        if (options->methodPathExploration()) {
-            if (LIP->hasLoops()) {
-                std::cout << "exit: Cannot use Path Exploration on programs with loops.\n";
-                exit(1);
-            }
-            bmc->runBMCWithPathExploration(PP);
-            if (!PP->hasFailingProgramTraces()) {
-                std::cout << "BMC with Path Exloration failed.";
-                std::cout << " Running classic BMC instead...\n";
-                ok = false;
-            }
-        }
         if (options->methodBMC() || !ok) {
             // Compute a single failing program execution
             bmc->runClassicBMC(PP);

@@ -17,7 +17,6 @@
 #include "Options.h"
 #include "Frontend/LoopInfoPass.h"
 #include "Profile/ProgramProfile.h"
-#include "Logic/GenPath.h"
 #include "Logic/Formula.h"
 #include "Logic/YicesSolver.h"
 
@@ -40,7 +39,6 @@ public:
     BMC(Function *_targetFun, YicesSolver *_solver, Formula *_TF, Formula *_AS,
         LoopInfoPass *_loopInfo, Options *_options, bool hasArgv);
     ~BMC() { }
-    void runBMCWithPathExploration(ProgramProfile *profile);
     void runClassicBMC(ProgramProfile *profile);
     
 };

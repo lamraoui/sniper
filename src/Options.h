@@ -46,7 +46,6 @@ public:
     bool        lineGranularityLevel();
     bool        blockGranularityLevel();
     bool        methodBMC();
-    bool        methodPathExploration();
     bool        methodConcolic();
     unsigned    getUnrollCount();
     unsigned    getMaxDepth();

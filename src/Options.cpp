@@ -75,7 +75,6 @@ enum Method {
 cl::opt<Method> TracesGenerationMethod(cl::desc("Choose a traces generation method:"),
 cl::values(
 clEnumVal(bmc , "Bounded Model Checking, one counterexample"),
-clEnumVal(pe,   "Path exploration, failing/successful traces (slow)"),
 clEnumVal(ce,   "Concolic Execution, failing/successful traces (fast)"),
 clEnumValEnd));
 
@@ -204,10 +203,6 @@ bool Options::blockGranularityLevel() {
 
 bool Options::methodBMC() {
     return (TracesGenerationMethod==bmc);
-}
-
-bool Options::methodPathExploration() {
-    return (TracesGenerationMethod==pe);
 }
 
 bool Options::methodConcolic() {

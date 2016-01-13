@@ -23,7 +23,6 @@
 #include "Utils/HittingSet.h"
 #include "Profile/ProgramTrace.h"
 #include "Profile/ProgramProfile.h"
-#include "Logic/GenPath.h"
 #include "Logic/Formula.h"
 #include "Logic/YicesSolver.h"
 #include "Logic/Combine.h"
