@@ -12,27 +12,20 @@
 #include "BMC.h"
 
 
-BMC::BMC(Function *_targetFun, YicesSolver *_solver, Formula *_TF, Formula *_AS,
-         LoopInfoPass *_loopInfo, Options *_options, bool _hasArgv) 
-: targetFun(_targetFun), solver(_solver), TF(_TF), AS(_AS),
-loopInfo(_loopInfo), options(_options), hasArgv(_hasArgv) { 
-
-}
-
-
 // =============================================================================
-// runClassicBMC
+// run
 //
 // Compute a counterexample using BMC.
 // F = pre^TF^notPost
 //
 // =============================================================================
-void BMC::runClassicBMC(ProgramProfile *profile) {
+void BMC::run(ProgramProfile *profile, Function *targetFun,
+              YicesSolver *solver, Formula *TF, Formula *AS,
+              LoopInfoPass *loopInfo, Options *options, bool hasArgv) {
     
     // Add the trace formula to the context
-    YicesSolver *yices = (YicesSolver*) solver;
-    yices->init();
-    yices->addToContext(TF);
+    solver->init();
+    solver->addToContext(TF);
     
     // TODO: add all pre-condition (not negated)
     
@@ -40,7 +33,7 @@ void BMC::runClassicBMC(ProgramProfile *profile) {
     for (ExprPtr e : AS->getExprs()) {
         ExprPtr ne = Expression::mkNot(e);
         ne->setHard();
-        yices->addToContext(ne);
+        solver->addToContext(ne);
     }
     
     // Compute BMC
@@ -49,7 +42,7 @@ void BMC::runClassicBMC(ProgramProfile *profile) {
         std::cout << "Starting Bounded Model Checking...\n\n";
     }
         
-    switch(yices->check()) {
+    switch(solver->check()) {
         // Negated claim is satisfiable, i.e., does not hold
         case l_true: {
         } break;  
@@ -124,5 +117,5 @@ void BMC::runClassicBMC(ProgramProfile *profile) {
     }
     profile->addProgramTrace(E);
     
-    yices->clean();
+    solver->clean();
 }

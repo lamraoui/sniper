@@ -11,9 +11,28 @@
 
 
 #include <stdio.h>
+#include <iostream>
+#include <fstream>
+#include <sstream>
+
+#include "yices_c.h"
 
 #include "Logic/YicesSolver.h"
+#include "Logic/Expression.h"
 #include "gtest/gtest.h"
+
+std::string getYicesExprAsString(yices_expr e) {
+    if (e==NULL) {
+        return "";
+    }
+    // Dump the expression into a string
+    std::stringstream buffer;
+    std::streambuf *old = std::cout.rdbuf(buffer.rdbuf());
+    yices_pp_expr(e); // printed into buffer
+    std::string e_str = buffer.str();
+    std::cout.rdbuf(old);
+    return e_str;
+}
 
 TEST(YicesSolverTest, YicesSolverCheck) {
     
@@ -86,6 +105,19 @@ TEST(YicesSolverTest, YicesSolverMaxsat) {
     solver->clean();
     delete solver;
 }
+
+// Testing makeYicesExpression()
+/*TEST(YicesSolverTest, YicesSolverMkExpr) {
+    
+    // Create a solver
+    YicesSolver *solver = new YicesSolver();
+    solver->init();
+    
+    // True
+    ExprPtr e1     = Expression::mkTrue();
+    yices_expr ye1 = solver->makeYicesExpression(e1);
+    
+}*/
 
 GTEST_API_ int main(int argc, char **argv) {
     printf("Running main() from gtest_main.cc\n");

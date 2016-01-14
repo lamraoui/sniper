@@ -100,11 +100,10 @@ void SniperBackend::run() {
         //std::vector<Expression*> PC = formula->getPostConditions();
     }
     else {
-        BMC *bmc = new BMC(targetFun, solver, TF, AS, LIP, options, hasArgv);
         bool ok = true;
         if (options->methodBMC() || !ok) {
             // Compute a single failing program execution
-            bmc->runClassicBMC(PP);
+            BMC::run(PP, targetFun, solver, TF, AS, LIP, options, hasArgv);
             if (PP->hasFailingProgramTraces()) {
                 if(options->verbose()) {
                     std::cout << "  Failing execution found: ";

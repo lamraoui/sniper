@@ -1,12 +1,8 @@
 /**
- * Formula.cpp
+ * \file Formula.cpp
  *
- * 
- *
- * @author : Si-Mohamed Lamraoui
- * @contact : simo@nii.ac.jp
- * @date : 2013/07/05
- * @copyright : NII 2013
+ * \author Si-Mohamed Lamraoui
+ * \date   12 January 2015
  */
 
 #include "Formula.h"

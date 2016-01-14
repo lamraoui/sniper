@@ -25,21 +25,11 @@ using namespace llvm;
 
 //============================================================================
 class BMC {
- 
-private:
-    Function *targetFun;
-    YicesSolver *solver;
-    Formula *TF;
-    Formula *AS;
-    LoopInfoPass *loopInfo;
-    Options *options;
-    bool hasArgv;
 
 public:
-    BMC(Function *_targetFun, YicesSolver *_solver, Formula *_TF, Formula *_AS,
-        LoopInfoPass *_loopInfo, Options *_options, bool hasArgv);
-    ~BMC() { }
-    void runClassicBMC(ProgramProfile *profile);
+    static void run(ProgramProfile *profile, Function *targetFun,
+                    YicesSolver *solver, Formula *TF, Formula *AS,
+                    LoopInfoPass *loopInfo, Options *options, bool hasArgv);
     
 };
 //============================================================================

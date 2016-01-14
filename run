@@ -8,7 +8,7 @@ then
   exit 0
 fi
 
-clang $2 -S -emit-llvm -O0 -gline-tables-only -o $2.bc 
+clang-mp-3.3 $2 -S -emit-llvm -O0 -gline-tables-only -o $2.bc 
 echo "Bitecode generated"
 
 # Bytecode file exists
@@ -18,12 +18,12 @@ then
 	"1")
     	# Concolic execution with 
     	# Full Flow-sensitive Trace Formula (FFTF)
-		time ./src/sniper -dbg-msg -v -inst -ce -function $1 -cfile $2 $2.bc
+		time ./src/sniper -inst -ce -function $1 -cfile $2 $2.bc
    		;;
 	"2")
 		# Concolic execution with 
 		# Hardened Flow-sensitive Trace Formula (HFTF)
-		time ./src/sniper -dbg-msg -v -inst -ce -htf -function $1 -cfile $2 $2.bc 
+		time ./src/sniper -inst -ce -htf -function $1 -cfile $2 $2.bc 
     	;;
 	"3")
     	# BMC
