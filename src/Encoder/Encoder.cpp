@@ -43,7 +43,7 @@ ExprPtr Encoder::encode(BinaryOperator *bo) {
     if(opCode==Instruction::Mul || opCode==Instruction::FMul ||
        opCode==Instruction::UDiv || opCode==Instruction::SDiv ||
        opCode==Instruction::FDiv) {
-        assert((isa<ConstantInt>(arg1) && isa<ConstantInt>(arg2)) &&
+        assert((isa<ConstantInt>(arg1) || isa<ConstantInt>(arg2)) &&
                "Non-linear arithmetic not supported!");
     }
     // Declare the virtual variables
