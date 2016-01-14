@@ -1,12 +1,8 @@
 /**
- * BMC.cpp
+ * \file BMC.cpp
  *
- * 
- *
- * @author : Si-Mohamed Lamraoui
- * @contact : simo@nii.ac.jp
- * @date : 2013/03/29
- * @copyright : NII 2013
+ * \author Si-Mohamed Lamraoui
+ * \date   12 January 2015
  */
 
 #include "BMC.h"
