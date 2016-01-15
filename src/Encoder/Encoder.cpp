@@ -18,16 +18,6 @@
 #include "Encoder.h"
 
 
-const StringRef Encoder::SNIPER_FUN_PREFIX      = "sniper_";
-const StringRef Encoder::SNIPER_ASSERT_RETINT_FUN_NAME = "sniper_i_assert";
-const StringRef Encoder::SNIPER_ASSERT_RETVOID_FUN_NAME = "sniper_v_assert";
-const StringRef Encoder::SNIPER_ASSUME_RETINT_FUN_NAME = "sniper_i_assume";
-const StringRef Encoder::SNIPER_ASSUME_RETVOID_FUN_NAME = "sniper_v_assume";
-const StringRef Encoder::ASSERT_FUN_NAME        = "assert";
-const StringRef Encoder::ASSUME_FUN_NAME        = "assume";
-const StringRef Encoder::LOOP_ASSERT_FUN_NAME   = "assert_loop";
-
-
 // =============================================================================
 // encode - BinaryOperator
 // 
@@ -531,61 +521,31 @@ ExprPtr Encoder::encode(CallInst *call, Formula *AS) {
         assert(F && "Unresolvable indirect function call!");
         functionName = F->getName();
     }
-    // Assumes/Asserts
-    if(functionName==SNIPER_ASSERT_RETINT_FUN_NAME
-       || functionName==SNIPER_ASSERT_RETVOID_FUN_NAME
-       || functionName==SNIPER_ASSUME_RETINT_FUN_NAME
-       || functionName==SNIPER_ASSUME_RETVOID_FUN_NAME
-       || functionName==ASSERT_FUN_NAME || functionName==ASSUME_FUN_NAME) {
-        Value *argOp;
-        if (functionName==SNIPER_ASSERT_RETINT_FUN_NAME
-            || functionName==SNIPER_ASSERT_RETVOID_FUN_NAME) {
-             argOp = call->getArgOperand(1);
-        } else {
-             argOp = call->getArgOperand(0);
-        }
-        ExprPtr arg_var = NULL;
-        if (ZExtInst *zext = dyn_cast<ZExtInst>(argOp)) {
-            arg_var = ctx->newVariable(zext);
-        } else if (isa<PHINode>(argOp)) {
-            arg_var = ctx->newVariable(argOp);
-        } else {
-            assert("Cannot process assert call!");
-        }   
-        BasicBlock *bb = call->getParent();
-        ExprPtr arg_bb = ctx->getCondVariable(bb); 
-        
-        // PRE/POST: (and BB (= tmp 1))  notPOST: (and BB (= tmp 0))
-        ExprPtr one_expr = Expression::mkSInt32Num(1);
-        ExprPtr zero_expr = Expression::mkSInt32Num(0);
-        ExprPtr eqOne_expr = Expression::mkEq(arg_var, one_expr);
-        ExprPtr eqZero_expr = Expression::mkEq(arg_var, zero_expr);
-        
-        // Pre-condition
-        if (functionName==SNIPER_ASSUME_RETINT_FUN_NAME
-            || functionName==SNIPER_ASSUME_RETVOID_FUN_NAME
-            || functionName==ASSUME_FUN_NAME) {
-            //ExprPtr and_expr = Expression::mkAnd(arg_bb, eqOne_expr);
-            eqOne_expr->setInstruction(call);
-            return eqOne_expr; // hard
-        }
-        // Post-condition
-        else if(functionName==SNIPER_ASSERT_RETINT_FUN_NAME
-                || functionName==SNIPER_ASSERT_RETVOID_FUN_NAME
-                || functionName==ASSERT_FUN_NAME) {
-            //ExprPtr and_expr1 = Expression::mkAnd(arg_bb, eqOne_expr);
-            AS->add(eqOne_expr); // Post-condition
-            return NULL;
-        } else {
-            assert("Cannot process assert call!");
-        }
-    } 
+    // Assert - Post-condition
+    if(functionName==Frontend::SNIPER_ASSERT_FUN_NAME ||
+       functionName=="sniper_reportAssert") {
+        unsigned i = (functionName==Frontend::SNIPER_ASSERT_FUN_NAME?0:1);
+        Value *argOp    = call->getArgOperand(i);
+        ExprPtr argExpr = ctx->newVariable(argOp);
+        AS->add(argExpr);
+        return NULL;
+    }
+    // Assume - Pre-condition
+    else if(functionName==Frontend::SNIPER_ASSUME_FUN_NAME ||
+            functionName=="sniper_reportAssume") {
+        unsigned i = (functionName==Frontend::SNIPER_ASSUME_FUN_NAME?0:1);
+        Value *argOp    = call->getArgOperand(i);
+        ExprPtr argExpr = ctx->newVariable(argOp);
+        argExpr->setInstruction(call);
+        return argExpr; // hard
+    }
     // Concolic profiling functions
-    else if (functionName.startswith(SNIPER_FUN_PREFIX)) {
+    else if (functionName.startswith(Frontend::SNIPER_FUN_PREFIX)) {
             return NULL;
     }
     // Special assert for loops
-    else if(call->getNumArgOperands()==1 && functionName==LOOP_ASSERT_FUN_NAME) {
+    else if(call->getNumArgOperands()==1 &&
+            functionName==Frontend::SNIPER_LOOP_ASSERT_FUN_NAME) {
         BasicBlock *bb = call->getParent();
         ExprPtr arg_bb = ctx->getCondVariable(bb); 
         ExprPtr notbb_expr = Expression::mkNot(arg_bb);

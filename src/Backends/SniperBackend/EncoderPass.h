@@ -25,6 +25,7 @@
 #include "llvm/IR/Instructions.h"
 
 #include "Options.h"
+#include "Frontend/Frontend.h"
 #include "Frontend/LoopInfoPass.h"
 #include "Profile/ProgramProfile.h"
 #include "Encoder/Context.h"

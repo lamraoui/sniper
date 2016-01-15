@@ -11,6 +11,11 @@
 
 #include "Frontend.h"
 
+const StringRef Frontend::SNIPER_FUN_PREFIX           = "sniper_";
+const StringRef Frontend::SNIPER_ASSERT_FUN_NAME      = "sniper_assert";
+const StringRef Frontend::SNIPER_ASSUME_FUN_NAME      = "sniper_assume";
+const StringRef Frontend::SNIPER_LOOP_ASSERT_FUN_NAME = "sniper_assert_loop";
+
 
 bool Frontend::run() {
 
@@ -18,6 +23,7 @@ bool Frontend::run() {
     if (options->printDuration()) {
         timer.start();
     }
+    
     // Set all functions with the AlwaysInline attribute
     // and inline all calls
     DataLayout  *DL = new DataLayout(llvmMod);

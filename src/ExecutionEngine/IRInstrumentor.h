@@ -14,6 +14,7 @@
 #define _IRINSTRUMENTOR_H
 
 #include <iostream>
+#include <stdbool.h>
 
 #include "llvm/IR/Instructions.h"
 #include "llvm/ExecutionEngine/ExecutionEngine.h"
@@ -31,6 +32,7 @@
 #include "llvm/Transforms/Utils/Cloning.h"
 #include "llvm/Transforms/Utils/BasicBlockUtils.h"
 
+#include "Frontend/Frontend.h"
 #include "Executor.h"
 
 using namespace llvm;
@@ -51,10 +53,8 @@ private:
     Function *ExecInst3i1Fun;
     Function *ExecInst1i1and2i32Fun;
     Function *ReportEndFun;
-    Function *ReportAssertRetIntFun;
-    Function *ReportAssertRetVoidFun;
-    Function *ReportAssumeRetIntFun;
-    Function *ReportAssumeRetVoidFun;
+    Function *ReportAssertFun;
+    Function *ReportAssumeFun;
     Function *PushArgsFun;
     Function *PopArgsFun;
 

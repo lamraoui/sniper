@@ -307,13 +307,18 @@ void EncoderPass::initAssertCalls() {
                     calledFunName = F->getName();
                 }
             }
-            if (calledFunName==Encoder::SNIPER_ASSERT_RETINT_FUN_NAME
-                || calledFunName==Encoder::SNIPER_ASSERT_RETVOID_FUN_NAME
-                || calledFunName==Encoder::SNIPER_ASSUME_RETINT_FUN_NAME
-                || calledFunName==Encoder::SNIPER_ASSUME_RETVOID_FUN_NAME
-                || calledFunName==Encoder::ASSERT_FUN_NAME
-                || calledFunName==Encoder::ASSUME_FUN_NAME) {
+            if (calledFunName==Frontend::SNIPER_ASSERT_FUN_NAME ||
+                calledFunName=="sniper_reportAssert") {
                 hasAsserts = true;
+                if (MDNode *N = I.getMetadata("dbg")) {
+                    DILocation Loc(N);
+                    unsigned line = Loc.getLineNumber();
+                    ctx->setAssertCallLine(line);
+                }
+            }
+            // TODO: put assume line numbers in a differente vector
+            else if (calledFunName==Frontend::SNIPER_ASSUME_FUN_NAME ||
+                     calledFunName=="sniper_reportAssume") {
                 if (MDNode *N = I.getMetadata("dbg")) {
                     DILocation Loc(N);
                     unsigned line = Loc.getLineNumber();

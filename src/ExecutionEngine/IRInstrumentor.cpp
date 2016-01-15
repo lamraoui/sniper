@@ -96,24 +96,12 @@ void sniper_reportEnd() {
     Executor::ReportEnd();
 }
 
-int sniper_i_assert(intptr_t *v, int r) {
-    Value *val = (Value*) v;
-    Executor::ReportAssert(val, r);
-    return 0;
-}
-
-void sniper_v_assert(intptr_t *v, int r) {
+void sniper_reportAssert(intptr_t *v, bool r) {
     Value *val = (Value*) v;
     Executor::ReportAssert(val, r);
 }
 
-int sniper_i_assume(intptr_t *v, int r) {
-    Value *val = (Value*) v;
-    Executor::ReportAssume(val, r);
-    return 0;
-}
-
-void sniper_v_assume(intptr_t *v, int r) {
+void sniper_reportAssume(intptr_t *v, bool r) {
     Value *val = (Value*) v;
     Executor::ReportAssume(val, r);
 }
@@ -194,25 +182,16 @@ IRInstrumentor::IRInstrumentor(Module *_llvmMod, ExecutionEngine *_EE)
     ReportEndFun = 
     cast<Function>(llvmMod->getOrInsertFunction("sniper_reportEnd", voidTy, NULL));
     EE->addGlobalMapping(ReportEndFun, (void *)sniper_reportEnd); 
-    // Register the sniper_assert function
-    ReportAssertRetIntFun =
-    cast<Function>(llvmMod->getOrInsertFunction("sniper_i_assert",
-                                                int32Ty, int64Ty, int32Ty, NULL));
-    EE->addGlobalMapping(ReportAssertRetIntFun, (void *)sniper_i_assert);
-    ReportAssertRetVoidFun =
-    cast<Function>(llvmMod->getOrInsertFunction("sniper_v_assert",
-                                                voidTy, int64Ty, int32Ty, NULL));
-    EE->addGlobalMapping(ReportAssertRetVoidFun, (void *)sniper_v_assert);
-    
-    // Register the sniper_assume function
-    ReportAssumeRetIntFun =
-    cast<Function>(llvmMod->getOrInsertFunction("sniper_i_assume",
-                                                int32Ty, int64Ty, int32Ty, NULL));
-    EE->addGlobalMapping(ReportAssumeRetIntFun, (void *)sniper_i_assume);
-    ReportAssumeRetVoidFun =
-    cast<Function>(llvmMod->getOrInsertFunction("sniper_v_assume",
-                                                voidTy, int64Ty, int32Ty, NULL));
-    EE->addGlobalMapping(ReportAssumeRetVoidFun, (void *)sniper_v_assume);
+    // Register the sniper_reportAssert function
+    ReportAssertFun =
+    cast<Function>(llvmMod->getOrInsertFunction("sniper_reportAssert",
+                                                voidTy, int64Ty, int1Ty, NULL));
+    EE->addGlobalMapping(ReportAssertFun, (void *)sniper_reportAssert);
+    // Register the sniper_reportAssume function
+    ReportAssumeFun =
+    cast<Function>(llvmMod->getOrInsertFunction("sniper_reportAssume",
+                                                voidTy, int64Ty, int1Ty, NULL));
+    EE->addGlobalMapping(ReportAssumeFun, (void *)sniper_reportAssume);
     // Register the sniper_pushArgs function
     PushArgsFun = 
     cast<Function>(llvmMod->getOrInsertFunction("sniper_pushArgs", voidTy,
@@ -729,26 +708,23 @@ void IRInstrumentor::replaceAssertAssumeExitCall(Function *targetFun) {
         Instruction &i = *iit;
         if (CallInst *c = dyn_cast<CallInst>(&i)) {
             Function *fun = c->getCalledFunction();
-            if (fun && fun->getName()=="assume") {
-                if (c->getNumArgOperands()!=1) {
-                    std::cout << "warning: too many arguments in assume function\n";
-                } else {
-                    assumeCalls.push_back(c);
-                }
+            if (!fun) {
+                continue;
             }
-            else if (fun && (fun->getName()=="sassert" || fun->getName()=="assert")) {
-                if (c->getNumArgOperands()!=1) {
-                    std::cout << "warning: too many arguments in assert function\n";
-                } else {
-                    assertCalls.push_back(c);
-                }
+            StringRef name = fun->getName();
+            if (name==Frontend::SNIPER_ASSUME_FUN_NAME) {
+                assumeCalls.push_back(c);
+            }
+            else if (name==Frontend::SNIPER_ASSERT_FUN_NAME) {
+                assertCalls.push_back(c);
             } 
-            else if (fun && fun->getName()=="exit") {
+            else if (name=="exit") {
                 exitCalls.push_back(c);
             }
         } 
     }
-    // Replace calls to assume (call assume() -> call sniper_assume() )
+    // Replace calls to assume
+    // (call sniper_assume(bool) -> call sniper_reportAssume(intptr,bool) )
     IRBuilder<> IRB(llvmMod->getContext());
     std::vector<CallInst*>::iterator it1;
     for (it1=assumeCalls.begin(); it1!=assumeCalls.end(); it1++) {
@@ -774,18 +750,14 @@ void IRInstrumentor::replaceAssertAssumeExitCall(Function *targetFun) {
             dyn_cast<Function>(c->getCalledValue()->stripPointerCasts());
             assert(calledFun && "Unresolvable indirect function call!");
         }
-        CallInst *newCall = NULL;
-        if (calledFun->getReturnType()->isVoidTy()) {
-            newCall = CallInst::Create(ReportAssumeRetVoidFun, args);
-        } else {
-            newCall = CallInst::Create(ReportAssumeRetIntFun, args);
-        }
+        CallInst *newCall = CallInst::Create(ReportAssumeFun, args);
         // Set debugging metadata
         const DebugLoc dl = c->getDebugLoc();
         newCall->setDebugLoc(dl);
         ReplaceInstWithInst(c->getParent()->getInstList(), ii, newCall);
     }
-    // Replace calls to assert (call assert() -> call sniper_assert() )
+    // Replace calls to assert
+    // (call sniper_assert() -> call sniper_reportAssert() )
     std::vector<CallInst*>::iterator it2;
     for (it2=assertCalls.begin(); it2!=assertCalls.end(); it2++) {
         CallInst *c = *it2;
@@ -810,12 +782,7 @@ void IRInstrumentor::replaceAssertAssumeExitCall(Function *targetFun) {
             dyn_cast<Function>(c->getCalledValue()->stripPointerCasts());
             assert(calledFun && "Unresolvable indirect function call!");
         }
-        CallInst *newCall = NULL;
-        if (calledFun->getReturnType()->isVoidTy()) {
-           newCall = CallInst::Create(ReportAssertRetVoidFun, args);
-        } else {
-           newCall = CallInst::Create(ReportAssertRetIntFun, args);
-        }
+        CallInst *newCall = CallInst::Create(ReportAssertFun, args);
         // Set debugging metadata
         const DebugLoc dl = c->getDebugLoc();
         newCall->setDebugLoc(dl);

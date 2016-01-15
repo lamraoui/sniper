@@ -39,6 +39,12 @@ using namespace llvm;
 
 //============================================================================
 class Frontend {
+
+public:
+    static const StringRef SNIPER_FUN_PREFIX;
+    static const StringRef SNIPER_ASSERT_FUN_NAME;
+    static const StringRef SNIPER_ASSUME_FUN_NAME;
+    static const StringRef SNIPER_LOOP_ASSERT_FUN_NAME;
     
 private:
     Module          *llvmMod;
@@ -62,6 +68,7 @@ private:
     bool simplifyFunctionSignature(Function *targetFun);
     void checkFunctionSignature(Function *targetFun);
     void processFunctionReturns(Function *f);
+    void defineIntrinsicFunctions();
 
 };
 //============================================================================

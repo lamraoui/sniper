@@ -41,6 +41,7 @@
 #include "Options.h"
 #include "Logic/Expression.h"
 #include "Logic/Formula.h"
+#include "Frontend/Frontend.h"
 #include "Frontend/LocalVariables.h"
 #include "Frontend/LoopInfoPass.h"
 #include "Profile/ProgramProfile.h"
@@ -52,19 +53,8 @@ using namespace llvm;
 //============================================================================
 class Encoder {
 
-public:
-    static const StringRef SNIPER_FUN_PREFIX;
-    static const StringRef SNIPER_ASSERT_RETINT_FUN_NAME;
-    static const StringRef SNIPER_ASSERT_RETVOID_FUN_NAME;
-    static const StringRef SNIPER_ASSUME_RETINT_FUN_NAME;
-    static const StringRef SNIPER_ASSUME_RETVOID_FUN_NAME;
-    static const StringRef ASSERT_FUN_NAME;
-    static const StringRef ASSUME_FUN_NAME;
-    static const StringRef LOOP_ASSERT_FUN_NAME;
-    
 private:
     Context *ctx;
-    
     
 public:
     Encoder(Context *_ctx) : ctx(_ctx)  { }
