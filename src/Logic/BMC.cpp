@@ -15,18 +15,21 @@
 // F = pre^TF^notPost
 //
 // =============================================================================
-void BMC::run(ProgramProfile *profile, Function *targetFun,
-              YicesSolver *solver, Formula *TF, Formula *AS,
+void BMC::run(ProgramProfile *profile, Function *targetFun, YicesSolver *solver,
+              Formula *TF, Formula *preCond, Formula *postCond,
               LoopInfoPass *loopInfo, Options *options, bool hasArgv) {
     
     // Add the trace formula to the context
     solver->init();
     solver->addToContext(TF);
     
-    // TODO: add all pre-condition (not negated)
-    
+    // Add all pre-condition (not negated)
+    for (ExprPtr e : preCond->getExprs()) {
+        e->setHard();
+        solver->addToContext(e);
+    }
     // Add all the not(post-condition) to the context
-    for (ExprPtr e : AS->getExprs()) {
+    for (ExprPtr e : postCond->getExprs()) {
         ExprPtr ne = Expression::mkNot(e);
         ne->setHard();
         solver->addToContext(ne);

@@ -83,7 +83,8 @@ void SniperBackend::run() {
     Context     *C  = new Context(LV);
     EncoderPass *EP = new EncoderPass(targetFun, C, LIP, PP, options);
     Formula     *TF = EP->makeTraceFormula();
-    Formula     *AS = EP->getASFormula();
+    Formula     *preCond  = EP->getPreCondition();
+    Formula     *postCond = EP->getPostCondition();
     delete EP;
     delete C;
     
@@ -103,7 +104,8 @@ void SniperBackend::run() {
         bool ok = true;
         if (options->methodBMC() || !ok) {
             // Compute a single failing program execution
-            BMC::run(PP, targetFun, solver, TF, AS, LIP, options, hasArgv);
+            BMC::run(PP, targetFun, solver, TF, preCond, postCond,
+                     LIP, options, hasArgv);
             if (PP->hasFailingProgramTraces()) {
                 if(options->verbose()) {
                     std::cout << "  Failing execution found: ";
@@ -120,5 +122,5 @@ void SniperBackend::run() {
     IterationAlgorithm *IA =
     new IterationAlgorithm(targetFun, solver, hasArgv, options);
     Combine::Method CM = (Combine::Method) options->getCombineMethod();
-    IA->run(TF, AS, PP, CM);
+    IA->run(TF, preCond, postCond, PP, CM);
 }

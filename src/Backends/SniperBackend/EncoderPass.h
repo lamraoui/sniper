@@ -44,7 +44,8 @@ private:
     LoopInfoPass *loops;
     ProgramProfile * profile;
     Options *options;
-    Formula *AS;
+    Formula *preCond;
+    Formula *postCond;
 
 public:
     EncoderPass(Function *_targetFun, Context *_ctx, LoopInfoPass *_loops,
@@ -52,15 +53,17 @@ public:
                 : targetFun(_targetFun), ctx(_ctx), loops(_loops),
                 profile(_profile), options(_options) {
         this->encoder = new Encoder(ctx);
-        // Create an empty AS formula (for pre- and post-condition)
-        this->AS = new Formula();
+        // Create empty pre- and post-condition formulas
+        this->preCond  = new Formula();
+        this->postCond = new Formula();
     }
     
     EncoderPass() {
         delete encoder;
     }
     Formula* makeTraceFormula();
-    Formula* getASFormula();
+    Formula* getPreCondition();
+    Formula* getPostCondition();
     
 private:
     void initGlobalVariables();

@@ -507,7 +507,7 @@ ExprPtr Encoder::encode(ZExtInst *zext) {
 // =============================================================================
 // encode - CallInst
 // =============================================================================
-ExprPtr Encoder::encode(CallInst *call, Formula *AS) {
+ExprPtr Encoder::encode(CallInst *call, Formula *preCond, Formula *postCond) {
     
     StringRef functionName;
     Function *F = call->getCalledFunction();
@@ -527,7 +527,7 @@ ExprPtr Encoder::encode(CallInst *call, Formula *AS) {
         unsigned i = (functionName==Frontend::SNIPER_ASSERT_FUN_NAME?0:1);
         Value *argOp    = call->getArgOperand(i);
         ExprPtr argExpr = ctx->newVariable(argOp);
-        AS->add(argExpr);
+        postCond->add(argExpr);
         return NULL;
     }
     // Assume - Pre-condition
@@ -536,8 +536,8 @@ ExprPtr Encoder::encode(CallInst *call, Formula *AS) {
         unsigned i = (functionName==Frontend::SNIPER_ASSUME_FUN_NAME?0:1);
         Value *argOp    = call->getArgOperand(i);
         ExprPtr argExpr = ctx->newVariable(argOp);
-        argExpr->setInstruction(call);
-        return argExpr; // hard
+        preCond->add(argExpr);
+        return NULL;
     }
     // Concolic profiling functions
     else if (functionName.startswith(Frontend::SNIPER_FUN_PREFIX)) {

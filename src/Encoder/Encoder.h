@@ -73,7 +73,7 @@ public:
     ExprPtr encode(GetElementPtrInst *gep);
     ExprPtr encode(SExtInst *sext);
     ExprPtr encode(ZExtInst *zext);
-    ExprPtr encode(CallInst *call, Formula *AS);
+    ExprPtr encode(CallInst *call, Formula *preCond, Formula *postCond);
     ExprPtr encode(ReturnInst *i);
     
     // Not implemented

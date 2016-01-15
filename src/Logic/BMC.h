@@ -57,16 +57,17 @@ public:
      * \param solver An SMT solver to check the unsatisfiability of the 
      * formula (\a TF ^ not(\a AS)).
      * \param TF A trace formula that encodes \a targetFun.
-     * \param AS A formula that encodes the correctness specifications 
-     * of \a targetFun.
+     * \param preCond A formula that encodes the pre-condtion of \a targetFun.
+     * \param postCond A formula that encodes the post-condtion of \a targetFun.
      * \param loopInfo Information about loops in \a targetFun.
      * \param options User defined SNIPER options.
      * \param hasArgv True if \a targetFun is of type int f(int,int**),
      * false otherwise.
      */
     static void run(ProgramProfile *profile, Function *targetFun,
-                    YicesSolver *solver, Formula *TF, Formula *AS,
-                    LoopInfoPass *loopInfo, Options *options, bool hasArgv);
+                    YicesSolver *solver, Formula *TF, Formula *preCond,
+                    Formula *postCond, LoopInfoPass *loopInfo,
+                    Options *options, bool hasArgv);
     
 };
 

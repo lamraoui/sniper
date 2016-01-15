@@ -132,7 +132,7 @@ Formula* EncoderPass::makeTraceFormula() {
                     expr = encoder->encode(cast<ICmpInst>(i));
                     break;
                 case Instruction::Call:
-                    expr = encoder->encode(cast<CallInst>(i), AS);
+                    expr = encoder->encode(cast<CallInst>(i), preCond, postCond);
                     if (!expr) {
                         // Do not encode sniper_x functions.
                         continue;
@@ -147,7 +147,7 @@ Formula* EncoderPass::makeTraceFormula() {
                     expr = encoder->encode(cast<StoreInst>(i));
                     break;
                 case Instruction::Load:
-                    expr = encoder->encode(cast<LoadInst>(i), AS);
+                    expr = encoder->encode(cast<LoadInst>(i), postCond);
                     break;
                 case Instruction::GetElementPtr:
                     expr = encoder->encode(cast<GetElementPtrInst>(i));
@@ -273,12 +273,21 @@ Formula* EncoderPass::makeTraceFormula() {
 }
 
 // =============================================================================
-// getASFormula
+// getPostCondition
 //
-// Return a formula representating the pre- and post-conditions.
+// Return a formula representating the post-condition.
 // =============================================================================
-Formula *EncoderPass::getASFormula() {
-    return AS;
+Formula *EncoderPass::getPostCondition() {
+    return postCond;
+}
+
+// =============================================================================
+// getPreCondition
+//
+// Return a formula representating the post-condition.
+// =============================================================================
+Formula *EncoderPass::getPreCondition() {
+    return preCond;
 }
 
 // =============================================================================

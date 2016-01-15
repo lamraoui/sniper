@@ -13,7 +13,7 @@
 
 unsigned nbCallsToSolver = 0;
 
-void IterationAlgorithm::run(Formula *TF, Formula *AS,
+void IterationAlgorithm::run(Formula *TF, Formula *preCond, Formula *postCond,
                              ProgramProfile *prof,
                              Combine::Method combineMethod) {
     // Nothing to do
@@ -28,8 +28,13 @@ void IterationAlgorithm::run(Formula *TF, Formula *AS,
     std::vector<ProgramTrace*>
     failingTraces = prof->getFailingProgramTraces();
     
-    // Add the pre- and post-conditions to the context
-    for (ExprPtr e : AS->getExprs()) {
+    // Add the pre-conditions to the context (as hard)
+    for (ExprPtr e : preCond->getExprs()) {
+        e->setHard();
+        TF->add(e);
+    }
+    // Add the post-conditions to the context (as hard)
+    for (ExprPtr e : postCond->getExprs()) {
         e->setHard();
         TF->add(e);
     }
