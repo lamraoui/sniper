@@ -171,11 +171,17 @@ private:
     bool assertResult;
 public:
     AssertExprCell(SymbolPtr sarg1, bool assertResult, Instruction *i) 
-    : CallExprCell(NULL, sarg1, i), assertResult(assertResult) { 
-        ExprPtr oneExpr = Expression::mkSInt32Num(1);
-        ExprPtr e       = sarg1->convertToExpr();
-        this->expr      = Expression::mkEq(e, oneExpr);
-        this->notExpr   = Expression::mkDiseq(e, oneExpr);
+    : CallExprCell(NULL, sarg1, i), assertResult(assertResult) {
+        assert(i && "Expecting an instruction!");
+        ExprPtr e = sarg1->convertToExpr();
+        if (i->getType()->isIntegerTy(1)) {
+            this->expr = e;
+            this->notExpr = Expression::mkNot(e);
+        } else {
+            ExprPtr oneExpr = Expression::mkSInt32Num(1);
+            this->expr      = Expression::mkEq(e, oneExpr);
+            this->notExpr   = Expression::mkDiseq(e, oneExpr);
+        }
     }
     bool getResult() { return assertResult; }
     virtual bool isAssert() { return true; } 
