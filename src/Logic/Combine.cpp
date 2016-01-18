@@ -1,12 +1,8 @@
 /**
- * Combine.cpp
+ * \file Combine.cpp
  *
- * 
- *
- * @author : Si-Mohamed Lamraoui
- * @contact : simo@nii.ac.jp
- * @date : 2015/10/19
- * @copyright : NII 2015
+ * \author Si-Mohamed Lamraoui
+ * \date   15 January 2015
  */
 
 #include "Combine.h"
