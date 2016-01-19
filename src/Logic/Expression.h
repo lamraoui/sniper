@@ -87,12 +87,25 @@ typedef std::shared_ptr<DivExpression>          DivExprPtr;
 typedef std::shared_ptr<ModExpression>          ModExprPtr;
 typedef std::shared_ptr<XorExpression>          XorExprPtr;
 
-// Pretty printer for Expression
+/**
+ * Pretty printer for expressions.
+ */
 std::ostream& operator<<(std::ostream& os, const ExprPtr e);
 
+/**
+ * \class Expression
+ *
+ * \brief Parent class for expressions.
+ * 
+ * An expression, also called clause or constraint, is 
+ * representated by an abstract syntax tree.
+ */
 class Expression {
     
 public:
+    /**
+     * Op codes
+     */
     static const unsigned True          = 1;
     static const unsigned False         = 2;
     static const unsigned UInt32Num     = 3;
@@ -121,14 +134,34 @@ public:
     static const unsigned Xor           = 26;
     
 private:
+    /**
+     * Unique ID number to be assigned to each expression.
+     */
     static unsigned ID;
     const unsigned currentID;
+    /**
+     * True if the expresssion is soft (retractable).
+     */
     bool soft;
     bool valid;
+    /**
+     * LLVM instruction from which the expression was encoded.
+     * In some cases, this variable can be null.
+     */
     llvm::Instruction *instruction;
+    /**
+     * Line number in the original source code of the LLVM expression 
+     * from which the expression was encoded.
+     */
     unsigned line;
 protected:
+    /**
+     * Number of integer variables created.
+     */
     static unsigned NbIntVariables;
+    /**
+     * Number of Boolean variables created.
+     */
     static unsigned NbBoolVariables;
 protected:
     Expression()
@@ -136,50 +169,172 @@ protected:
     virtual ~Expression() { }
     
 public:
-    static TrueExprPtr         mkTrue();
-    static FalseExprPtr        mkFalse();
-    static UInt32NumExprPtr    mkUInt32Num(unsigned value);
-    static SInt32NumExprPtr    mkSInt32Num(int value);
-    static BoolVarExprPtr      mkBoolVar(std::string name);
-    static IntVarExprPtr       mkIntVar(std::string name);
-    static IntToIntVarExprPtr  mkIntToIntVar(std::string name);
-    static ToParseExprPtr      parseExpression(std::string s);
+    /**
+     * Return an expression representing \a true.
+     */
+    static TrueExprPtr mkTrue();
+    /**
+     * Return an expression representing \a false.
+     */
+    static FalseExprPtr mkFalse();
+    /**
+     * Return an expression representing the given unsigned integer.
+     */
+    static UInt32NumExprPtr mkUInt32Num(unsigned value);
+    /**
+     * Return an expression representing the given signed integer.
+     */
+    static SInt32NumExprPtr mkSInt32Num(int value);
+    /**
+     * Return a new boolean variable expression (instance).
+     */
+    static BoolVarExprPtr mkBoolVar(std::string name);
+    /**
+     * Return a new integer variable expression (instance).
+     */
+    static IntVarExprPtr mkIntVar(std::string name);
+    /**
+     * Return a new function variable expression (instance).
+     */
+    static IntToIntVarExprPtr mkIntToIntVar(std::string name);
+    /**
+     * Not implemented.
+     */
+    static ToParseExprPtr parseExpression(std::string s);
+    /**
+     * Return an expression representing \a (not e1).
+     */
+    static NotExprPtr mkNot(ExprPtr e1);
+    /**
+     * Return an expression representing \a e1 = e2.
+     */
+    static EqExprPtr mkEq(ExprPtr e1, ExprPtr e2);
+    /**
+     * Return an expression representing \a e1 != e2.
+     */
+    static DiseqExprPtr mkDiseq(ExprPtr e1, ExprPtr e2);
+    /**
+     * Return an expression representing \a e1 < e2.
+     */
+    static LtExprPtr mkLt(ExprPtr e1, ExprPtr e2);
+    /**
+     * Return an expression representing \a e1 <= e2.
+     */
+    static LeExprPtr mkLe(ExprPtr e1, ExprPtr e2);
+    /**
+     * Return an expression representing \a e1 > e2.
+     */
+    static GtExprPtr mkGt(ExprPtr e1, ExprPtr e2);
+    /**
+     * Return an expression representing \a e1 >= e2.
+     */
+    static GeExprPtr mkGe(ExprPtr e1, ExprPtr e2);
+    /**
+     * Return an expression representing \a e1 and e2.
+     */
+    static AndExprPtr mkAnd(ExprPtr e1, ExprPtr e2);
+    /**
+     * Return an expression representing \a es_0 and es_1 ... and es_n-1.
+     */
+    static AndExprPtr mkAnd(std::vector<ExprPtr> es);
+    /**
+     * Return an expression representing \a e1 or e2.
+     */
+    static OrExprPtr mkOr(ExprPtr e1, ExprPtr e2);
+    /**
+     * Return an expression representing \a es_0 or es_1 ... or es_n-1.
+     */
+    static OrExprPtr mkOr(std::vector<ExprPtr> es);
+    /**
+     * Return an expression representing \a e1 xor e2.
+     */
+    static XorExprPtr mkXor(ExprPtr e1, ExprPtr e2);
+    /**
+     * Return an expression representing \a es_0 xor es_1 ... xor es_n-1.
+     */
+    static XorExprPtr mkXor(std::vector<ExprPtr> es);
+    /**
+     * Return an expression representing (IF econd ethen eelse).
+     */
+    static IteExprPtr mkIte(ExprPtr econd, ExprPtr ethen, ExprPtr eelse);
+    /**
+     * Return an expression representing \a e1 + e2.
+     */
+    static SumExprPtr mkSum(ExprPtr e1, ExprPtr e2);
+    /**
+     * Return an expression representing \a e1 + e2 (signed).
+     *
+     * Signed addition with overlow. 
+     * Bound: -2^(\a nbBit-1) <= x <= 2^(\a nbBit-1).
+     */
+    static ExprPtr mkSSum(ExprPtr e1, ExprPtr e2, unsigned nbBit);
+    /**
+     * Return an expression representing \a e1 + e2 (unsigned).
+     *
+     * Unsigned addition with overlow.
+     * Bound: 0 <= u <= 2^(nbBit).
+     */
+    static ExprPtr mkUSum(ExprPtr e1, ExprPtr e2, unsigned nbBit);
+    /**
+     * Return an expression representing \a e1 - e2.
+     */
+    static SubExprPtr mkSub(ExprPtr e1, ExprPtr e2);
+    /**
+     * Return an expression representing \a e1 * e2.
+     */
+    static MulExprPtr mkMul(ExprPtr e1, ExprPtr e2);
+    /**
+     * Return an expression representing \a e1 / e2.
+     */
+    static DivExprPtr mkDiv(ExprPtr e1, ExprPtr e2);
+    /**
+     * Return an expression representing \a e1 % e2.
+     */
+    static ModExprPtr mkMod(ExprPtr e1, ExprPtr e2);
+    /**
+     * Return a function application term \a (e1 e2).
+     */
+    static AppExprPtr mkApp(ExprPtr e1, ExprPtr e2);
+    /**
+     * Build a function update term \a (update f (arg) v).
+     */
+    static UpdateExprPtr mkFunctionUpdate(ExprPtr f, ExprPtr arg, ExprPtr v);
+    /**
+     * Return an expression representing \a left op right.
+     */
+    static ExprPtr mkOp(ExprPtr left, ExprPtr right, llvm::CmpInst::Predicate op);
+    /**
+     * Return an expression representing \a left i.op right.
+     */
+    static ExprPtr mkOp(ExprPtr left, ExprPtr right, llvm::Instruction *i);
     
-    static NotExprPtr      mkNot(ExprPtr e1);
-    static EqExprPtr       mkEq(ExprPtr e1, ExprPtr e2);
-    static DiseqExprPtr    mkDiseq(ExprPtr e1, ExprPtr e2);
-    static LtExprPtr       mkLt(ExprPtr e1, ExprPtr e2);
-    static LeExprPtr       mkLe(ExprPtr e1, ExprPtr e2);
-    static GtExprPtr       mkGt(ExprPtr e1, ExprPtr e2);
-    static GeExprPtr       mkGe(ExprPtr e1, ExprPtr e2);
-    static AndExprPtr      mkAnd(ExprPtr e1, ExprPtr e2);
-    static AndExprPtr      mkAnd(std::vector<ExprPtr> es);
-    static OrExprPtr       mkOr(ExprPtr e1, ExprPtr e2);
-    static OrExprPtr       mkOr(std::vector<ExprPtr> es);
-    static XorExprPtr      mkXor(ExprPtr e1, ExprPtr e2);
-    static XorExprPtr      mkXor(std::vector<ExprPtr> es);
-    static IteExprPtr      mkIte(ExprPtr econd, ExprPtr ethen, ExprPtr eelse);
-    static SumExprPtr      mkSum(ExprPtr e1, ExprPtr e2);
-    static ExprPtr         mkSSum(ExprPtr e1, ExprPtr e2, unsigned nbBit);
-    static ExprPtr         mkUSum(ExprPtr e1, ExprPtr e2, unsigned nbBit);
-    static SubExprPtr      mkSub(ExprPtr e1, ExprPtr e2);
-    static MulExprPtr      mkMul(ExprPtr e1, ExprPtr e2);
-    static DivExprPtr      mkDiv(ExprPtr e1, ExprPtr e2);
-    static ModExprPtr      mkMod(ExprPtr e1, ExprPtr e2);
-    static AppExprPtr      mkApp(ExprPtr e1, ExprPtr e2);
-    static UpdateExprPtr   mkFunctionUpdate(ExprPtr f, ExprPtr arg, ExprPtr v);
-    static ExprPtr         mkOp(ExprPtr left, ExprPtr right, llvm::CmpInst::Predicate op);
-    static ExprPtr         mkOp(ExprPtr left, ExprPtr right, llvm::Instruction *i);
-    
+    /**
+     * Return true if \a e1 is equal to \a e2, false otherwise.
+     */
     friend bool operator== (ExprPtr e1, ExprPtr e2);
+    /**
+     * Return true if \a e1 is not equal to \a e2, false otherwise.
+     */
     friend bool operator!= (ExprPtr e1, ExprPtr e2);
     
+    /**
+     * Return the opposite opperator of \a op.
+     */
     static llvm::CmpInst::Predicate negateOp(llvm::CmpInst::Predicate op);
+    /**
+     * Return an expression representating the LLVM value \a v.
+     */
     static ExprPtr getExprFromValue(llvm::Value *v);
     
+    /**
+     * Return the number of integer variables created.
+     */
     static unsigned getNbIntVariables() {
         return NbIntVariables;
     }
+    /**
+     * Return the number of boolean variables created.
+     */
     static unsigned getNbBoolVariables() {
         return NbBoolVariables;
     }
@@ -189,18 +344,35 @@ public:
     void invalidate() {
         valid = false;;
     }
+    /**
+     * Return \a true if the expresseion is soft (retractable), 
+     * false otherwise.
+     */
     bool isSoft() {
         return soft;
     }
+    /**
+     * Return \a true if the expresseion is hard (not retractable), 
+     * false otherwise.
+     */
     bool isHard() {
         return !soft;
     }
+    /**
+     * Assign a line number (source code) to this expression.
+     */
     void setLine(unsigned l) {
         line = l;
     }
+    /**
+     * Set this expression as hard (not retractable).
+     */
     void setHard() {
         soft = false;
     }
+    /**
+     * Set this expression as soft (retractable).
+     */
     void setSoft() {
         unsigned l = 0;
         llvm::Instruction *I = getInstruction();
@@ -214,15 +386,33 @@ public:
         setLine(l);
         soft = true;
     }
+    /**
+     * Return the line number in the original source code of the 
+     * LLVM expression from which the expression was encoded.
+     */
     unsigned getLine() {
         return line;
     }
+    /**
+     * Return the LLVM instruction from which the expression was encoded.
+     * If no instruction was assigned to this expression,
+     * the function returns null.
+     */
     llvm::Instruction* getInstruction() {
         return instruction;
     }
+    /**
+     * Set the LLVM instruction from which the expression was encoded.
+     */
     void setInstruction(llvm::Instruction *i) {
         instruction = i;
     }
+    /**
+     * Return the LLVM basicblock of the LLVM instruction from which 
+     * the expression was encoded.
+     * If no instruction was assigned to this expression, 
+     * the function returns null.
+     */
     llvm::BasicBlock* getBB() {
         if (instruction==NULL) {
             //std::cout << "warning: no instruction for <";
@@ -232,14 +422,27 @@ public:
         }
         return instruction->getParent();
     }
+    /**
+     * Return the unique ID number of this expression.
+     */
     unsigned getID() {
         return currentID;   
     }
+    /**
+     * Return the op code of this expression (see above).
+     */
     virtual unsigned getOpCode() = 0;
+    /**
+     * Dump to the standard ouput a textual representation 
+     * of this expression.
+     */
     virtual void dump() = 0;
     
 };
 
+/**
+ * \class Class representating a leaf expression such as a variable.
+ */
 class SingleExpression : public Expression {
 protected:
     std::string name;
@@ -251,6 +454,9 @@ public:
     }
 };
 
+/**
+ * \class Class representating an expression with two arguments.
+ */
 class BinaryExpression : public Expression {
 protected:
     ExprPtr e1;
@@ -266,6 +472,9 @@ public:
     }
 };
 
+/**
+ * \class Class representating an expression with three arguments.
+ */
 class TrinaryExpression : public Expression {
 protected:
     ExprPtr e1;
@@ -285,6 +494,9 @@ public:
     }    
 };
 
+/**
+ * \class Class representating an expression with \a n arguments.
+ */
 class UnaryExpression : public Expression {
 protected:
     std::vector<ExprPtr> exprs;
@@ -303,6 +515,9 @@ public:
     }
 };
 
+/**
+ * \class Expression representating \a true.
+ */
 class TrueExpression : public Expression {
 public:
     TrueExpression() { }
@@ -314,6 +529,9 @@ public:
     }
 };
 
+/**
+ * \class Expression representating \a false.
+ */
 class FalseExpression : public Expression {
 public:
     FalseExpression() { }
@@ -325,6 +543,9 @@ public:
     }
 };
 
+/**
+ * \class Expression representating an unsigned integer value.
+ */
 class UInt32NumExpression : public Expression {
 protected:
     unsigned num;
@@ -341,6 +562,9 @@ public:
     }
 };
 
+/**
+ * \class Expression representating a signed integer value.
+ */
 class SInt32NumExpression : public Expression {
 protected:
     int num;
@@ -357,6 +581,9 @@ public:
     }
 };
 
+/**
+ * \class Expression representating a Boolean variable.
+ */
 class BoolVarExpression : public SingleExpression {
 public:
     BoolVarExpression(std::string _name) 
@@ -374,6 +601,9 @@ public:
     }
 };
 
+/**
+ * \class Expression representating an integer variable.
+ */
 class IntVarExpression : public SingleExpression {
 public:
     IntVarExpression(std::string _name) 
@@ -391,6 +621,9 @@ public:
     }
 };
 
+/**
+ * \class Expression representating a function (int->int) variable.
+ */
 class IntToIntVarExpression : public SingleExpression {
 public:
     IntToIntVarExpression(std::string _name) 
@@ -403,6 +636,9 @@ public:
     }
 };
 
+/**
+ * \class Expression representating a parsed expression.
+ */
 class ToParseExpression : public Expression {
 private:
     std::string str;
@@ -419,6 +655,9 @@ public:
     }
 };
 
+/**
+ * \class Expression representating \a e1 >= e2.
+ */
 class GeExpression : public BinaryExpression {
 public:
     GeExpression(ExprPtr _e1, ExprPtr _e2) 
@@ -435,6 +674,9 @@ public:
     }
 };
 
+/**
+ * \class Expression representating \a e1 > e2.
+ */
 class GtExpression : public BinaryExpression {
 public:
     GtExpression(ExprPtr _e1, ExprPtr _e2) 
@@ -451,6 +693,9 @@ public:
     }
 };
 
+/**
+ * \class Expression representating \a e1 <= e2.
+ */
 class LeExpression : public BinaryExpression {
 public:
     LeExpression(ExprPtr _e1, ExprPtr _e2) 
@@ -467,6 +712,9 @@ public:
     }
 };
 
+/**
+ * \class Expression representating \a e1 < e2.
+ */
 class LtExpression : public BinaryExpression {
 public:
     LtExpression(ExprPtr _e1, ExprPtr _e2) 
@@ -483,6 +731,9 @@ public:
     }
 };
 
+/**
+ * \class Expression representating \a e1 != e2.
+ */
 class DiseqExpression : public BinaryExpression {
 public:
     DiseqExpression(ExprPtr _e1, ExprPtr _e2) 
@@ -499,6 +750,9 @@ public:
     }
 };
 
+/**
+ * \class Expression representating \a e1 = e2.
+ */
 class EqExpression : public BinaryExpression {
 public:
     EqExpression(ExprPtr _e1, ExprPtr _e2) 
@@ -515,6 +769,9 @@ public:
     }
 };
 
+/**
+ * \class Expression representating \a (not e).
+ */
 class NotExpression : public Expression {
 protected:
     ExprPtr e;
@@ -533,6 +790,9 @@ public:
     }
 };
 
+/**
+ * \class Expression representating \a e1 and e2.
+ */
 class AndExpression : public UnaryExpression {
 public:
     AndExpression(std::vector<ExprPtr> es) 
@@ -561,6 +821,9 @@ public:
     }
 };
 
+/**
+ * \class Expression representating \a e1 or e2.
+ */
 class OrExpression : public UnaryExpression {
 public:
     OrExpression(std::vector<ExprPtr> es) 
@@ -589,6 +852,9 @@ public:
     }
 };
 
+/**
+ * \class Expression representating \a e1 xor e2.
+ */
 class XorExpression : public UnaryExpression {
 public:
     XorExpression(std::vector<ExprPtr> es) 
@@ -617,6 +883,9 @@ public:
     }
 };
 
+/**
+ * \class Expression representating \a e1 + e2.
+ */
 class SumExpression : public UnaryExpression {
 public:
     SumExpression(std::vector<ExprPtr> es) 
@@ -645,6 +914,9 @@ public:
     }
 };
 
+/**
+ * \class Expression representating \a e1 - e2.
+ */
 class SubExpression : public UnaryExpression {
 public:
     SubExpression(std::vector<ExprPtr> es) 
@@ -673,6 +945,9 @@ public:
     }
 };
 
+/**
+ * \class Expression representating \a e1 * e2.
+ */
 class MulExpression : public UnaryExpression {
 public:
     MulExpression(std::vector<ExprPtr> es) 
@@ -701,6 +976,9 @@ public:
     }
 };
 
+/**
+ * \class Expression representating \a e1 / e2.
+ */
 class DivExpression : public BinaryExpression {
 public:
     DivExpression(ExprPtr e1, ExprPtr e2) 
@@ -717,6 +995,9 @@ public:
     }
 };
 
+/**
+ * \class Expression representating \a e1 % e2.
+ */
 class ModExpression : public BinaryExpression {
 public:
     ModExpression(ExprPtr e1, ExprPtr e2) 
@@ -733,6 +1014,9 @@ public:
     }
 };
 
+/**
+ * \class Expression representating \a (IF cond then eelse).
+ */
 class IteExpression : public TrinaryExpression {
 public:
     IteExpression(ExprPtr cond, ExprPtr then, ExprPtr eelse)
@@ -751,6 +1035,10 @@ public:
     }
 };
 
+/**
+ * \class Expression representating the function 
+ * application term \a (e1 e2).
+ */
 class AppExpression : public BinaryExpression {
 public:
     AppExpression(ExprPtr f, ExprPtr arg) 
@@ -767,6 +1055,10 @@ public:
     }
 };
 
+/**
+ * \class Expression representating a function 
+ * update term \a (update f (arg) v).
+ */
 class UpdateExpression : public TrinaryExpression {
 public:
     UpdateExpression(ExprPtr f, ExprPtr arg, ExprPtr v) 
@@ -785,6 +1077,4 @@ public:
     }
 };
 
-
-
-#endif
+#endif // _EXPRESSION_H

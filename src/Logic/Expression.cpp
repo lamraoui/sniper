@@ -1,12 +1,8 @@
 /**
- * Expression.cpp
+ * \file Expression.cpp
  *
- * 
- *
- * @author : Si-Mohamed Lamraoui
- * @contact : simo@nii.ac.jp
- * @date : 2013/05/31
- * @copyright : NII 2013
+ * \author Si-Mohamed Lamraoui
+ * \date   18 January 2015
  */
 
 #include "Expression.h"
