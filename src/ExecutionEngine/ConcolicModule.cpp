@@ -19,6 +19,7 @@ ConcolicModule::ConcolicModule(Module *_llvmMod, Function *_targetFun, Options *
     this->IRB =  new IRBuilder<>(Context);
     // Set the maximum depth for the executions
     Executor::setMaxDepth(options->getMaxDepth());
+    this->preConditions = Formula::make();
 }
 
 
@@ -42,6 +43,11 @@ ExecutionEngine* ConcolicModule::initialize() {
     // Instrument the target function
     IRInstrumentor *IRI = new IRInstrumentor(llvmMod, EE);
     IRI->instrumentModule(llvmMod, targetFun);
+    // Make pre-condition formulas
+    for (Value *v : IRI->getPreConditions()) {
+        ExprPtr e = Expression::getExprFromValue(v);
+        this->preConditions->add(e);
+    }
     delete IRI;
     // Init the SMT solver
     this->solver = new YicesSolver();

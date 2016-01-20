@@ -63,6 +63,8 @@ private:
     static unsigned     GotoCount;
     static unsigned     InvokeCount;
     static AssertResult LastRunAssertResult;
+    static AssertResult LastRunAssumeResult;
+    static bool         HasAssume;
     static bool         DisabledSymbolicExe;
     static bool         DisabledSymbolicExeCurRun;
     

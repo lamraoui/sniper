@@ -80,6 +80,7 @@ protected:
     bool        terminated;
     VariablesPtr lastInputs;
     std::vector<std::pair<VariablesPtr,std::vector<State_t> > > pendingInputs;
+    FormulaPtr  preConditions;
     
 public:
     ConcolicModule(Module *_llvmMod, Function *_targetFun, Options *_options);

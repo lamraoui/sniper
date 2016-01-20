@@ -22,6 +22,8 @@ unsigned        Executor::RunID;
 unsigned        Executor::GotoCount;
 unsigned        Executor::InvokeCount;
 AssertResult    Executor::LastRunAssertResult;
+AssertResult    Executor::LastRunAssumeResult;
+bool            Executor::HasAssume;
 SymbolMap*      Executor::SMAP;
 SymbolMap*      Executor::PMAP;
 SymbolicPath*   Executor::Path;
@@ -51,6 +53,8 @@ void Executor::init(LoopInfoPass *lip, ProgramProfile *p,
     PathLoopInfo        = lip;
     Profile             = p;
     LastRunAssertResult = UNKNOW;
+    LastRunAssumeResult = UNKNOW;
+    HasAssume           = false;
     NoAssert            = noAssert;
     RunID               = 0;
     GotoCount           = 0;
@@ -867,6 +871,12 @@ void Executor::ReportAssert(Value *v, int assertResult) {
 
 void Executor::ReportAssume(Value *v, int assumeResult) {
     assert(v && "Expecting a value!");
+    HasAssume = true;
+    LastRunAssumeResult = (assumeResult ? SUCCESS : FAIL);
+    if (assumeResult==0) {
+        std::cout << "Error: invalid sniper_assume call (provably false)\n";
+        std::cout << "Note: now ignoring this error at this location";
+    }
     if (DisabledSymbolicExeCurRun) {
         return;
     }
@@ -876,10 +886,6 @@ void Executor::ReportAssume(Value *v, int assumeResult) {
         Sv = SMAP->get(v);
         Instruction *i = dyn_cast<Instruction>(v);
         Path->addAssumeCell(Sv, assumeResult, i);
-        if (assumeResult==0) {
-            std::cout << "ASSUME !!!!!!!!!!!\n";
-            exit(1);
-        }
     }
 }
 
@@ -894,6 +900,10 @@ void Executor::ReportEnd() {
     } else {
         Trace->setUnknow();
     }
+    // If assume failed, do not save traces
+    if (HasAssume && LastRunAssumeResult!=SUCCESS) {
+        
+    } else
     if (CollectBlockTraces) {
         // Get the last blocks
         if (NextBB) {

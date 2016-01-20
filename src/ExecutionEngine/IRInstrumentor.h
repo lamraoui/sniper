@@ -57,11 +57,16 @@ private:
     Function *ReportAssumeFun;
     Function *PushArgsFun;
     Function *PopArgsFun;
+    std::vector<Value*> preConditions;
 
 public:
     IRInstrumentor(Module *_llvmMod, ExecutionEngine *_EE);
     void instrumentModule(Module *llvmMod, Function *targetFun);
     ~IRInstrumentor() { }
+    
+    std::vector<Value*> getPreConditions() {
+        return preConditions;
+    }
     
 private:
     void instrumentFunction(Function *f, bool isTarget);
