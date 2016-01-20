@@ -1,7 +1,0 @@
-v41/tcas.c:75:13: warning: implicit declaration of function 'Own_Below_Threat' is invalid in C99 [-Wimplicit-function-declaration]
-        result = !(Own_Below_Threat()) || ((Own_Below_Threat()) && (!(Down_Separation >= ALIM())));
-                   ^
-v41/tcas.c:97:13: warning: implicit declaration of function 'Own_Above_Threat' is invalid in C99 [-Wimplicit-function-declaration]
-        result = !(Own_Above_Threat()) || ((Own_Above_Threat()) && (Up_Separation >= ALIM()));
-                   ^
-2 warnings generated.

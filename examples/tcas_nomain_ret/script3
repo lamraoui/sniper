@@ -1,5 +1,0 @@
-#!/bin/bash
-
-gcc ./v$1/tcas.c -o ./v$1/exe
-cat concolic_testcases_gen.txt | xargs -L 1 ./v$1/exe
-

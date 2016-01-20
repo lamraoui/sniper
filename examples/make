@@ -1,6 +1,0 @@
-#!/bin/bash
-
-rm *.c.bc
-for fich in *.c ; do
-llvm-gcc -emit-llvm -O0 -g $fich -c -o ${fich}.bc
-done
