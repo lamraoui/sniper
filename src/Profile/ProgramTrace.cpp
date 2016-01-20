@@ -1,12 +1,8 @@
 /**
- * ProgramTrace.cpp
+ * \file ProgramTrace.h
  *
- * 
- *
- * @author : Si-Mohamed Lamraoui
- * @contact : simo@nii.ac.jp
- * @date : 2013/08/21
- * @copyright : NII 2013
+ * \author Si-Mohamed Lamraoui
+ * \date   20 January 2015
  */
 
 #include "ProgramTrace.h"

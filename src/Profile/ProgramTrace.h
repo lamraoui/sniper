@@ -1,14 +1,9 @@
 /**
- * ProgramTrace.h
+ * \file ProgramTrace.h
  *
- * 
- *
- * @author : Si-Mohamed Lamraoui
- * @contact : simo@nii.ac.jp
- * @date : 2014/04/02
- * @copyright : NII 2014
+ * \author Si-Mohamed Lamraoui
+ * \date   20 January 2015
  */
-
 
 #ifndef _PROGRAMTRACE_H
 #define _PROGRAMTRACE_H
@@ -26,20 +21,216 @@
 
 using namespace llvm;
 
-// Program assert outcome
+/** 
+ * A program post-condition outcome of an execution trace.
+ */
 enum AssertResult {
-    SUCCESS,
-    FAIL,
-    UNKNOW
+    SUCCESS, /*!< Post-condition was satisfied */
+    FAIL,    /*!< Post-conditions was violated */
+    UNKNOW   /*!< Post-condition's outcome is undetermined */
 };
 
 class Variables;
-typedef std::shared_ptr<Variables> VariablesPtr;
 class InputVariableTrace;
+
+typedef std::shared_ptr<Variables> VariablesPtr;
 typedef std::shared_ptr<InputVariableTrace> InputVarTracePtr;
 
+/**
+ * \class ProgramTrace
+ *
+ * \brief Execution trace.
+ *
+ * An execution trace holds the input values that trigger the execution,
+ * the executed LLVM basicblocks, and the expected program output (oracle).
+ * When using a post-condition formula with \a sniper_assert, no oracle is used.
+ */
+class ProgramTrace {
+    
+private:
+    /**
+     * Unique ID number to be assigned to each expression.
+     */
+    static unsigned ID;
+    const unsigned myID;
+    /**
+     * LLVM function from which this trace was generated.
+     */
+    Function *targetFun;
+    /**
+     * Set of LLVM basicblocks that were executed in the 
+     * associated to this trace.
+     */
+    std::set<BasicBlock*> executedBlocks;
+    /**
+     * Program input values used to trigger this trace.
+     */
+    VariablesPtr inputVars;
+    /**
+     * Expected program output for the given input values (oracle).
+     */
+    Value *expectedOutput;
+    /**
+     * Type of trace: failing, successful, or not determined.
+     */
+    AssertResult type;
+    
+public:
+    ProgramTrace(Function *_targetFun)
+    : myID(ID++), targetFun(_targetFun), type(UNKNOW) {
+        inputVars = std::make_shared<Variables>();
+        expectedOutput = NULL;
+    }
+    
+    ProgramTrace(Function *_targetFun, AssertResult _type)
+    : myID(ID++), targetFun(_targetFun), type(_type) {
+        inputVars = std::make_shared<Variables>();
+        expectedOutput = NULL;
+    }
+    
+    ProgramTrace(Function *_targetFun, std::vector<Value*> _inputs,
+                 AssertResult _type)
+    : myID(ID++), targetFun(_targetFun), type(_type) {
+        assert(_targetFun->arg_size()==_inputs.size() &&
+               "Wrong execution trace!");
+        unsigned i = 0;
+        Function::arg_iterator ait;
+        for (ait = targetFun->arg_begin(); ait != targetFun->arg_end(); ++ait) {
+            Value *origin = ait;
+            Value *concrete = _inputs[i++];
+            addProgramInput(origin, concrete);
+        }
+        expectedOutput = NULL;
+    }
+    
+    ~ProgramTrace() {  }
+    
+    // ==== Input values ====
+    
+    /**
+     * Add a program input value.
+     *
+     * \param origin Value in the LLVM function.
+     * \param val Contant LLVM value.
+     */
+    void addProgramInput(Value *origin, Value *val);
+    /**
+     * Add a program input value.
+     *
+     * \param origin Value in the LLVM function.
+     * \param val Contant integer value.
+     */
+    void addProgramInput(Value *origin, int val);
+    /**
+     * Add a program input value.
+     */
+    void addProgramInput(InputVarTracePtr ivt);
+    /**
+     * Return a formula that represents input values with equalities.
+     * \f$(input_1 = val_1) \land ... \land (input_n = val_n)\f$
+     */
+    ExprPtr getProgramInputsFormula(Formula *formula);
+    /**
+     * Return input variables.
+     */
+    VariablesPtr getInputVariables() {
+        return inputVars;
+    }
+    /**
+     * Dump to the standard ouput the program input values.
+     */
+    void dumpProgramInputs() ;
+    
+    // ==== Block profile ====
+    
+    /**
+     * Assign executed LLVM basicblocks for this trace.
+     */
+    void setExecutedBlocks(std::vector<BasicBlock*> &bb);
+    /**
+     * Return the executed LLVM basicblocks of this trace.
+     */
+    std::set<BasicBlock*> getExecutedBB();
+    
+    // ==== Trace type (outcome) ====
+    
+    /**
+     * Return \a true if the post-condition was satified
+     * in the execution of this trace, false otherwise.
+     */
+    bool isSuccessful() {
+        return (type==SUCCESS);
+    }
+    /**
+     * Return \a true if the post-condition was violated
+     * in the execution of this trace, false otherwise.
+     */
+    bool isFailing() {
+        return (type==FAIL);
+    }
+    /**
+     * Return \a true if the post-condition outcome is undeterminated
+     * in the execution of this trace, false otherwise.
+     */
+    bool isUnknow() {
+        return (type==UNKNOW);
+    }
+    /**
+     * Set this trace as failing (post-condition violated).
+     */
+    void setFailing() {
+        type = FAIL;
+    }
+    /**
+     * Set this trace as successful (post-condition satisfied).
+     */
+    void setSuccessful() {
+        type = SUCCESS;
+    }
+    /**
+     * Set this trace as nor successful, nor failing.
+     */
+    void setUnknow() {
+        type = UNKNOW; // SUCCESS
+    }
+    
+    // ==== Oracle ====
+    
+    /**
+     * Set expected program output (oracle).
+     */
+    void setExpectedOutput(Value *o) {
+        expectedOutput = o;
+    }
+    /**
+     * Get expected program output (oracle).
+     */
+    Value *getExpectedOutput() {
+        return expectedOutput;
+    }
+    
+    // ==== Miscellaneous ====
+    
+    /**
+     * Get the unique ID number of this trace.
+     */
+    unsigned getID() {
+        return myID;
+    }
+    bool operator<(const ProgramTrace &other) const {
+        return (inputVars<other.inputVars);
+    }
+    bool operator==(const ProgramTrace &other) const {
+        return (inputVars==other.inputVars);
+    }
+    
+    /**
+     * Dump to the standard ouput the information of this trace.
+     */
+    void dump();
+    
+};
 
-//============================================================================
 class InputVariableTrace {
 private:
     Value *concrete;
@@ -75,7 +266,7 @@ public:
         assert(ci && "no concrete value for variable!");
         std::cout << ci->getSExtValue();
     }
-    /*bool operator<(const InputVariableTrace &other) const { 
+    /*bool operator<(const InputVariableTrace &other) const {
         return (name<other.name && getInt32()<other.getInt32());
     }
     bool operator==(const InputVariableTrace &other) const { 
@@ -168,87 +359,4 @@ public:
     }*/
 };
 
-
-
-class ProgramTrace {
-
-private:
-    static unsigned ID;
-    const unsigned myID;
-    Function *targetFun;
-    std::set<BasicBlock*> executedBlocks;
-    VariablesPtr inputVars;
-    Value *expectedOutput; // oracle
-    AssertResult type;
-    
-public:
-    ProgramTrace(Function *_targetFun)
-    : myID(ID++), targetFun(_targetFun), type(UNKNOW) {
-        inputVars = std::make_shared<Variables>();
-        expectedOutput = NULL;
-    }
-    
-    ProgramTrace(Function *_targetFun, AssertResult _type)
-    : myID(ID++), targetFun(_targetFun), type(_type) {
-        inputVars = std::make_shared<Variables>();
-        expectedOutput = NULL;
-    }
-    
-    ProgramTrace(Function *_targetFun, std::vector<Value*> _inputs,
-                 AssertResult _type)
-    : myID(ID++), targetFun(_targetFun), type(_type) {
-        assert(_targetFun->arg_size()==_inputs.size() &&
-               "Wrong execution trace!");
-        unsigned i = 0;
-        Function::arg_iterator ait;
-        for (ait = targetFun->arg_begin(); ait != targetFun->arg_end(); ++ait) {
-            Value *origin = ait;
-            Value *concrete = _inputs[i++];
-            addProgramInput(origin, concrete);
-        }
-        expectedOutput = NULL;
-    }
-    
-    ~ProgramTrace() {  }
-    
-    // Input values
-    void            addProgramInput(Value *origin, Value *val);
-    void            addProgramInput(Value *origin, int val);
-    void            addProgramInput(InputVarTracePtr ivt);
-    //void          addProgramInput(std::string argvValue);
-    ExprPtr         getProgramInputsFormula(Formula *formula);
-    VariablesPtr    getInputVariables() { return inputVars; }
-    void            dumpProgramInputs() ;
-    
-    // Block profile
-    void setExecutedBlocks(std::vector<BasicBlock*> &bb);
-    std::set<BasicBlock*> getExecutedBB();
-    
-    // Trace type (outcome)
-    bool isSuccessful()  { return (type==SUCCESS); }
-    bool isFailing()     { return (type==FAIL);    }
-    bool isUnknow()      { return (type==UNKNOW);  }
-    void setFailing()    { type = FAIL;    }
-    void setSuccessful() { type = SUCCESS; }
-    void setUnknow()     { type = SUCCESS; }
-    
-    // Oracle
-    void setExpectedOutput(Value *o) { expectedOutput = o; }
-    Value *getExpectedOutput() { return expectedOutput; }
-    
-    // Miscellaneous
-    unsigned getID() { return myID;}
-    
-    bool operator<(const ProgramTrace &other) const { 
-        return (inputVars<other.inputVars);
-    }
-    bool operator==(const ProgramTrace &other) const { 
-        return (inputVars==other.inputVars);
-    }
-    
-    void dump();
-    
-};
-//============================================================================
-
-#endif
+#endif // _PROGRAMTRACE_H
