@@ -223,6 +223,9 @@ public:
     bool operator==(const ProgramTrace &other) const {
         return (inputVars==other.inputVars);
     }
+    bool operator!=(const ProgramTrace &other) const {
+        return (inputVars!=other.inputVars);
+    }
     
     /**
      * Dump to the standard ouput the information of this trace.
@@ -266,21 +269,27 @@ public:
         assert(ci && "no concrete value for variable!");
         std::cout << ci->getSExtValue();
     }
-    /*bool operator<(const InputVariableTrace &other) const {
-        return (name<other.name && getInt32()<other.getInt32());
+    
+    bool operator<(const InputVariableTrace &other) const {
+        return (getInt32()<other.getInt32() && name<other.name);
     }
-    bool operator==(const InputVariableTrace &other) const { 
-        return (name==other.name && getInt32()==other.getInt32());
+    bool operator==(const InputVariableTrace &other) const {
+        return (getInt32()==other.getInt32() && name==other.name);
     }
-    bool operator!=(const InputVariableTrace &other) const { 
-        return (name!=other.name || getInt32()!=other.getInt32());
-    }*/
-    bool isEqualTo(InputVarTracePtr &other) const { 
-        return (name==other->getName() && getInt32()==other->getInt32());
+    bool operator!=(const InputVariableTrace &other) const {
+        return (getInt32()!=other.getInt32() && name!=other.name);
     }
-    bool isValueEqualTo(InputVarTracePtr &other) const { 
-        return (getInt32()==other->getInt32());
+    
+    friend bool operator<(InputVarTracePtr lhs, InputVarTracePtr rhs) {
+        return (*lhs < *rhs);
     }
+    friend bool operator==(InputVarTracePtr lhs, InputVarTracePtr rhs) {
+        return (*lhs == *rhs);
+    }
+    friend bool operator!=(InputVarTracePtr lhs, InputVarTracePtr rhs) {
+        return (*lhs != *rhs);
+    }
+    
 };
 
 class Variables {
@@ -333,30 +342,55 @@ public:
             }
         }
     }
-    bool isValueEqualTo(VariablesPtr &other) {
-        if (vars.size()!=other->size()) {
+    
+    bool operator<(const Variables &other) const {
+        std::cout << "Variables::<\n";
+        if (vars.size()<other.vars.size()) {
+            return true;
+        }
+        if (vars.size()>other.vars.size()) {
             return false;
         }
-        std::vector<InputVarTracePtr> vars2 = other->getVector();
         for (std::size_t i=0; i<vars.size(); ++i) {
-            if (!vars[i]->isValueEqualTo(vars2[i])) {
+            if (!(vars[i]<other.vars[i])) {
                 return false;
             }
         }
-        return true;   
+        return true;
     }
-    /*bool operator==(const Variables &other) const { 
-        std::cout << "COMP!!!\n";
+    bool operator==(const Variables &other) const {
         if (vars.size()!=other.vars.size()) {
             return false;
         }
-        for (int i=0; i<vars.size(); ++i) {
+        for (std::size_t i=0; i<vars.size(); ++i) {
             if (vars[i]!=other.vars[i]) {
                 return false;
             }
         }
         return true;
-    }*/
+    }
+    bool operator!=(const Variables &other) const {
+        if (vars.size()==other.vars.size()) {
+            return false;
+        }
+        for (std::size_t i=0; i<vars.size(); ++i) {
+            if (vars[i]!=other.vars[i]) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    friend bool operator<(VariablesPtr lhs, VariablesPtr rhs) {
+        return (*lhs < *rhs);
+    }
+    friend bool operator==(VariablesPtr lhs, VariablesPtr rhs) {
+        return (*lhs == *rhs);
+    }
+    friend bool operator!=(VariablesPtr lhs, VariablesPtr rhs) {
+        return (*lhs != *rhs);
+    }
+    
 };
 
 #endif // _PROGRAMTRACE_H
