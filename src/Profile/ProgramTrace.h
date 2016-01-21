@@ -235,7 +235,9 @@ public:
 };
 
 /**
- * Input variable of a program execution trace. 
+ * \class InputVariableTrace
+ * 
+ * An input variable of a program execution trace.
  */
 class InputVariableTrace {
     
@@ -327,29 +329,63 @@ public:
     
 };
 
+/**
+ * \class Variables
+ *
+ * A set of input variables of a program execution trace.
+ */
 class Variables {
+    
 private:
+    /**
+     * Set of input variables.
+     */
     std::vector<InputVarTracePtr> vars;
+
 public:
     Variables() { }
     ~Variables() { }
+    
+    /**
+     * Create and add a new input variable.
+     *
+     * \param o Original variable in the LLVM function.
+     * \param c Constant LLVM value of \a o in the execution trace.
+     */
     void add(Value *o, Value *c) {
         InputVarTracePtr ptr = std::make_shared<InputVariableTrace>(o, c);
         add(ptr);
     }
+    /**
+     * Create and add a new input variable.
+     *
+     * \param o Original variable in the LLVM function.
+     * \param c Concrete constant value of \a o in the execution trace.
+     */
     void add(Value *o, int val) {
         InputVarTracePtr ptr = std::make_shared<InputVariableTrace>(o, val);
         add(ptr);
     }
+    /**
+     * Add an existing input variable.
+     */
     void add(InputVarTracePtr v) {
         const bool isIn = std::find(vars.begin(), vars.end(), v)!=vars.end();
         if (!isIn) {
             vars.push_back(v);
         }
     }
+    
+    /**
+     * Return the number of input variables.
+     */
     unsigned size() { 
         return vars.size(); 
     }
+    /**
+     * Return \a true if there is no input variables, 
+     * false otherwise.
+     */
     bool empty() { 
         return vars.empty(); 
     }
@@ -358,6 +394,9 @@ public:
         return vars;
     }
     //  ------- //
+    /**
+     * Return all concrete values.
+     */
     std::vector<Value*> getValues() {
         std::vector<Value*> vals;
         std::vector<InputVarTracePtr>::iterator it;
@@ -367,6 +406,11 @@ public:
         }
         return vals;
     }
+    
+    /**
+     * Dump to the standard ouput information of 
+     * this set of input variables.
+     */
     void dump() {
         std::vector<InputVarTracePtr>::iterator it;
         for(it=vars.begin(); it!=vars.end(); ++it) {
