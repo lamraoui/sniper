@@ -234,15 +234,27 @@ public:
     
 };
 
+/**
+ * Input variable of a program execution trace. 
+ */
 class InputVariableTrace {
+    
 private:
+    /**
+     * Concrete LLVM value (constant) assigned to this variable.
+     */
     Value *concrete;
+    /**
+     * Name of this variable in the LLVM function.
+     */
     std::string name;
+    
 private:
     InputVariableTrace(Value *o) { 
         name = o->getName().str();
         assert(name.length()>0 && "Empty string!");
     }
+    
 public:
     InputVariableTrace(Value *o, Value *c) : InputVariableTrace(o) { 
         concrete = c;
@@ -255,15 +267,38 @@ public:
     ~InputVariableTrace() { 
         //delete concrete; // BUG
     }
+    
+    /**
+     * Return the LLVM name of this variable.
+     */
     std::string getName() {
         return name;
     }
+    
+    /**
+     * Return the concrete value as an integer (32/64 bits).
+     *
+     * Converts the underlying APInt value to an int64_t 
+     * via sign extension. If the value (not the bit width) 
+     * of the APInt is too large to fit in an int64_t, 
+     * an assertion will result.
+     */
     int getInt32() const { 
         ConstantInt *ci = dyn_cast<ConstantInt>(concrete);
         assert(ci && "No concrete value for variable!");
         return (int) ci->getSExtValue();
     }
-    Value* getConcrete() { return concrete; }
+    
+    /**
+     * Return the concrete LLVM value of this variable.
+     */
+    Value* getConcrete() {
+        return concrete;
+    }
+    
+    /**
+     * Dump to the standard output information of this variable.
+     */
     void dump() {
         ConstantInt *ci = dyn_cast<ConstantInt>(concrete);
         assert(ci && "no concrete value for variable!");
