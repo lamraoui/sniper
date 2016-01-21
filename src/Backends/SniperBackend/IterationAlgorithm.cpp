@@ -64,7 +64,9 @@ void IterationAlgorithm::run(Formula *TF, Formula *preCond, Formula *postCond,
     YicesSolver *yices = (YicesSolver*) solver;
     std::vector<SetOfFormulasPtr> MCSes = allDiagnosis(TF, failingTraces, yices);
     
-    std::cout << "Nb calls solver  : " << nbCallsToSolver << std::endl;
+    if (options->dbgMsg()) {
+        std::cout << "Nb calls solver  : " << nbCallsToSolver << std::endl;
+    }
     
     // Combination methods: PWU, MHS, FLA
     SetOfFormulasPtr combMCSes = NULL;
