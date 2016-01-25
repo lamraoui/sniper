@@ -93,6 +93,7 @@ public:
     : myID(ID++), targetFun(_targetFun), type(_type) {
         assert(_targetFun->arg_size()==_inputs.size() &&
                "Wrong execution trace!");
+        inputVars = std::make_shared<Variables>();
         unsigned i = 0;
         Function::arg_iterator ait;
         for (ait = targetFun->arg_begin(); ait != targetFun->arg_end(); ++ait) {
