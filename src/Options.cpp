@@ -1,12 +1,8 @@
 /**
- * Options.cpp
+ * \file Options.cpp
  *
- * 
- *
- * @author : Si-Mohamed Lamraoui
- * @contact : simo@nii.ac.jp
- * @date : 2013/03/01
- * @copyright : NII 2013
+ * \author Si-Mohamed Lamraoui
+ * \date   25 January 2015
  */
 
 #include "Options.h"
