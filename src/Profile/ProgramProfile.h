@@ -1,15 +1,9 @@
 /**
- * ProgramProfile.h
+ * \file ProgramProfile.h
  *
- * Save the information related to executions of a program:
- * - inputs that trigger the execution
- *
- * @author : Si-Mohamed Lamraoui
- * @contact : simo@nii.ac.jp
- * @date : 2013/11/15
- * @copyright : NII 2013
+ * \author Si-Mohamed Lamraoui
+ * \date   18 January 2015
  */
-
 
 #ifndef _PROGRAMPROFILE_H
 #define _PROGRAMPROFILE_H
@@ -34,17 +28,26 @@ using namespace llvm;
 class NLOperationSummary;
 class FunctionSummary;
 
-
-//============================================================================
+/**
+ * \class ProgramProfile
+ *
+ * This class holds program execution traces.
+ */
 class ProgramProfile {
 
 private:
+    /**
+     * LLVM function from which the program execution traces were obtained.
+     */
     Function *targetFun;
-    std::map<std::string, FunctionSummary*> funSummariesMap;
-    std::map<DILocation, NLOperationSummary*> nlOpSummariesMap;
     std::vector<ProgramTrace*> traces;
-    // The set bugFreeBlocks is only accessible
-    // when bugFreeBlocksComputed is true.
+    /**
+     * Bug free blocks are LLVM basicblocks that are assumed to be free 
+     * from faults because they are never executed in failing execution.
+     * This set is used in the construction of the Hardened Flow-sensitive
+     * Trace Formula (HFTF).
+     * This set is only accessible when bugFreeBlocksComputed is true.
+     */
     std::set<BasicBlock*> bugFreeBlocks;
     bool bugFreeBlocksComputed;
     
@@ -53,33 +56,102 @@ public:
     : targetFun(_targetFun), bugFreeBlocksComputed(false) {  }    
     ~ProgramProfile() { }
     
-    // Traces
+    /**
+     * Add a program execution trace.
+     */
     void addProgramTrace(ProgramTrace *e);
+    /**
+     * Return true if this profile has failing program execution traces, 
+     * false otherwise.
+     */
     bool hasFailingProgramTraces();
+    /**
+     * Return all program execution traces.
+     */
     std::vector<ProgramTrace*> getProgramTraces();
+    /**
+     * Return failing program execution traces.
+     */
     std::vector<ProgramTrace*> getFailingProgramTraces();
+    /**
+     * Return successful program execution traces.
+     */
     std::vector<ProgramTrace*> getSuccessfulProgramTraces();
+    /**
+     * Return program execution traces that are neither failing or successful.
+     */
     std::vector<ProgramTrace*> getUnkownProgramTraces();
     
-    // For constructing HFTF
-    void addFailingBlocks(std::vector<BasicBlock*> &bb);
-    void addSuccessfulBlocks(std::vector<BasicBlock*> &bb);
-    void addUnknowBlocks(std::vector<BasicBlock*> &bb);
-    void computeBugFreeBlocks(Options *o); 
-    bool isBugFreeBlock(BasicBlock *bb);
-    std::set<BasicBlock*> getFailingRunBB();
-    std::set<BasicBlock*> getSuccessfulRunBB();
-    std::set<BasicBlock*> getOtherRunBB();
-    std::set<BasicBlock*> getBugFreeBlocks();
     
+    // ==== For constructing HFTF ====
+    
+    /**
+     * Add a set of LLVM basicblocks that were executed in a failing execution.
+     */
+    void addFailingBlocks(std::vector<BasicBlock*> &bb);
+    /**
+     * Add a set of LLVM basicblocks that were executed in a successful execution.
+     */
+    void addSuccessfulBlocks(std::vector<BasicBlock*> &bb);
+    /**
+     * Add a set of LLVM basicblocks that were executed in neither 
+     * a failing or successful execution.
+     */
+    void addUnknowBlocks(std::vector<BasicBlock*> &bb);
+    /**
+     * Build the set of bug free LLVM basicblocks.
+     *
+     * Bug free blocks are LLVM basicblocks that are assumed to be free
+     * from faults because they are never executed in failing execution.
+     * Bug free blocks are used in the construction of the Hardened 
+     * Flow-sensitive Trace Formula (HFTF).
+     */
+    void computeBugFreeBlocks(Options *o);
+    /**
+     * Return true if the LLVM basicblock \a bb was never executed
+     * in a failing execution.
+     */
+    bool isBugFreeBlock(BasicBlock *bb);
+    /**
+     * Return LLVM basic blocks that were executed in 
+     * failing program executions.
+     */
+    std::set<BasicBlock*> getFailingRunBB();
+    /**
+     * Return LLVM basic blocks that were executed in
+     * successful program executions.
+     */
+    std::set<BasicBlock*> getSuccessfulRunBB();
+    /**
+     * Return LLVM basic blocks that were neither executed in
+     * failing or successful program executions.
+     */
+    std::set<BasicBlock*> getOtherRunBB();
+    /**
+     * Return LLVM basic blocks that were never executed in
+     * failing program executions.
+     */
+    std::set<BasicBlock*> getBugFreeBlocks();
+    /**
+     * Dump to the standard output a textual representation of 
+     * this program profile.
+     */
     void dump(); 
     
 private:
+    /**
+     * Add a successful program execution trace.
+     */
     void addSuccProgramTrace(ProgramTrace *e);
+    /**
+     * Add a failing program execution trace.
+     */
     void addFailProgramTrace(ProgramTrace *e);
+    /**
+     * Add a program execution trace that is neither failing or successful.
+     */
     void addOtherProgramTrace(ProgramTrace *e);
     
 };
-//============================================================================
 
-#endif
+#endif // _PROGRAMPROFILE_H

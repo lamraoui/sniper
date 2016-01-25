@@ -1,12 +1,8 @@
 /**
- * ProgramProfile.cpp
+ * \file ProgramProfile.cpp
  *
- * 
- *
- * @author : Si-Mohamed Lamraoui
- * @contact : simo@nii.ac.jp
- * @date : 2013/11/15
- * @copyright : NII 2013
+ * \author Si-Mohamed Lamraoui
+ * \date   18 January 2015
  */
 
 #include "ProgramProfile.h"
