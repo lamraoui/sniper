@@ -1,12 +1,8 @@
 /**
- * Expression.h
+ * \file Expression.h
  *
- * 
- *
- * @author : Si-Mohamed Lamraoui
- * @contact : simo@nii.ac.jp
- * @date : 2013/04/01
- * @copyright : NII 2013
+ * \author Si-Mohamed Lamraoui
+ * \date   26 January 2015
  */
 
 
