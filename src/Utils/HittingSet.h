@@ -1,16 +1,9 @@
 /**
- * HittingSet.h
+ * \file HittingSet.h
  *
- * 
- *
- * @author : Si-Mohamed Lamraoui
- * @contact : simo@nii.ac.jp
- * @date : 2013/04/01
- * @copyright : NII 2013
+ * \author Si-Mohamed Lamraoui
+ * \date   25 January 2015
  */
-
-// http://stackoverflow.com/questions/7936037/any-good-implementation-of-greedy-set-cover-for-large-datasets
-
 
 #ifndef _HITTINGSET_H
 #define _HITTINGSET_H
@@ -25,39 +18,43 @@
 
 #include "yices_c.h"
 
-
-//============================================================================
+/**
+ * \class HittingSet
+ *
+ * This class provides a method to compute minimal hitting-set.
+ */
 template <typename T>
 class HittingSet {
     
-    typedef struct Node {
-        unsigned edgeVal;
-        std::set<T> set;
-        struct Node *pred;
-        std::vector<struct Node*> nexts;
-    } Node_t;
-
 public:
-    static void getMinimalHittingSets(std::vector<std::set<T> > &F,
-                                      std::vector<std::set<T> > &MHS);
+    /**
+     * Compute the minimal hitting-set \p H of \p S.
+     *
+     * <b>Definition (Hitting Set)</b> - \f$H\f$ is a hitting
+     * set of \f$S\f$ iff \f$H \subseteq D\f$ and
+     * \f$\forall S \in \Omega : H \cap S \neq \emptyset\f$.
+     *
+     * Let \p S be a collection of sets from some finite
+     * domain \f$D\f$, a hitting set of \p S is a set of elements
+     * from \f$D\f$ that covers (hits) every set in \p S by having
+     * at least one element in common with it. A minimal hitting 
+     * set is a hitting set from which no element can be removed 
+     * without losing the hitting set property. There exist many 
+     * algorithms to compute the hitting set. We here use a 
+     * technique based on the Maximum Satisfiability.
+     *
+     * \param S A vector of sets (MCSes) (input).
+     * \param H A vector of sets (MCSes) (output).
+     */
     static void getMinimalHittingSets_LP(std::vector<std::set<T> > &S,
-                                  std::vector<std::set<T> > &MHS);
-    
-private:
-    static void computeHittingSetDAG(std::vector<std::set<T> > &F,
-                                     Node_t *root, Node_t *node);
-    static void printSet(std::set<T> S);
-    static void saveTree(Node_t *node, T path[], unsigned len,
-                         std::vector<std::set<T> > &MHS_tmp);
-    
-};
-//============================================================================
+                                  std::vector<std::set<T> > &H);
 
+};
 
 // xi is equal to 1 iff Si is selected
 template<class T>
 void HittingSet<T>::getMinimalHittingSets_LP(std::vector<std::set<T> > &S,
-                                             std::vector<std::set<T> > &MHS) {
+                                             std::vector<std::set<T> > &H) {
     // Create the universe U
     std::set<T> U;
     for (unsigned i=0; i<S.size(); i++) {
@@ -146,7 +143,7 @@ void HittingSet<T>::getMinimalHittingSets_LP(std::vector<std::set<T> > &S,
                 }
                 if (!subset.empty()) {
                     // Save the solution
-                    MHS.push_back(subset);
+                    H.push_back(subset);
                     // Block the current solution
                     yices_expr blockExpr = yices_mk_or(ctx, args, j);
                     yices_assert(ctx, blockExpr);
@@ -166,137 +163,4 @@ void HittingSet<T>::getMinimalHittingSets_LP(std::vector<std::set<T> > &S,
     yices_del_context(ctx);
 }
 
-// F : collection of set
-template<class T>
-void HittingSet<T>::getMinimalHittingSets(std::vector<std::set<T> > &F,
-                                          std::vector<std::set<T> > &MHS) {
-    if (F.empty()) {
-        return;
-    }
-    // Init the root node
-    Node_t *n = new Node_t();
-    n->set = F[0];
-    n->edgeVal = 0;
-    n->pred = NULL;
-    Node_t *root = n;
-    
-    // Compute the Minimal Hitting Sets
-    computeHittingSetDAG(F, root, root);
-    
-    // Get the sets from the tree
-    std::vector<std::set<T> > MHS_tmp;
-    T path[1000];
-    saveTree(root, path, 0, MHS_tmp);
-    
-    typename std::vector<std::set<T> >::iterator it;
-    for(it=MHS_tmp.begin(); it!=MHS_tmp.end(); ++it) {
-        std::set<T> S1 = *it;
-        bool ok = true;
-        typename std::vector<std::set<T> >::iterator it2;
-        for(it2=MHS_tmp.begin(); it2!=MHS_tmp.end(); ++it2) {
-            std::set<T> S2 = *it2;
-            // Remove the over-sets
-            if (S1!=S2 && std::includes(S1.begin(), S1.end(), S2.begin(), S2.end()))
-            {
-                ok = false;
-            }
-        }
-        if (ok) {
-            // Remove the doublons
-            bool is_in = false;
-            typename std::vector<std::set<T> >::iterator it2;
-            for(it2=MHS.begin(); it2!=MHS.end(); ++it2) {
-                if (*it2==S1) {
-                    is_in = true;
-                    break;
-                }
-            }
-            if (!is_in) {
-                MHS.push_back(S1);
-                //printSet(S1);
-            }
-        }
-    }
-}
-
-template<class T>
-void HittingSet<T>::computeHittingSetDAG(std::vector<std::set<T> > &F,
-                                         Node_t *root, Node_t *node) {
-    
-    typename std::set<T>::iterator it2;
-    for(it2=(node->set).begin(); it2!=(node->set).end(); ++it2) {
-        T v = *it2;
-        
-        // Compute H(n_succ)
-        std::set<T> H;
-        if (v>0) {
-            H.insert(v);
-        }
-        Node_t *current = node;
-        while (current!=root) {
-            if (current->edgeVal>0) {
-                H.insert(current->edgeVal);
-            }
-            current = current->pred;
-        }
-        
-        // Find K such that KnH(n_succ) = {}
-        std::set<T> K;
-        typename std::vector<std::set<T> >::iterator it4;
-        for(it4=F.begin(); it4!=F.end(); ++it4) {
-            std::set<T> s = *it4;
-            std::set<T> intersect;
-            set_intersection(s.begin(),s.end(),H.begin(),H.end(),
-                             std::inserter(intersect,intersect.begin()));
-            if (intersect.empty()) {
-                K = s;
-                break;
-            }
-        }
-        
-        Node_t *next = new Node_t();
-        next->edgeVal = v;
-        next->pred = node;
-        (node->nexts).push_back(next);
-        if (!K.empty()) {
-            next->set = K;
-            computeHittingSetDAG(F, root, next);
-        }
-    }
-}
-
-template<class T>
-void HittingSet<T>::saveTree(Node_t *node, T path[], unsigned len,
-                             std::vector<std::set<T> > &MHS_tmp) {
-    
-    path[len] = node->edgeVal;
-    if ((node->nexts).size()==0) {
-        std::set<T> S;
-        for (unsigned i=0; i<=len; i++) {
-            if (path[i]>0) {
-                S.insert(path[i]);
-            }
-        }
-        MHS_tmp.push_back(S);
-    } else {
-        typename std::vector<Node_t*>::iterator it;
-        for(it=(node->nexts).begin(); it!=(node->nexts).end(); ++it) {
-            Node_t *n = *it;
-            saveTree(n, path, len+1, MHS_tmp);
-        }
-    }
-}
-
-template<class T>
-void HittingSet<T>::printSet(std::set<T> S) {
-    std::cout << "{";
-    typename std::set<T>::iterator it;
-    for(it=S.begin(); it!=S.end(); ++it) {
-        T n = *it;
-        std::cout << n << " ";
-    }
-    std::cout << "}" << std::endl;
-}
-
-
-#endif
+#endif // _HITTINGSET_H
