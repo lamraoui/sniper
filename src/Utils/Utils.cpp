@@ -1,14 +1,11 @@
 /**
- * utils.cpp
+ * \file Utils.cpp
  *
- *
- * @author : Si-Mohamed Lamraoui
- * @contact : simo@nii.ac.jp
- * @date : 2014/04/16
- * @copyright : NII 2014
+ * \author Si-Mohamed Lamraoui
+ * \date   26 January 2015
  */
 
-#include "utils.h"
+#include "Utils.h"
 
 // =============================================================================
 // displayProgressBar

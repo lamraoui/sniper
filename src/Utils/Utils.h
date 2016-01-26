@@ -1,13 +1,9 @@
 /**
- * utils.h
+ * \file Utils.h
  *
- *
- * @author : Si-Mohamed Lamraoui
- * @contact : simo@nii.ac.jp
- * @date : 2014/04/16
- * @copyright : NII 2014
+ * \author Si-Mohamed Lamraoui
+ * \date   26 January 2015
  */
-
 
 #ifndef _UTILS_H
 #define _UTILS_H
@@ -20,22 +16,48 @@
 
 #include "../Options.h"
 
+/**
+ * Print a progress bar to the standard output.
+ *
+ * \param progress Current progress (>= 0 and <= \p total).
+ * \param total Total progress (100%).
+ */
 void displayProgressBar(unsigned progress, unsigned total);
+/**
+ * Print the given message if the user passed the option \a -dbg-msg.
+ *
+ * \param msg A message to display to the standard output.
+ * \param o User's options.
+ */
 void MSG(std::string msg, Options *o = NULL);
   
-
+/**
+ * \class MSTimer
+ *
+ * This class provides a timer.
+ */
 class MSTimer {
+    
 private:
     struct timeval startTime;
     unsigned status;
+    
 public:
     MSTimer() : status(0) { }
     ~MSTimer() { };
+    
+    /**
+     * Start the timer.
+     */
     void start() {
         assert(status==0 && "Timer is already running!");
         gettimeofday(&startTime, NULL);
         status = 1;
     }
+    
+    /**
+     * Stop the timer and print the elapsed time (ms).
+     */
     void stop() {
         assert(status==1 && "Timer is not running!");
         struct timeval endTime;
@@ -46,6 +68,12 @@ public:
         std::cout << mtime << std::flush;
         status = 0;
     }
+    
+    /**
+     * Stop the timer, print a message and the elapsed time (ms).
+     *
+     * \param msg A message to be display to the standard output.
+     */
     void stop(std::string msg) {
         std::cout << msg << ": "; 
         stop();
@@ -96,12 +124,8 @@ public:
         return (double)clock() / CLOCKS_PER_SEC;
     }
 #endif
- */   
- 
- 
- 
+ */
     
 };
 
-
-#endif
+#endif // _UTILS_H
