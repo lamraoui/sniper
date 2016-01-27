@@ -95,9 +95,6 @@ bool Frontend::run() {
     } else {
         checkFunctionSignature(targetFun);
     }
-    if (options->printDuration()) {
-        timer.stop("Program Preprocessing Time");
-    }
     if (options->printModIR()) {
         std::cout << "---- Module IR -------------------------------\n";
         // Redirect the IR dump to stdout
