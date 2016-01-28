@@ -141,6 +141,9 @@ Formula* EncoderPass::makeTraceFormula() {
                     break;
                 case Instruction::Alloca:
                     expr = encoder->encode(cast<AllocaInst>(i));
+                    if (!expr) {
+                        continue;
+                    }
                     isWeigted = false;
                     break;
                 case Instruction::Store:
