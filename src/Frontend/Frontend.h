@@ -1,12 +1,8 @@
 /**
- * Frontend.h
+ * \file Frontent.h
  *
- *
- *
- * @author : Si-Mohamed Lamraoui
- * @contact : simo@nii.ac.jp
- * @date : 2015/07/08
- * @copyright : NII 2015
+ * \author Si-Mohamed Lamraoui
+ * \date   28 January 2015
  */
 
 #ifndef _FRONTEND_H
@@ -34,43 +30,103 @@
 #include "Frontend/GlobalVariables.h"
 #include "Frontend/LoopInfoPass.h"
 
-
 using namespace llvm;
 
-//============================================================================
+/**
+ * \class Frontend
+ *
+ * This class provides functions that pre-process the input program.
+ * The pre-processing consist of inlining function calls, puting the intermediate
+ * representation in SSA form, and unwinding loops fully (if prossible) or
+ * to given a bound.
+ */
 class Frontend {
 
 public:
+    /**
+     * Prefix of special SNIPER's function names.
+     * <a>sniper_XXXX()</a>
+     */
     static const StringRef SNIPER_FUN_PREFIX;
+    /**
+     * Name of the special function that defines a post-condition.
+     * <a>sniper_assert(bool)</a>
+     */
     static const StringRef SNIPER_ASSERT_FUN_NAME;
+    /**
+     * Name of the special function that defines a pre-condition.
+     * <a>sniper_assume(bool)</a>
+     */
     static const StringRef SNIPER_ASSUME_FUN_NAME;
+    /**
+     * Name of the special function that defines a loop invariant.
+     * <a>sniper_loop(bool)</a>
+     */
     static const StringRef SNIPER_LOOP_ASSERT_FUN_NAME;
     
 private:
-    Module          *llvmMod;
-    Options         *options;
-    LocalVariables  *localVars;
-    LoopInfoPass    *loopInfo;
+    /**
+     * The LLVM module where is the target function.
+     */
+    Module *llvmMod;
+    /**
+     * User defined options.
+     */
+    Options *options;
+    /**
+     * Information about the local variables in the target function.
+     */
+    LocalVariables *localVars;
+    /**
+     * Information about the loops in the target function.
+     */
+    LoopInfoPass  *loopInfo;
     bool argvUsed;
 
 public:
     Frontend(Module *llvmMod, Options *options) :
     llvmMod(llvmMod), options(options) {}
-    bool            run();
-    Module          *getLLVMModule();
-    Function        *getFunction(std::string name);
-    LocalVariables  *getLocalVars();
-    LoopInfoPass    *getLoopInfo();
-    bool            hasArgv();
+    
+    /**
+     * Pre-process the target function.
+     *
+     * This function inlines all function calls, transforms the intermediate
+     * representation in SSA form, and unwinds all loops fully (if prossible) or
+     * to given a bound (see options).
+     */
+    bool run();
+    /**
+     * Return the LLVM module where is the target function.
+     */
+    Module *getLLVMModule();
+    /**
+     * Return the LLVM target function.
+     */
+    Function *getFunction(std::string name);
+    /**
+     * Return information about local variables.
+     */
+    LocalVariables *getLocalVars();
+    /**
+     * Return information about loops.
+     */
+    LoopInfoPass *getLoopInfo();
+    bool hasArgv();
     
 private:
     bool isStandardFunctionSignature(Function *targetFun);
     bool simplifyFunctionSignature(Function *targetFun);
+    /**
+     * Check wether or not the target function prototype is supported. 
+     * In case the prototype/types are not supported, the program exit.
+     */
     void checkFunctionSignature(Function *targetFun);
+    /**
+     * Add a dummy add instruction before each function return.
+     */
     void processFunctionReturns(Function *f);
     void defineIntrinsicFunctions();
 
 };
-//============================================================================
     
-#endif
+#endif // _FRONTEND_H

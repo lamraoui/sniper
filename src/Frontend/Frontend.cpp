@@ -1,12 +1,8 @@
 /**
- * Frontend.cpp
+ * \file Frontent.cpp
  *
- *
- *
- * @author : Si-Mohamed Lamraoui
- * @contact : simo@nii.ac.jp
- * @date : 2015/07/08
- * @copyright : NII 2015
+ * \author Si-Mohamed Lamraoui
+ * \date   28 January 2015
  */
 
 #include "Frontend.h"
