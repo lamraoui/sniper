@@ -81,7 +81,6 @@ private:
      * Information about the loops in the target function.
      */
     LoopInfoPass  *loopInfo;
-    bool argvUsed;
 
 public:
     Frontend(Module *llvmMod, Options *options) :
@@ -111,21 +110,21 @@ public:
      * Return information about loops.
      */
     LoopInfoPass *getLoopInfo();
-    bool hasArgv();
     
 private:
-    bool isStandardFunctionSignature(Function *targetFun);
-    bool simplifyFunctionSignature(Function *targetFun);
     /**
-     * Check wether or not the target function prototype is supported. 
-     * In case the prototype/types are not supported, the program exit.
+     * Check whether or not the target function's type signature is 
+     * supported. In case the signature is not supported, 
+     * the program exits.
+     *
+     * SNIPER supports the following type signatures:
+     * <a> [void|int32] foo([int32...int32]) </a>
      */
-    void checkFunctionSignature(Function *targetFun);
+    void checkFunctionTypeSignature(Function *f);
     /**
      * Add a dummy add instruction before each function return.
      */
     void processFunctionReturns(Function *f);
-    void defineIntrinsicFunctions();
 
 };
     

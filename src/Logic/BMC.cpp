@@ -17,7 +17,7 @@
 // =============================================================================
 void BMC::run(ProgramProfile *profile, Function *targetFun, YicesSolver *solver,
               Formula *TF, Formula *preCond, Formula *postCond,
-              LoopInfoPass *loopInfo, Options *options, bool hasArgv) {
+              LoopInfoPass *loopInfo, Options *options) {
     
     // Add the trace formula to the context
     solver->init();
@@ -82,22 +82,6 @@ void BMC::run(ProgramProfile *profile, Function *targetFun, YicesSolver *solver,
     }
 
     ProgramTrace *E = new ProgramTrace(targetFun, FAIL);
-    
-    // Function of type main(argc,argv)
-    if (hasArgv) {
-    /*    std::string model_str = solver->getModel();
-        // Extract the ARGV clauses
-        std::string prefix = "(= (ARGV";
-        std::string clause;   
-        std::istringstream stream(model_str);
-        while (std::getline(stream, clause)) {
-            if (!clause.compare(0, prefix.size(), prefix)) {
-                E->addProgramInput(clause);
-            }
-        }
-     */
-        assert("argv not supported");
-    }      
     
     // Retrieve all main function arguments ,
     // retrieve their value from the model (of BMC)

@@ -27,19 +27,21 @@ void SniperBackend::run() {
     
     LocalVariables *LV = frontend->getLocalVars();
     LoopInfoPass *LIP  = frontend->getLoopInfo();
-    bool hasArgv = frontend->hasArgv();
 
     // Create an empty program profile for holding execution info
     ProgramProfile *PP = new ProgramProfile(targetFun);
     
     // Run the program with the given inputs
     std::string tsFilename = options->getTestSuiteFileName();
+    std::string goFilename = options->getGoldenOutputsFileName();
+    assert(((options->htfUsed() && options->methodConcolic())
+            || !options->htfUsed())
+           && "Concolic exec. must be activated to use HFTF encoding!");
     if (options->methodConcolic() && !tsFilename.empty()) {
         MSTimer ctimer;
         if (options->printDuration()) {
             ctimer.start();
         }
-        std::string goFilename = options->getGoldenOutputsFileName();
         ConcolicModule *CR =
         new IRRunner(llvmMod, targetFun, options, tsFilename, goFilename);
         CR->run(PP, LV, LIP);
@@ -47,6 +49,10 @@ void SniperBackend::run() {
         if (options->printDuration()) {
             ctimer.stop("Prog. Runner Execution Time");
         }
+    }
+    // Failing Testcases with Golden Outputs
+    else if (!tsFilename.empty() && !goFilename.empty()) {
+        PP->loadTestcases(tsFilename, goFilename, options);
     }
     // Concolic Execution
     else if (options->methodConcolic()) {
@@ -104,8 +110,7 @@ void SniperBackend::run() {
         bool ok = true;
         if (options->methodBMC() || !ok) {
             // Compute a single failing program execution
-            BMC::run(PP, targetFun, solver, TF, preCond, postCond,
-                     LIP, options, hasArgv);
+            BMC::run(PP, targetFun, solver, TF, preCond, postCond, LIP, options);
             if (PP->hasFailingProgramTraces()) {
                 if(options->verbose()) {
                     std::cout << "  Failing execution found: ";
@@ -119,8 +124,7 @@ void SniperBackend::run() {
     }
     
     // Run the fault localization algorithm
-    IterationAlgorithm *IA =
-    new IterationAlgorithm(targetFun, solver, hasArgv, options);
+    IterationAlgorithm *IA = new IterationAlgorithm(targetFun, solver, options);
     Combine::Method CM = (Combine::Method) options->getCombineMethod();
     IA->run(TF, preCond, postCond, PP, CM);
 }

@@ -42,9 +42,9 @@ private:
     
 public:
     IterationAlgorithm(Function *_targetFun, YicesSolver *_solver,
-                       bool _hasArgv, Options *_options) :
+                       Options *_options) :
                        targetFun(_targetFun), solver(_solver),
-                       hasArgv(_hasArgv), options(_options) { }
+                       options(_options) { }
     ~IterationAlgorithm() { }
     
     void run(Formula *TF, Formula *preCond, Formula *postCond,
