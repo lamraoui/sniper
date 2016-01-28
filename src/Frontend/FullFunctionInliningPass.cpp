@@ -1,12 +1,8 @@
 /**
- * FullFunctionInliningPass.cpp
+ * \file FullFunctionInliningPass.cpp
  *
- * 
- *
- * @author : Si-Mohamed Lamraoui
- * @contact : simo@nii.ac.jp
- * @date : 2013/03/26
- * @copyright : NII 2013
+ * \author Si-Mohamed Lamraoui
+ * \date   28 January 2015
  */
 
 #include "FullFunctionInliningPass.h"

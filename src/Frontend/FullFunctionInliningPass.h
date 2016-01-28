@@ -1,12 +1,8 @@
 /**
- * FullFunctionInliningPass.h
- *
+ * \file FullFunctionInliningPass.h
  * 
- *
- * @author : Si-Mohamed Lamraoui
- * @contact : simo@nii.ac.jp
- * @date : 2013/03/26
- * @copyright : NII 2013
+ * \author Si-Mohamed Lamraoui
+ * \date   28 January 2015
  */
 
 #ifndef FullFunctionInliningPass_H
@@ -31,24 +27,44 @@
 
 using namespace llvm;
 
-
-//============================================================================
+/**
+ * \class FullFunctionInliningPass
+ *
+ * This class is an LLVM pass that inline function calls.
+ * Inlining a function call consist of replacing a call instruction by 
+ * the callee function bodies.
+ */
 class FullFunctionInliningPass : public FunctionPass {
     
+    /**
+     * LLVM pass ID.
+     */
     static char ID;
     
 private:
+    /**
+     * User fined options.
+     */
     Options *options;
     
 public:
     FullFunctionInliningPass(Options *_options) 
     : FunctionPass(ID), options(_options) { }
     ~FullFunctionInliningPass() { }
+    
+    /**
+     * Return an LLVM pass that can be used to inline function calls.
+     *
+     * \param o User's options.
+     */
     Pass *createFullFunctionInliningPass(Options *o);
+    /**
+     * Inline all function calls in \p F.
+     *
+     * \param F An LLVM function.
+     */
     virtual bool runOnFunction(Function &F);
     
 };
-//============================================================================
 
-
-#endif
+#endif // FullFunctionInliningPass_H
