@@ -1,5 +1,5 @@
 /**
- * \file Frontent.cpp
+ * \file Frontend.cpp
  *
  * \author Si-Mohamed Lamraoui
  * \date   28 January 2015
