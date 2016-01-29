@@ -37,8 +37,8 @@ bool Frontend::run() {
     localVars->processLoadStore();
     
     // Process global variables
-    GlobalVariables *GV = new GlobalVariables(targetFun, options->dbgMsg());
-    GV->process();
+    GlobalVariables *GV = new GlobalVariables();
+    GV->process(targetFun);
     delete GV;
     
     // Unroll recursive calls

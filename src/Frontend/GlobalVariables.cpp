@@ -13,15 +13,6 @@
 
 
 // =============================================================================
-// GlobalVariables 
-//
-// =============================================================================
-GlobalVariables::GlobalVariables(Function *_mainFun, bool _dbgMsg) {
-    this->mainFun = _mainFun;
-    this->dbgMsg = _dbgMsg;
-}
-
-// =============================================================================
 // process 
 // 
 // TODO: inbound GEPI?
@@ -29,13 +20,12 @@ GlobalVariables::GlobalVariables(Function *_mainFun, bool _dbgMsg) {
 //
 //
 // =============================================================================
-
-void GlobalVariables::process() {
+void GlobalVariables::process(Function *targetFun) {
 
     // Insert an Alloca instruction in the main function
     // entry block for each GV declaration
-    Instruction *firstInst = mainFun->getEntryBlock().begin();
-    Module *m = mainFun->getParent();
+    Instruction *firstInst = targetFun->getEntryBlock().begin();
+    Module *m = targetFun->getParent();
     Module::global_iterator iter = m->global_begin();
     Module::global_iterator end = m->global_end();
     for (; iter != end; ++iter) {
@@ -48,7 +38,7 @@ void GlobalVariables::process() {
     
     // Iterate over the instructions
     inst_iterator ii0;
-    for (ii0 = inst_begin(mainFun); ii0!=inst_end(mainFun); ii0++) {
+    for (ii0 = inst_begin(targetFun); ii0!=inst_end(targetFun); ii0++) {
         Instruction &i = *ii0;
         
         switch (i.getOpcode()) {

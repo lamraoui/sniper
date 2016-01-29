@@ -24,7 +24,7 @@
 #include <llvm/Transforms/Utils/BasicBlockUtils.h>
 #include <llvm/Support/InstIterator.h>
 
-#include "Utils/utils.h"
+#include "Utils/Utils.h"
 
 using namespace llvm;
 
@@ -33,15 +33,14 @@ using namespace llvm;
 class GlobalVariables {
     
 private:
-    bool dbgMsg;
-    Function *mainFun;
     std::map<GlobalVariable*, Value*> gv2val;
     std::map<Value*, AllocaInst*> gv2a;
     
 public:
-    GlobalVariables(Function *_mainFun, bool _dbgMsg);
+    GlobalVariables() { }
     ~GlobalVariables() { }
-    void process();
+    
+    void process(Function *targetFun);
     
 private:
     void replacePointer(Instruction *inst);
