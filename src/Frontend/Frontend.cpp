@@ -33,8 +33,8 @@ bool Frontend::run() {
     // Save local variable names before processing the bytecode
     Function *targetFun = getFunction(options->getFunctionName());
     assert(targetFun && "Requested function missing");
-    localVars = new LocalVariables(targetFun);
-    localVars->processLoadStore();
+    localVars = new LocalVariables();
+    localVars->processLoadStore(targetFun);
     
     // Process global variables
     GlobalVariables *GV = new GlobalVariables();
@@ -75,8 +75,6 @@ bool Frontend::run() {
     FPM2->run(*targetFun);
     //TODO: delete FPM2;
     
-    // Process the phi instructions
-    localVars->processPhi();
     // Process returns
     processFunctionReturns(targetFun);
     

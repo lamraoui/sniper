@@ -1,12 +1,8 @@
 /**
- * LocalVariables.cpp
+ * \file LocalVariables.cpp
  *
- * 
- *
- * @author : Si-Mohamed Lamraoui
- * @contact : simohamed.lamraoui@gmail.com
- * @date : 2012/03/11
- * @copyright : NII 2012
+ * \author Si-Mohamed Lamraoui
+ * \date   29 January 2016
  */
 
 #include "LocalVariables.h"
@@ -16,7 +12,7 @@
 // process
 //
 // =============================================================================
-void LocalVariables::processLoadStore() {
+void LocalVariables::processLoadStore(Function *mainFun) {
     
     // Iterate through the function
     std::vector<StoreInst*> stores;  
@@ -139,49 +135,8 @@ void LocalVariables::processLoadStore() {
     //verifyFunction(*mainFun);
 }
 
-
 // =============================================================================
-// processPhi
-//
-// =============================================================================
-void LocalVariables::processPhi() {
-
-    // Iterate through the function
-    inst_iterator ii0;
-    for (ii0 = inst_begin(mainFun); ii0!=inst_end(mainFun); ii0++) {
-        Instruction &i = *ii0;
-        // Save the local variable positions
-        switch (i.getOpcode()) {
-            case Instruction::PHI: {
-                PHINode *phi = cast<PHINode>(&i);
-                std::string phiName = phi->getName();
-                if (!hasEnding(phiName, ".0")) {
-                    break;
-                }
-                bool ok = true;
-                for (unsigned j=0; j<phi->getNumIncomingValues(); j++) {
-                    Value *val = phi->getIncomingValue(j);
-                    if(!isa<ConstantInt>(val)) {
-                        ok = false; break;
-                    }
-                }
-                /*if (ok) {
-                    int line = this->ptr2line[phiName.substr(0,phiName.length()-2)];
-                    std::cout << "PHI-LINE: " << line << std::endl;
-                }*/
-                
-            } break;                
-            default:
-                break;
-        } 
-    }
-                
-    
-}
-
-
-// =============================================================================
-// getName
+// getPtr
 // 
 // =============================================================================
 std::string LocalVariables::getPtr(Instruction *i, int pos) {
@@ -195,15 +150,6 @@ std::string LocalVariables::getPtr(Instruction *i, int pos) {
 }
 
 // =============================================================================
-// getLine
-// 
-// =============================================================================
-unsigned LocalVariables::getLine(std::string name) {
-    return this->ptr2line[name];
-}
-
-
-// =============================================================================
 // set 
 // 
 // =============================================================================
@@ -214,21 +160,5 @@ void LocalVariables::set(Instruction *i, LoadInst *load, int pos) {
     v.inst = i;
     v.pos = pos;
     v.name = load->getPointerOperand()->getName();
-    // Type
     vars.push_back(v);    
-}
-
-
-// =============================================================================
-// hasEnding
-//
-// =============================================================================
-bool LocalVariables::hasEnding(std::string const &fullString,
-                               std::string const &ending) {
-    if (fullString.length() >= ending.length()) {
-        return (0 == fullString.compare (fullString.length() - ending.length(),
-                                         ending.length(),  ending));
-    } else {
-        return false;
-    }
 }

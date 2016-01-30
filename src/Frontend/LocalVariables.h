@@ -1,12 +1,8 @@
 /**
- * LocalVariables.h
+ * \file LocalVariables.h
  *
- * 
- *
- * @author : Si-Mohamed Lamraoui
- * @contact : simo@nii.ac.jp
- * @date : 2012/03/11
- * @copyright : NII 2012
+ * \author Si-Mohamed Lamraoui
+ * \date   29 January 2016
  */
 
 #ifndef _LOCALVARIABLES_H
@@ -25,45 +21,70 @@
 
 using namespace llvm;
 
-
+/**
+ * A variable of an LLVM instruction.
+ */
 typedef struct varArg {
-    Instruction *inst;
-    std::string name;
-    //Type *type;
-    int pos;
+    Instruction *inst; /*< Instruction that uses the variable */
+    std::string name;  /*< Original variable name */
+    int pos;           /*< Argument position of the variable in \a inst */
 } varArg_t;
 
-typedef struct var {
-    std::string name;
-    int type;
-} var_t;
 
-
-//============================================================================
+/**
+ * \class LocalVariables
+ *
+ * While putting the IR into SSA form, LLVM automatically propagates 
+ * constant values. This is something we want to avoid because we 
+ * loose information and may encounter diffculties when mapping back
+ * the IR’s instructions to the original source code.
+ * To avoid this we pre-proccess the IR before putting it in SSA form. 
+ * For each instruction we save the name of the used variables. 
+ * Then, in the IR in SSA form, for each instruction containing a 
+ * constant value, we check if the constant value refers to a variable. 
+ * If this is the case, we replace the constant value by its variable 
+ * name. We also assign these variables with the appropriate values.
+ */
 class LocalVariables {
-    
-public:
-    std::vector<var_t> localVariables;
-    
+
 private:
-    Function *mainFun;
-    std::vector<varArg_t> vars; 
-    std::map<std::string, unsigned> ptr2line;
+    /**
+     * Vector of local variables information.
+     */
+    std::vector<varArg_t> vars;
     
 public:
-    LocalVariables(Function *_mainFun) : mainFun(_mainFun) { }
+    LocalVariables() { }
     ~LocalVariables() { }
    
-    void        processLoadStore();
-    void        processPhi();
+    /**
+     * Process load and store instructions in \p mainFun so
+     * that variables used in these instructions are not
+     * propagated in other instructions during the SSA 
+     * transformation pass (PromoteMemoryToRegisterPass).
+     *
+     * \param mainFun An function to be process.
+     */
+    void processLoadStore(Function *mainFun);
+    /**
+     * Get the name of a variable used in \p i at position \p pos.
+     *
+     * \param i An LLVM instruction.
+     * \param pos Argument position [0:number of args in \p i[.
+     */
     std::string getPtr(Instruction *i, int pos);
-    unsigned    getLine(std::string name);
     
 private:
+    /**
+     * Set the name of a variable used in \p i and \p load.
+     * The variable is at position \ pos in \p i.
+     *
+     * \param i An LLVM instruction.
+     * \param load A LLVM load instruction.
+     * \param pos Argument position in \p i [0:number of args in \p i[.
+     */
     void set(Instruction *i, LoadInst *load, int pos);
-    bool hasEnding(std::string const &fullString, std::string const &ending);
     
 };
-//============================================================================
 
-#endif
+#endif // _LOCALVARIABLES_H
