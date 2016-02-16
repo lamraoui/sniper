@@ -10,15 +10,7 @@
  */
 
 #include "SymbolMap.h"
-
-
-SymbolMap::SymbolMap() {
-    
-}
-
-SymbolMap::~SymbolMap() {
-    memory.clear();
-}
+ 
 
 // S[v->I(v)]
 SymbolPtr SymbolMap::addInput(Value *v) {
