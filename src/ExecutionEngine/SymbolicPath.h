@@ -173,10 +173,21 @@ private:
     
 };
 
+/**
+ *\class ExprCell
+ *
+ * Base class to represent an element (cell) of a path constraint. 
+ */
 class ExprCell {
 
 protected:
+    /**
+     * Constraint encoding the cell's instruction.
+     */
     ExprPtr expr;
+    /**
+     * Negation of ExprCell#expr.
+     */
     ExprPtr notExpr;
     Instruction *i;
 
@@ -184,20 +195,57 @@ public:
     ExprCell(Instruction *i) : i(i) { }
     virtual ~ExprCell() { }
 
-    virtual bool isBranch() { return false; }
-    virtual bool isFunCall() { return false; }  
-    virtual bool isAssert() { return false; } 
-    virtual bool isAssume() { return false; }
+    /**
+     * Return true if this cell holds a branch instruction, 
+     * false otherwise.
+     */
+    virtual bool isBranch() { 
+        return false; 
+    }
+    /**
+     * Return true if this cell holds a call instruction, 
+     * false otherwise.
+     */
+    virtual bool isFunCall() { 
+        return false; 
+    }
+    /**
+     * Return true if this cell holds a call to an assert function, 
+     * false otherwise.
+     */
+    virtual bool isAssert() { 
+        return false; 
+    }
+     /**
+     * Return true if this cell holds a call to an assume function, 
+     * false otherwise.
+     */
+    virtual bool isAssume() { 
+        return false; 
+    }
+    /**
+     * Dump information to the standard output.
+     */
     virtual void dump() = 0;
-    ExprPtr getExpr() {
-        return expr;
+    /**
+     * Return the constraint encoding the cell's instruction.
+     */
+    ExprPtr getExpr() { 
+        return expr; 
     }
-    ExprPtr getNotExpr() {
-        return notExpr;
+    /**
+     * Return a negation of the constraint encoding the cell's instruction.
+     */
+    ExprPtr getNotExpr() { 
+        return notExpr; 
     }
+     /**
+     * Return the cell's instruction.
+     */
     Instruction* getInstruction() { 
         return i; 
     }
+    
 };
 
 class BranchExprCell : public ExprCell {
