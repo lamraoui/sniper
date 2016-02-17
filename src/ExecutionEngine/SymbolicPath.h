@@ -306,11 +306,28 @@ public:
     }
 };
 
+/**
+ *\class BranchExprCell
+ *
+ * This class represent an element (cell) of a path constraint, 
+ * which holds a call instruction. 
+ */
 class CallExprCell : public ExprCell {
+
 protected:
+    /**
+     * Return value of the function being call.
+     */
     Value *vret;
+    /**
+     * Symbolic arguments of the function being call.
+     */
     std::vector<SymbolPtr> sargs;
+    /**
+     *  Arguments (concrete value) of the function being call.
+     */
     std::vector<Value*> vargs;
+
 public:
     CallExprCell(Value *vret, Value *varg1, Instruction *i) 
     : ExprCell(i), vret(vret) { 
@@ -326,22 +343,56 @@ public:
     CallExprCell(Value *vret, std::vector<SymbolPtr> sargs, Instruction *i) 
     : ExprCell(i), vret(vret), sargs(sargs) { 
     }
-    Value* getRetValue() { return vret; }
-    std::vector<Value*> getArgsValues() { return vargs; }
-    std::vector<SymbolPtr> getArgsSymbols() { return sargs; }
-    virtual bool isFunCall() { return true; }
+
+    /**
+     * Return the return value of the function being call.
+     */
+    Value* getRetValue() { 
+        return vret; 
+    }
+    /**
+     * Return the symbolic arguments of the function being call.
+     */
+    std::vector<SymbolPtr> getArgsSymbols() { 
+        return sargs; 
+    }
+    /**
+     * Return the arguments (concrete value) of the function being call.
+     */
+    std::vector<Value*> getArgsValues() { 
+        return vargs; 
+    }
+    /**
+     * Always return true since this cell 
+     * holds a call instruction.
+     */
+    virtual bool isFunCall() { 
+        return true; 
+    }
+    /**
+     * \warning{This function cannot be called because 
+     * a CallExprCell does not hold any expression.}
+     */
     ExprPtr getExpr() {
         std::cout << "error: no expression for function node!\n";
         exit(1);
     }
+    /**
+     * \warning{This function cannot be called because 
+     * a CallExprCell does not hold any expression.}
+     */
     ExprPtr getNotExpr() {
         std::cout << "error: no expression for function node!\n";
         exit(1);
     }
+    /**
+     * Dump to the standard ouput the type of this cell.
+     */
     virtual void dump() {
         std::cout << "(FCN: "; 
         std::cout << " )";
     }
+
 };
 
 class AssertExprCell : public CallExprCell {
