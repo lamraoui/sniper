@@ -1,13 +1,9 @@
 /**
- * SymbolicPath.h
+ * \file SymbolicPath.h
  *
- * 
- * @author : Si-Mohamed Lamraoui
- * @contact : simo@nii.ac.jp
- * @date : 2013/12/07
- * @copyright : NII 2013
+ * \author Si-Mohamed Lamraoui
+ * \date   16 February 2016
  */
-
 
 #ifndef _SYMBOLICPATH_H
 #define _SYMBOLICPATH_H
@@ -38,56 +34,156 @@ typedef std::shared_ptr<CallExprCell> CallExprCellPtr;
 typedef std::shared_ptr<AssertExprCell> AssertExprCellPtr;
 typedef std::shared_ptr<AssumeExprCell> AssumeExprCellPtr;
 
+/**
+ * State of a branching point.
+ */
 typedef struct State {
-    bool branch;
-    bool done;
+    bool branch; /**< Value of the branch instruction condition (true:bb1,false:bb2). */
+    bool done; /**< True if both branches were explored */
 } State_t;
 
-//============================================================================
+/**
+ * \class SymbolicPath
+ *　
+ * This class is used in the concolic execution engine. 
+ * This class represent a path constraint (PC) 
+ * to collect symbolic predicate expressions from branching 
+ * points. The conjunction of the predicates in PC holds for 
+ * the execution path. The CUTE algorithm (concolic execution 
+ * algorithm) checks whether the PC with the last constraint 
+ * negated is satisfiable. If so, new input values can be generated 
+ * allowing each test run to exercise different program paths.
+ */
 class SymbolicPath {
     
 private:
+    /**
+     * Path constraint (PC).
+     */
     std::vector<ExprCellPtr> path;
+    /**
+     * Post-conditions.
+     */
     std::vector<ExprCellPtr> asserts;
-    std::vector<ExprCellPtr> assumes; 
-    std::vector<State_t>     stack;
+     /**
+     * Pre-conditions.
+     */
+    std::vector<ExprCellPtr> assumes;
+     /**
+     * Record the current path state.
+     */
+    std::vector<State_t> stack;
+    /**
+     * Record the number of branching points.
+     */
     unsigned nbBranch;
 
 public:
-    SymbolicPath();
-    SymbolicPath(SymbolicPath &obj);
-    ~SymbolicPath();
-    SymbolicPath* clone();
+    SymbolicPath() : nbBranch(0) { }
+    SymbolicPath(SymbolicPath &obj) {
+        path = obj.path;
+        nbBranch = obj.nbBranch;
+    }
+    ~SymbolicPath() { }
+    SymbolicPath* clone() {
+        return new SymbolicPath(*this);
+    }
     
+    /**
+     * Return the path constraint (PC).
+     */
     std::vector<ExprCellPtr> getPath();
+    /**
+     * Return the post-conditions.
+     */
     std::vector<ExprCellPtr> getAsserts();
-    std::vector<State_t>   getStack();
+    /**
+     * Return the current path state.
+     */
+    std::vector<State_t> getStack();
+    /**
+     * Set a new path state.
+     */
     void setStack(std::vector<State_t> s);
-
+    /**
+     * Add a new symbolic predicate expression (branch instruction) 
+     * to the path constraint and update the stack.
+     *
+     * \param svcond A symbol representating a branch instruction.
+     * \param branchTaken The outcome of the branch instruction. 
+     * \param i An LLVM branch (br) instruction.
+     */
     void addBranchCell(SymbolPtr svcond, bool branchTaken, Instruction *i);
+    /**
+     * Add a new symbolic predicate expression (call instruction) 
+     * to the path constraint.
+     *
+     * \param vret Returned value of the function beging called. 
+     * \param sarg1 A symbol representating a call instruction.
+     * \param i An LLVM call instruction.
+     */
     void addCallCell(Value *vret, SymbolPtr sarg1, Instruction *i);
+    /**
+     * Add a new symbolic predicate expression (call to an assert function) 
+     * to the path constraint.
+     *
+     * \param svcond A symbol representating a call instruction.
+     * \param assertResult The outcome of the assert (fail or not).
+     * \param i An LLVM call instruction.
+     */
     void addAssertCell(SymbolPtr s, bool assertResult, Instruction *i);
+    /**
+     * Add a new symbolic predicate expression (call to an assume function) 
+     * to the path constraint.
+     *
+     * \param svcond A symbol representating a call instruction.
+     * \param assertResult The outcome of the assume (fail or not).
+     * \param i An LLVM call instruction.
+     */
     void addAssumeCell(SymbolPtr s, bool assumeResult, Instruction *i);
+    /**
+     * Return the number of branching points. 
+     */
     unsigned getNbBranch();
+    /**
+     * Clear the path constraint.
+     */
     void clear();
-    void clearStack() { stack.clear(); }
+    /**
+     * Clear the state of the current path.
+     */
+    void clearStack();
+    /**
+     * Add a new branching point state to the stack. 
+     */
     void updateStack(bool branch);
+    /**
+     * Dump to the standard output the path constraint.
+     */
     void dump();
     
 private:
+    /** 
+     * Add a new symbolic predicate expression 
+     * to the path constraint.
+     *
+     * \param n Cell holding a symbolic predicate expression. 
+     */
     void addCell(ExprCellPtr n);
     
 };
-//============================================================================
 
 class ExprCell {
+
 protected:
     ExprPtr expr;
     ExprPtr notExpr;
     Instruction *i;
+
 public:
     ExprCell(Instruction *i) : i(i) { }
     virtual ~ExprCell() { }
+
     virtual bool isBranch() { return false; }
     virtual bool isFunCall() { return false; }  
     virtual bool isAssert() { return false; } 
@@ -222,4 +318,4 @@ public:
     
 };
 
-#endif
+#endif // _SYMBOLICPATH_H
