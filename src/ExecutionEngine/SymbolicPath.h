@@ -395,9 +395,20 @@ public:
 
 };
 
+/**
+ *\class AssertExprCell
+ *
+ * This class represent an element (cell) of a path constraint, 
+ * which holds a call to a assert function (sniper_assert(bool)). 
+ */
 class AssertExprCell : public CallExprCell {
+
 private:
+    /**
+     * Outcome of the assert function.
+     */
     bool assertResult;
+
 public:
     AssertExprCell(SymbolPtr sarg1, bool assertResult, Instruction *i) 
     : CallExprCell(NULL, sarg1, i), assertResult(assertResult) {
@@ -412,8 +423,25 @@ public:
             this->notExpr   = Expression::mkDiseq(e, oneExpr);
         }
     }
-    bool getResult() { return assertResult; }
-    virtual bool isAssert() { return true; } 
+
+    /**
+     * Return true if the outcome of the assert function is 
+     * not failing, false owtherwise. 
+     */
+    bool getResult() { 
+        return assertResult; 
+    }
+    /**
+     * Always return true since this cell 
+     * holds a call to an assert function.
+     */
+    virtual bool isAssert() { 
+        return true; 
+    } 
+    /**
+     * Dump to the standard output the cell expression 
+     * and the assert outcome.
+     */
     virtual void dump() {
         std::cout << "(AC: ";
         expr->dump();
