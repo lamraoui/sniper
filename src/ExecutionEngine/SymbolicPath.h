@@ -245,21 +245,55 @@ public:
     Instruction* getInstruction() { 
         return i; 
     }
-    
+
 };
 
+/**
+ *\class BranchExprCell
+ *
+ * This class represent an element (cell) of a path constraint, 
+ * which holds a branch instruction. 
+ */
 class BranchExprCell : public ExprCell {
+
 protected:
+    /**
+     * True if the "then" branch was taken, 
+     * false if the "else" branch was taken.
+     */
     bool branchTaken;
+
 public:
     BranchExprCell(SymbolPtr svcond, bool branchTaken, Instruction *i) 
     : ExprCell(i), branchTaken(branchTaken) {
         this->expr    = svcond->convertToExpr();
         this->notExpr = Expression::mkNot(this->expr);
     }
-    bool getBranchTaken() { return branchTaken; }
-    void setBranchTaken(bool branch) { branchTaken = branch; }
-    virtual bool isBranch() { return true; }
+
+    /**
+     * Return true if the "then" branch was taken, 
+     * false if the "else" branch was taken.
+     */
+    bool getBranchTaken() { 
+        return branchTaken; 
+    }
+    /**
+     * Set the which branch was taken by the br instruction.
+     */
+    void setBranchTaken(bool branch) { 
+        branchTaken = branch; 
+    }
+    /**
+     * Always return true since this cell 
+     * holds a branch instruction.
+     */
+    virtual bool isBranch() { 
+        return true; 
+    }
+    /**
+     * Dump to the standard output the cell expression 
+     * and the branch taken.
+     */
     virtual void dump() {
         std::cout << "(BN: "; 
         expr->dump();
