@@ -455,17 +455,45 @@ public:
     
 };
 
+/**
+ *\class AssumeExprCell
+ *
+ * This class represent an element (cell) of a path constraint, 
+ * which holds a call to a assume function (sniper_assume(bool)). 
+ */
 class AssumeExprCell : public CallExprCell {
+
 private:
+    /**
+     * Outcome of the assume function.
+     */
     bool assumeResult;
+
 public:
     AssumeExprCell(SymbolPtr sarg1, bool assumeResult, Instruction *i) 
     : CallExprCell(NULL, sarg1, i), assumeResult(assumeResult) { 
         this->expr =  sarg1->convertToExpr();
         this->notExpr = Expression::mkNot(this->expr);
     }
-    bool getResult() { return assumeResult; }
-    virtual bool isAssume() { return true; } 
+
+    /**
+     * Return true if the outcome of the assume function is 
+     * not failing, false owtherwise. 
+     */
+    bool getResult() { 
+        return assumeResult; 
+    }
+    /**
+     * Always return true since this cell 
+     * holds a call to an assume function.
+     */
+    virtual bool isAssume() { 
+        return true; 
+    }
+    /**
+     * Dump to the standard output the cell expression 
+     * and the assume outcome.
+     */
     virtual void dump() {
         std::cout << "(AS: ";
         expr->dump();
