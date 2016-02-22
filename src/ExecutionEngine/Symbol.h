@@ -188,11 +188,19 @@ public:
     }
 };
 
-// S(v)= S(v1) op v2
+/**
+ * \class SVBinaryOpSymbol
+ *
+ * This class is a binary op symbol with 
+ * one of this argument begin a concrete value 
+ * and the other argument begin a symbolic variable. 
+ *
+ * S(v)= S(v1) op v2
+ */
 class SVBinaryOpSymbol : public BinaryOpSymbol {
 protected:
-    SymbolPtr s1;
-    Value  *v2;
+    SymbolPtr s1; // First argument
+    Value  *v2;   // Second argument (concrete value)
 public:
     SVBinaryOpSymbol(Value *v, SymbolPtr s1, Value *v2) 
     : BinaryOpSymbol(v), s1(s1), v2(v2) { }
