@@ -448,14 +448,21 @@ public:
     }
 };
 
-
-// Limitation: only support integer values
-//             (*a cannot be symbolic)
-// P(ptr) = gep *a, S(v1)
+/**
+ * \class CastOpSymbol
+ *
+ * A gep op symbol is a symbol that represents 
+ * a get pointer element instruction.
+ *
+ * P(ptr) = gep *a, S(v1)
+ *
+ * Limitation: only support integer values
+ *             (*a cannot be symbolic).
+ */
 class GepOpSymbol : public Symbol {
 protected:
-    Value *a;
-    SymbolPtr s1;
+    Value *a;     // Address argument (concrete value)
+    SymbolPtr s1; // Offset argument
 public:
     GepOpSymbol(Value *ptr, Value *a, SymbolPtr s1) 
     : Symbol(ptr), a(a), s1(s1) { }
