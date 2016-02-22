@@ -368,11 +368,19 @@ public:
     }
 };
 
-// S(v)= S(v1) ? v2 : v3
+/**
+ * \class VVSelectOpSymbol
+ *
+ * This class is a select symbol with the  
+ * first argument begin a symbolic variable and    
+ * the other arguments begin concrete values. 
+ *
+ * S(v)= S(v1) ? v2 : v3
+ */
 class VVSelectOpSymbol : public SelectOpSymbol {
 protected:
-    Value *v2;
-    Value *v3;
+    Value *v2; // Second argument (concrete value)
+    Value *v3; // Third argument (concrete value)
 public:
     VVSelectOpSymbol(Value *v, SymbolPtr s1, Value *v2, Value *v3) 
     : SelectOpSymbol(v, s1), v2(v2), v3(v3) { }
