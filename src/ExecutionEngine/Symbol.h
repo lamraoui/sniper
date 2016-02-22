@@ -402,10 +402,17 @@ public:
     }
 };
 
-// S(v)= cast S(v1)
+/**
+ * \class CastOpSymbol
+ *
+ * A cast op symbol is a symbol that represents 
+ * a cast instruction.
+ *
+ * S(v)= cast S(v1)
+ */
 class CastOpSymbol : public Symbol {
 protected:
-    SymbolPtr s1;
+    SymbolPtr s1; // Argument to be casted
 public:
     CastOpSymbol(Value *v, SymbolPtr s1) 
     : Symbol(v), s1(s1) { }
