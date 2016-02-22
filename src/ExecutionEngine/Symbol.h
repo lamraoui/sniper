@@ -53,7 +53,7 @@ typedef std::shared_ptr<GepOpSymbol> GepOpSymbolPtr;
 /**
  * \class Symbol
  *
- * In concolic execution (see ConcolicModule.h), 
+ * In concolic execution (see ConcolicModule), 
  * variables are treated as symbolic variables during 
  * symbolic execution. 
  */
@@ -92,7 +92,7 @@ public:
      * Return true if this symbol is an input symbol, 
      * otherwise false.
      *
-     * An input symbol is a symbol that represent an 
+     * An input symbol is a symbol that represents an 
      * argument of the target function.
      */
     virtual bool isInput() { 
@@ -120,7 +120,13 @@ public:
     static std::string getPredicateStr(CmpInst::Predicate p);
 };
 
-
+/**
+ * \class InputSymbol
+ *
+ * An input symbol is a symbol that represents an 
+ * argument of the target function.
+ * See ConcolicModule for more details. 
+ */
 class InputSymbol : public Symbol {
 public:
     InputSymbol(Value *v) : Symbol(v) { }
