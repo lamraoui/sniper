@@ -254,7 +254,12 @@ public:
     }
 };
 
-
+/**
+ * \class SelectOpSymbol
+ *
+ * A select symbol is a symbol that represents 
+ * a select instruction (a?b:c).
+ */
 class SelectOpSymbol : public Symbol {
 protected:
     SymbolPtr s1;
