@@ -267,7 +267,14 @@ public:
     SelectOpSymbol(Value *v, SymbolPtr s1) : Symbol(v), s1(s1) { }
 };
 
-// S(v)= S(v1) ? S(v2) : S(v3)
+/**
+ * \class SSSelectOpSymbol
+ *
+ * This class is a select symbol with all   
+ * of this arguments begin symbolic variables. 
+ *
+ * S(v)= S(v1) ? S(v2) : S(v3)
+ */
 class SSSelectOpSymbol : public SelectOpSymbol {
 protected:
     SymbolPtr s2;
@@ -293,7 +300,6 @@ public:
     }
 };
 
-// S(v)= S(v1) ? v2 : S(v3)
 class VSSelectOpSymbol : public SelectOpSymbol {
 protected:
     Value *v2;
