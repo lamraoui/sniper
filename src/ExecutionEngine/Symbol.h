@@ -154,11 +154,18 @@ protected:
     BinaryOpSymbol(Value *_v) : Symbol(_v) { }
 };
 
-// S(v)= S(v1) op S(v2)
+/**
+ * \class SSBinaryOpSymbol
+ *
+ * This class is a binary op symbol with 
+ * two of this arguments begin symbolic variables. 
+ *
+ * S(v)= S(v1) op S(v2)
+ */
 class SSBinaryOpSymbol : public BinaryOpSymbol {
 protected:
-    SymbolPtr s1;
-    SymbolPtr s2;
+    SymbolPtr s1; // First argument
+    SymbolPtr s2; // Second argument
 public:
     SSBinaryOpSymbol(Value *v, SymbolPtr s1, SymbolPtr s2) 
     : BinaryOpSymbol(v), s1(s1), s2(s2) { }
