@@ -130,7 +130,9 @@ public:
 class InputSymbol : public Symbol {
 public:
     InputSymbol(Value *v) : Symbol(v) { }
-    bool isInput() { return true; }
+    bool isInput() { 
+        return true; 
+    }
     virtual void dump() {
         if(v==NULL) {
             std::cout << "null";
@@ -141,6 +143,12 @@ public:
     }
 };
 
+/**
+ * \class BinaryOpSymbol
+ *
+ * A binary op symbol is a symbol that represents 
+ * a binary instruction (add, sub, ...).
+ */
 class BinaryOpSymbol : public Symbol {
 protected:
     BinaryOpSymbol(Value *_v) : Symbol(_v) { }
