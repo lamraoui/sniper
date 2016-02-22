@@ -1,14 +1,9 @@
- /**
- * Symbol.h
+/**
+ * \file Symbol.h
  *
- * 
- *
- * @author : Si-Mohamed Lamraoui
- * @contact : simo@nii.ac.jp
- * @date : 2013/08/21
- * @copyright : NII 2013
+ * \author Si-Mohamed Lamraoui
+ * \date   22 February 2016
  */
-
 
 #ifndef _SYMBOL_H
 #define _SYMBOL_H
@@ -55,26 +50,73 @@ typedef std::shared_ptr<CastOpSymbol> CastOpSymbolPtr;
 typedef std::shared_ptr<GepOpSymbol> GepOpSymbolPtr;
 
 
+/**
+ * \class Symbol
+ *
+ * In concolic execution (see ConcolicModule.h), 
+ * variables are treated as symbolic variables during 
+ * symbolic execution. 
+ */
 class Symbol {
     
 protected:
+    /**
+     * Unique ID number to be assigned to each symbol.
+     */
     static unsigned ID;
     unsigned currentID;
+    /**
+     * LLVM value to be representated.
+     */
     Value *v;
+
 public:
-    Symbol(Value *v);
+    Symbol(Value *_v) : v(_v), currentID(ID++) {
+        assert(v && "No value for symbol!");
+    }
     virtual ~Symbol() { }
+
+    /**
+     * Convert this symbol into a logic formula.
+     *
+     * \return An expression.
+     */
     virtual ExprPtr convertToExpr();
-    Value* getValue() { return v; }
-    void setValue(Value *v) { this->v = v; }
-    virtual bool isInput() { return false; }
+    /**
+     * Return the representated value.
+     */
+    Value* getValue() { 
+        return v; 
+    }
+    /**
+     * Return true if this symbol is an input symbol, 
+     * otherwise false.
+     *
+     * An input symbol is a symbol that represent an 
+     * argument of the target function.
+     */
+    virtual bool isInput() { 
+        return false; 
+    }
+    /**
+     * Dump to the standard output this symbol.  
+     */
     virtual void dump() {
         std::cout << "S(";
         Symbol::dump(v);
         std::cout << ")";
         std::cout.flush();
     }
+
+    /**
+     * Dump to the standard ouput the 
+     * representated variable.
+     */
     static void dump(Value *v);
+    /**
+     * Return a textual representation of an 
+     * LLVM comparison predicate. 
+     */
     static std::string getPredicateStr(CmpInst::Predicate p);
 };
 
@@ -369,4 +411,4 @@ public:
     }
 };
 
-#endif
+#endif // _SYMBOL_H
