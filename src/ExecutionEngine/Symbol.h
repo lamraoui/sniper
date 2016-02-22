@@ -277,8 +277,8 @@ public:
  */
 class SSSelectOpSymbol : public SelectOpSymbol {
 protected:
-    SymbolPtr s2;
-    SymbolPtr s3;
+    SymbolPtr s2; // Second argument
+    SymbolPtr s3; // Third argument
 public:
     SSSelectOpSymbol(Value *v, SymbolPtr s1, SymbolPtr s2, SymbolPtr s3) 
     : SelectOpSymbol(v, s1), s2(s2), s3(s3) { }
@@ -311,8 +311,8 @@ public:
  */
 class VSSelectOpSymbol : public SelectOpSymbol {
 protected:
-    Value *v2;
-    SymbolPtr s3;
+    Value *v2;    // Second arument (concrete value)
+    SymbolPtr s3; // Third argument
 public:
     VSSelectOpSymbol(Value *v, SymbolPtr s1, Value *v2, SymbolPtr s3) 
     : SelectOpSymbol(v, s1), v2(v2), s3(s3) { }
@@ -334,11 +334,19 @@ public:
     }
 };
 
-// S(v)= S(v1) ? S(v2) : v3
+/**
+ * \class SVSelectOpSymbol
+ *
+ * This class is a select symbol with the 
+ * last argument begin a concrete value and    
+ * the other arguments begin symbolic variables. 
+ *
+ * S(v)= S(v1) ? S(v2) : v3
+ */
 class SVSelectOpSymbol : public SelectOpSymbol {
 protected:
-    SymbolPtr s2;
-    Value *v3;
+    SymbolPtr s2; // Second argument
+    Value *v3;    // Third argument (concrete value) 
 public:
     SVSelectOpSymbol(Value *v, SymbolPtr s1, SymbolPtr s2, Value *v3) 
     : SelectOpSymbol(v, s1), s2(s2), v3(v3) { }
