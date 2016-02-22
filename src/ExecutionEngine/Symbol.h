@@ -192,8 +192,8 @@ public:
  * \class SVBinaryOpSymbol
  *
  * This class is a binary op symbol with 
- * one of this argument begin a concrete value 
- * and the other argument begin a symbolic variable. 
+ * the first argument begin a symbolic variable 
+ * and the second argument begin a concrete value.
  *
  * S(v)= S(v1) op v2
  */
@@ -221,11 +221,19 @@ public:
     }
 };
 
-// S(v)= v1 op S(v2)
+/**
+ * \class VSBinaryOpSymbol
+ *
+ * This class is a binary op symbol with 
+ * the first argument begin a concrete value 
+ * and the second argument begin a symbolic variable. 
+ *
+ * S(v)= v1 op S(v2)
+ */
 class VSBinaryOpSymbol : public BinaryOpSymbol {
 protected:
-    Value  *v1;
-    SymbolPtr s2;
+    Value *v1;    // First argument (concrete value)
+    SymbolPtr s2; // Second argument
 public:
     VSBinaryOpSymbol(Value *v, Value *v1, SymbolPtr s2) 
     : BinaryOpSymbol(v), v1(v1), s2(s2) { }
