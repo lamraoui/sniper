@@ -30,14 +30,14 @@ using namespace llvm;
  * \brief Bounded Model checking.
  *
  * This warper class provides a function to 
- * perform bounded model checking (BMC).
+ * perform bounded model checking (%BMC).
  */
 class BMC {
 
 public:
     
     /**
-     * \brief Run bounded model checking (BMC) on \a targetFun.
+     * \brief Run bounded model checking (%BMC) on \a targetFun.
      *
      * This method can generate a single error-inducing input (failing trace).
      * BMC with Boolean satisfiability is performed by the satisfiability 
