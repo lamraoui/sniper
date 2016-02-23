@@ -1,32 +1,11 @@
 /**
- * IRRunner.cpp
+ * \file IRRunner.cpp
  *
- * Same as ConcolicProfiler without generating new input
- * value for the program.
- * Values are provided by the user.
- *
- * @author : Si-Mohamed Lamraoui
- * @contact : simo@nii.ac.jp
- * @date : 2014/09/18
- * @copyright : NII 2013
+ * \author Si-Mohamed Lamraoui
+ * \date   28 February 2016
  */
 
 #include "IRRunner.h"
-
-
-IRRunner::IRRunner(Module *_llvmMod, Function *_targetFun, Options *_options,
-                     const std::string &tsFilename, const std::string &goFilename)
-: ConcolicModule(_llvmMod, _targetFun, _options) {
-    this->targetFun = _targetFun;
-    this->inputValuesVec = parseTestsuiteFile(tsFilename);
-    if (!goFilename.empty()) {
-        this->outputValuesVec = parseGoldenOutputsFile(goFilename);
-    }
-}
-
-IRRunner::~IRRunner() {
-     //delete EE;
-}
 
 void IRRunner::run(ProgramProfile *profile, LocalVariables *locVars,
                     LoopInfoPass *loopInfo) {
@@ -91,7 +70,6 @@ void IRRunner::run(ProgramProfile *profile, LocalVariables *locVars,
     Executor::clean();    
 }
 
-
 std::vector<std::vector<Value*> > IRRunner::parseTestsuiteFile(
                                 const std::string &filename) {
     std::ifstream infile(filename.c_str());
@@ -121,7 +99,6 @@ std::vector<std::vector<Value*> > IRRunner::parseTestsuiteFile(
     return TS;
 }
 
-
 std::vector<Value*> IRRunner::parseGoldenOutputsFile(const std::string &filename) {
     // Open the file
     std::ifstream infile(filename.c_str());
@@ -145,4 +122,3 @@ std::vector<Value*> IRRunner::parseGoldenOutputsFile(const std::string &filename
     }
     return GO;
 }
-
