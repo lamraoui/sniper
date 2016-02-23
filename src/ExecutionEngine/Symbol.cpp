@@ -1,23 +1,15 @@
 /**
- * Symbol.cpp
+ * \file Symbol.cpp
  *
- * 
- *
- * @author : Si-Mohamed Lamraoui
- * @contact : simo@nii.ac.jp
- * @date : 2013/08/21
- * @copyright : NII 2013
+ * \author Si-Mohamed Lamraoui
+ * \date   23 February 2016
  */
 
 #include "Symbol.h"
 
+
 unsigned Symbol::ID = 0;
 
-Symbol::Symbol(Value *v) {
-    assert(v && "No value for symbol!");
-    this->v = v;
-    this->currentID = ID++;
-}
 
 ExprPtr Symbol::convertToExpr() {
     return Expression::getExprFromValue(v);
