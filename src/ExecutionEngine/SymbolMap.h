@@ -23,7 +23,7 @@ using namespace llvm;
 /**
  * \class SymbolMap
  *
- * This class map LLVM values to symbols.
+ * This class maps LLVM values to symbols.
  * This class is a part of the concolic execution.
  */
 class SymbolMap {

@@ -1,26 +1,11 @@
 /**
- * ConcolicModule.cpp
+ * \file ConcolicModule.cpp
  *
- * 
- *
- * @author : Si-Mohamed Lamraoui
- * @contact : simo@nii.ac.jp
- * @date : 2013/08/21
- * @copyright : NII 2013
+ * \author Si-Mohamed Lamraoui
+ * \date   28 February 2016
  */
 
 #include "ConcolicModule.h"
-
-
-ConcolicModule::ConcolicModule(Module *_llvmMod, Function *_targetFun, Options *_options) 
-: llvmMod(_llvmMod), targetFun(_targetFun), options(_options), lastInputs(NULL) {
-    // Create an instruction builder
-    LLVMContext &Context = getGlobalContext();
-    this->IRB =  new IRBuilder<>(Context);
-    // Set the maximum depth for the executions
-    Executor::setMaxDepth(options->getMaxDepth());
-    this->preConditions = Formula::make();
-}
 
 
 // =============================================================================
@@ -125,9 +110,4 @@ Value* ConcolicModule::callFunction(ExecutionEngine *EE, Module *m, Function *f,
     // to code-generate this Function.
     EE->freeMachineCodeForFunction(warper);
     return output;
-}
-
-ConcolicModule::~ConcolicModule() {
-    delete IRB;
-    delete this->solver;
 }

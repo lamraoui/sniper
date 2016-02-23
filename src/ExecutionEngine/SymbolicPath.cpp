@@ -1,36 +1,12 @@
 /**
- * SymbolicPath.cpp
+ * \file SymbolicPath.cpp
  *
- * 
- *
- * @author : Si-Mohamed Lamraoui
- * @contact : simo@nii.ac.jp
- * @date : 2013/12/07
- * @copyright : NII 2013
+ * \author Si-Mohamed Lamraoui
+ * \date   16 February 2016
  */
 
 #include "SymbolicPath.h"
 
-
-SymbolicPath::SymbolicPath() { 
-    nbBranch = 0;
-}
-
-SymbolicPath::SymbolicPath(SymbolicPath &obj) { 
-    std::vector<ExprCellPtr>::const_iterator it;
-    for (it=obj.path.begin(); it!=obj.path.end(); ++it) {
-        ExprCellPtr n = *it;
-        path.push_back(n);
-    }
-    nbBranch = obj.nbBranch;
-}
-
-SymbolicPath::~SymbolicPath() {  
-}
-
-SymbolicPath* SymbolicPath::clone() { 
-    return new SymbolicPath(*this); 
-} 
 
 std::vector<ExprCellPtr> SymbolicPath::getPath() {
     return path;
@@ -52,11 +28,7 @@ unsigned SymbolicPath::getNbBranch() {
     return nbBranch; 
 }
 
-//============================================================================
-// addNode
-//
 // Add a node to the path.
-//============================================================================
 void SymbolicPath::addCell(ExprCellPtr n) {
     // Record information about Branch nodes
     if (n->isBranch()) {
@@ -114,6 +86,10 @@ void SymbolicPath::clear() {
     asserts.clear();
     assumes.clear();
     nbBranch = 0;
+}
+
+void SymbolicPath::clearStack() { 
+    stack.clear(); 
 }
 
 void SymbolicPath::dump() {
