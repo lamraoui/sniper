@@ -11,8 +11,6 @@
 
 #include "IRInstrumentor.h"
 
-
-
 // Instruction with no argument 
 void sniper_executeInst(intptr_t inst) {
     Instruction *i = (Instruction*) inst;
