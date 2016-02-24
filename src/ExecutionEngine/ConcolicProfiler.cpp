@@ -1,30 +1,16 @@
 /**
- * ConcolicProfiler.cpp
+ * \file ConcolicProfiler.cpp
  *
- * 
- *
- * @author : Si-Mohamed Lamraoui
- * @contact : simo@nii.ac.jp
- * @date : 2013/08/21
- * @copyright : NII 2013
+ * \author Si-Mohamed Lamraoui
+ * \date   24 February 2016
  */
 
 #include "ConcolicProfiler.h"
-
 
 static unsigned MAX_RUN = 20000; // TODO: --max-time
 static int RND_MIN = -2147483648;
 static int RND_MAX =  2147483647;
 
-ConcolicProfiler::ConcolicProfiler(Module *_llvmMod, Function *_targetFun, Options *_options) 
-: ConcolicModule(_llvmMod, _targetFun, _options) {
-    this->targetFun = _targetFun;
-    srand(time(NULL));
-}
-
-ConcolicProfiler::~ConcolicProfiler() {
-     //delete EE;
-}
 
 // =============================================================================
 // run - Concolic algorithm used in the tools CUTE and DART.
@@ -48,9 +34,9 @@ void ConcolicProfiler::run(ProgramProfile *profile, LocalVariables *locVars,
         if (inputValues->empty()) {
             break;
         }
-        if (options->dbgMsg()) {
-            std::cout << "\n=== (S/F) RUN " << roundID << " ====================\n";
-        }
+        //if (options->dbgMsg()) {
+        //    std::cout << "\n=== (S/F) RUN " << roundID << " ====================\n";
+        //}
         // Prepare the executor
         Executor::start(targetFun, inputValues, locVars);
         // Call the function f with the input values as argument
@@ -84,7 +70,7 @@ void ConcolicProfiler::run(ProgramProfile *profile, LocalVariables *locVars,
         bool isIn = false;
         for (ProgramTrace *t : traces) {
             VariablesPtr v = t->getInputVariables();
-            if(inputValues->isValueEqualTo(v)) {
+            if(inputValues==v /*inputValues->isValueEqualTo(v)*/) {
                 isIn = true; break;
             }
         }
@@ -190,13 +176,13 @@ VariablesPtr ConcolicProfiler::generateInputValues() {
         }
         symbPath->setStack(stack);
         if (hasSuccSolution && hasFailSolution) {
-            if (inputs->isValueEqualTo(failingInputs)) {
+            if (inputs==failingInputs /*inputs->isValueEqualTo(failingInputs)*/) {
                 return inputs;
             }
             // The generated failing inputs are already been saved?
             bool isIn = false;
             for (std::pair<VariablesPtr,std::vector<State_t> > p : pendingInputs) {
-                if(p.first->isValueEqualTo(failingInputs)) {
+                if(p.first==failingInputs /*p.first->isValueEqualTo(failingInputs)*/) {
                     isIn = true; break;
                 }
             }
@@ -327,5 +313,4 @@ bool ConcolicProfiler::solve(std::vector<ExprCellPtr> path,
         std::cout << "error: solver (status " << status << ")\n";
         exit(1);
     }
-
 }
