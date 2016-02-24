@@ -752,11 +752,7 @@ void IRInstrumentor::replaceAssertAssumeExitCall(Function *targetFun) {
         // Set debugging metadata
         const DebugLoc dl = c->getDebugLoc();
         newCall->setDebugLoc(dl);
-        ReplaceInstWithInst(c->getParent()->getInstList(), ii, newCall);
-        // Save the pre-condition value to later
-        // generate appropriated input values
-        preConditions.push_back(op0);
-        
+        ReplaceInstWithInst(c->getParent()->getInstList(), ii, newCall);        
     }
     // Replace calls to assert
     // (call sniper_assert() -> call sniper_reportAssert() )

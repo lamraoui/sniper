@@ -58,7 +58,6 @@ private:
     Function *ReportAssumeFun;
     Function *PushArgsFun;
     Function *PopArgsFun;
-    std::vector<Value*> preConditions;
 
 public:
     IRInstrumentor(Module *_llvmMod, ExecutionEngine *_EE);
@@ -72,17 +71,7 @@ public:
      * \param llvmMod A LLVM module to instrument.
      * \param targetFun An LLVM function.
      */
-    void instrumentModule(Module *llvmMod, Function *targetFun);    
-    /**
-     * Return the pre-conditions of the target function.
-     *
-     * A pre-condition is set by using in the target function 
-     * the built-in function sniper_assume(bool arg).
-     * This function returns all LLVM "arg" variables.
-     */
-    std::vector<Value*> getPreConditions() {
-        return preConditions;
-    }
+    void instrumentModule(Module *llvmMod, Function *targetFun);
     
 private:
     /**
