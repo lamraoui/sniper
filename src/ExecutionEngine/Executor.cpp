@@ -1,12 +1,8 @@
 /**
- * Executor.cpp
+ * \file Executor.h
  *
- * 
- *
- * @author : Si-Mohamed Lamraoui
- * @contact : simo@nii.ac.jp
- * @date : 2013/08/21
- * @copyright : NII 2013
+ * \author Si-Mohamed Lamraoui
+ * \date   25 February 2016
  */
 
 #include "Executor.h"
