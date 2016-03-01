@@ -1,18 +1,9 @@
 /**
- * Main.cpp
+ * \file Main.cpp
  *
- *
- * Compile :
- * g++ -g -O3 tool.cpp `llvm-config --cppflags --ldflags --libs` -o tool
- *
- * g++ -g -O3 tool.cpp backend/Backend.cpp backend/YicesPass.cpp `llvm-config --cppflags --ldflags --libs` -o tool
- *
- * @author : Si-Mohamed Lamraoui
- * @contact : simo@nii.ac.jp
- * @date : 2013/08/01
- * @copyright : NII 2012
+ * \author Si-Mohamed Lamraoui
+ * \date   1 March 2016
  */
-
 
 #include <string>
 #include <algorithm>
@@ -58,7 +49,6 @@ int main(int argc, char **argv) {
         
 		sys::PrintStackTraceOnErrorSignal();
         
-        //===============================================
         if(opt->dbgMsg()) {
             std::cout << std::endl;
             std::cout << "Loading bitcode file\n";
@@ -88,7 +78,6 @@ int main(int argc, char **argv) {
         }
         if(opt->dbgMsg())
             std::cout << "Bitcode file loaded\n";
-        //===============================================
     
         // Run frontend
         if(opt->dbgMsg())
