@@ -307,7 +307,7 @@ public:
 };
 
 /**
- *\class BranchExprCell
+ *\class CallExprCell
  *
  * This class represent an element (cell) of a path constraint, 
  * which holds a call instruction. 
