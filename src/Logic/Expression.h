@@ -99,9 +99,8 @@ std::ostream& operator<<(std::ostream& os, const ExprPtr e);
 class Expression {
     
 public:
-    /**
-     * Op codes
-     */
+     /**@{
+      * Op codes */
     static const unsigned True          = 1;
     static const unsigned False         = 2;
     static const unsigned UInt32Num     = 3;
@@ -128,7 +127,8 @@ public:
     static const unsigned Div           = 24;
     static const unsigned Mod           = 25;
     static const unsigned Xor           = 26;
-    
+    /**@}*/
+
 private:
     /**
      * Unique ID number to be assigned to each expression.
@@ -317,7 +317,7 @@ public:
      */
     static llvm::CmpInst::Predicate negateOp(llvm::CmpInst::Predicate op);
     /**
-     * Return an expression representating the LLVM value \a v.
+     * Return an expression representing the LLVM value \a v.
      */
     static ExprPtr getExprFromValue(llvm::Value *v);
     
@@ -430,7 +430,9 @@ public:
 };
 
 /**
- * \class Class representating a leaf expression such as a variable.
+ * \class SingleExpression
+ *
+ * A class representing a leaf expression such as a variable.
  */
 class SingleExpression : public Expression {
 protected:
@@ -438,13 +440,18 @@ protected:
     SingleExpression(std::string _name) 
     : name(_name) { }
 public:
+    /**
+     * Return the name of the variable.
+     */
     std::string getName() {
         return name;
     }
 };
 
 /**
- * \class Class representating an expression with two arguments.
+ * \class BinaryExpression
+ * 
+ * A class representing an expression with two arguments.
  */
 class BinaryExpression : public Expression {
 protected:
@@ -453,16 +460,24 @@ protected:
     BinaryExpression(ExprPtr _e1, ExprPtr _e2) 
     : e1(_e1),e2(_e2) { }
 public:
+    /**
+     * Return the left-hand side expression.
+     */
     ExprPtr getExpr1() {
         return e1;
     }
+    /**
+     * Return the right-hand side expression.
+     */
     ExprPtr getExpr2() {
         return e2;
     }
 };
 
 /**
- * \class Class representating an expression with three arguments.
+ * \class TrinaryExpression
+ *
+ * A class representing an expression with three arguments.
  */
 class TrinaryExpression : public Expression {
 protected:
@@ -472,19 +487,30 @@ protected:
     TrinaryExpression(ExprPtr _e1, ExprPtr _e2, ExprPtr _e3 )
     : e1(_e1),e2(_e2),e3(_e3) { }
 public:
+    /**
+     * Return the first expression.
+     */
     ExprPtr getExpr1() {
         return e1;
     }
+    /**
+     * Return the second expression.
+     */
     ExprPtr getExpr2() {
         return e2;
     }
+    /**
+     * Return the third expression.
+     */
     ExprPtr getExpr3() {
         return e3;
     }    
 };
 
 /**
- * \class Class representating an expression with \a n arguments.
+ * \class UnaryExpression
+ *
+ * A class representing an expression with \a n arguments.
  */
 class UnaryExpression : public Expression {
 protected:
@@ -499,13 +525,18 @@ protected:
         exprs.clear();
     }
 public:
+    /**
+     * Return all the expressions.
+     */
     std::vector<ExprPtr> getExprs() {
         return exprs;
     }
 };
 
 /**
- * \class Expression representating \a true.
+ * \class TrueExpression
+ *
+ * An expression representing \a true.
  */
 class TrueExpression : public Expression {
 public:
@@ -519,7 +550,9 @@ public:
 };
 
 /**
- * \class Expression representating \a false.
+ * \class FalseExpression
+ *
+ * An expression representing \a false.
  */
 class FalseExpression : public Expression {
 public:
@@ -533,13 +566,18 @@ public:
 };
 
 /**
- * \class Expression representating an unsigned integer value.
+ * \class UInt32NumExpression
+ *
+ * An expression representing an unsigned integer value.
  */
 class UInt32NumExpression : public Expression {
 protected:
     unsigned num;
 public:
     UInt32NumExpression(unsigned n) : num(n) { }
+    /**
+     * Return the value.
+     */
     unsigned getValue() {
         return num;
     }
@@ -552,13 +590,18 @@ public:
 };
 
 /**
- * \class Expression representating a signed integer value.
+ * \class SInt32NumExpression
+ *
+ * An expression representing a signed integer value.
  */
 class SInt32NumExpression : public Expression {
 protected:
     int num;
 public:
     SInt32NumExpression(int n) : num(n) { }
+    /**
+     * Return the value.
+     */
     int getValue() {
         return num;
     }
@@ -571,7 +614,9 @@ public:
 };
 
 /**
- * \class Expression representating a Boolean variable.
+ * \class BoolVarExpression
+ *
+ * An expression representing a Boolean variable.
  */
 class BoolVarExpression : public SingleExpression {
 public:
@@ -591,7 +636,9 @@ public:
 };
 
 /**
- * \class Expression representating an integer variable.
+ * \class IntVarExpression
+ *
+ * An expression representing an integer variable.
  */
 class IntVarExpression : public SingleExpression {
 public:
@@ -611,7 +658,9 @@ public:
 };
 
 /**
- * \class Expression representating a function (int->int) variable.
+ * \class IntToIntVarExpression
+ *
+ * An expression representing a function (int->int) variable.
  */
 class IntToIntVarExpression : public SingleExpression {
 public:
@@ -626,13 +675,18 @@ public:
 };
 
 /**
- * \class Expression representating a parsed expression.
+ * \class ToParseExpression
+ * 
+ * An expression representing a parsed expression.
  */
 class ToParseExpression : public Expression {
 private:
     std::string str;
 public:
     ToParseExpression(std::string s) : str(s) { }
+    /**
+     * Return the parsed string.
+     */
     std::string getString() {
         return str;
     }
@@ -645,7 +699,9 @@ public:
 };
 
 /**
- * \class Expression representating \a e1 >= e2.
+ * \class GeExpression
+ * 
+ * An expression representing \a e1 >= e2.
  */
 class GeExpression : public BinaryExpression {
 public:
@@ -664,7 +720,9 @@ public:
 };
 
 /**
- * \class Expression representating \a e1 > e2.
+ * \class GtExpression
+ * 
+ * An expression representing \a e1 > e2.
  */
 class GtExpression : public BinaryExpression {
 public:
@@ -683,7 +741,9 @@ public:
 };
 
 /**
- * \class Expression representating \a e1 <= e2.
+ * \class LeExpression
+ *
+ * An expression representing \a e1 <= e2.
  */
 class LeExpression : public BinaryExpression {
 public:
@@ -702,7 +762,9 @@ public:
 };
 
 /**
- * \class Expression representating \a e1 < e2.
+ * \class LtExpression 
+ * 
+ * An expression representing \a e1 < e2.
  */
 class LtExpression : public BinaryExpression {
 public:
@@ -721,7 +783,9 @@ public:
 };
 
 /**
- * \class Expression representating \a e1 != e2.
+ * \class DiseqExpression
+ *
+ * An expression representing \a e1 != e2.
  */
 class DiseqExpression : public BinaryExpression {
 public:
@@ -740,7 +804,9 @@ public:
 };
 
 /**
- * \class Expression representating \a e1 = e2.
+ * \class EqExpression
+ *
+ * An expression representing \a e1 = e2.
  */
 class EqExpression : public BinaryExpression {
 public:
@@ -759,13 +825,18 @@ public:
 };
 
 /**
- * \class Expression representating \a (not e).
+ * \class NotExpression
+ *
+ * An expression representing \a (not e).
  */
 class NotExpression : public Expression {
 protected:
     ExprPtr e;
 public:
     NotExpression(ExprPtr _e) : e(_e) { }
+    /**
+     * Return the expression not negated.
+     */
     ExprPtr get() { 
         return e;
     }
@@ -780,7 +851,9 @@ public:
 };
 
 /**
- * \class Expression representating \a e1 and e2.
+ * \class AndExpression
+ *
+ * An expression representing \a e1 and e2.
  */
 class AndExpression : public UnaryExpression {
 public:
@@ -811,7 +884,9 @@ public:
 };
 
 /**
- * \class Expression representating \a e1 or e2.
+ * \class OrExpression
+ * 
+ * An expression representing \a e1 or e2.
  */
 class OrExpression : public UnaryExpression {
 public:
@@ -842,7 +917,9 @@ public:
 };
 
 /**
- * \class Expression representating \a e1 xor e2.
+ * \class XorExpression
+ *
+ * An expression representing \a e1 xor e2.
  */
 class XorExpression : public UnaryExpression {
 public:
@@ -873,7 +950,9 @@ public:
 };
 
 /**
- * \class Expression representating \a e1 + e2.
+ * \class SumExpression
+ *
+ * An expression representing \a e1 + e2.
  */
 class SumExpression : public UnaryExpression {
 public:
@@ -904,7 +983,9 @@ public:
 };
 
 /**
- * \class Expression representating \a e1 - e2.
+ * \class SubExpression
+ *
+ * An expression representing \a e1 - e2.
  */
 class SubExpression : public UnaryExpression {
 public:
@@ -935,7 +1016,9 @@ public:
 };
 
 /**
- * \class Expression representating \a e1 * e2.
+ * \class MulExpression
+ *
+ * An expression representing \a e1 * e2.
  */
 class MulExpression : public UnaryExpression {
 public:
@@ -966,7 +1049,9 @@ public:
 };
 
 /**
- * \class Expression representating \a e1 / e2.
+ * \class DivExpression
+ *
+ * An expression representing \a e1 / e2.
  */
 class DivExpression : public BinaryExpression {
 public:
@@ -985,7 +1070,9 @@ public:
 };
 
 /**
- * \class Expression representating \a e1 % e2.
+ * \class ModExpression
+ *
+ * An expression representing \a e1 % e2.
  */
 class ModExpression : public BinaryExpression {
 public:
@@ -1004,7 +1091,9 @@ public:
 };
 
 /**
- * \class Expression representating \a (IF cond then eelse).
+ * \class IteExpression
+ *
+ * An expression representing \a (IF cond then eelse).
  */
 class IteExpression : public TrinaryExpression {
 public:
@@ -1025,7 +1114,9 @@ public:
 };
 
 /**
- * \class Expression representating the function 
+ * \class AppExpression
+ *
+ * An expression representing the function 
  * application term \a (e1 e2).
  */
 class AppExpression : public BinaryExpression {
@@ -1045,7 +1136,9 @@ public:
 };
 
 /**
- * \class Expression representating a function 
+ * \class UpdateExpression
+ *
+ * An expression representing a function 
  * update term \a (update f (arg) v).
  */
 class UpdateExpression : public TrinaryExpression {
