@@ -130,6 +130,9 @@ public:
 class InputSymbol : public Symbol {
 public:
     InputSymbol(Value *v) : Symbol(v) { }
+    /**
+     * Always return true since this class is an input symbol.
+     */
     bool isInput() { 
         return true; 
     }
@@ -449,7 +452,7 @@ public:
 };
 
 /**
- * \class CastOpSymbol
+ * \class GepOpSymbol
  *
  * A gep op symbol is a symbol that represents 
  * a get pointer element instruction.
