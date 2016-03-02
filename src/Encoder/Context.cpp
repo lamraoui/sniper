@@ -1,17 +1,11 @@
 /**
- * Context.cpp
+ * \file Context.cpp
  *
- * 
- *
- * @author : Si-Mohamed Lamraoui
- * @contact : simo@nii.ac.jp
- * @date : 2014/04/11
- * @copyright : NII 2014
+ * \author Si-Mohamed Lamraoui
+ * \date   1 March 2016
  */
 
-
 #include "Context.h"
-
 
 // =============================================================================
 // getLocalVariable
@@ -75,7 +69,7 @@ ExprPtr Context::getLocalVariable(Instruction *i, Value *arg, int pos) {
 //
 // default: bb=0,
 // =============================================================================
-ExprPtr Context::newVariable(Value *val, BasicBlock *bb) {
+ExprPtr Context::newVariable(Value *val) {
     ExprPtr expr = NULL;
     // Constant
     // --------------------------------------------------------
@@ -124,8 +118,7 @@ ExprPtr Context::newVariable(Value *val, BasicBlock *bb) {
          if(expr!=NULL) {
          return expr;
          }*/
-        
-        assert(bb && "Basic block is null!");
+
         // Update the version number of the variable
         this->gv2v[gv]++; 
         std::stringstream vers;

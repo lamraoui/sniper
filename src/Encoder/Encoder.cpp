@@ -762,10 +762,6 @@ ExprPtr Encoder::encode(GetElementPtrInst *gep) {
     else if (isArgv(gep->getPointerOperand())) {
         assert(gep->hasIndices() && "Pointers are not supported!");
         Value *index = gep->getOperand(1);
-        if(ConstantInt *ci = dyn_cast<ConstantInt>(index)) {
-            int cst = (int) ci->getSExtValue();
-            if (cst>(int)ctx->getArgvMaxIndex()) ctx->setArgvMaxIndex(cst);
-        }
         ExprPtr index_expr = ctx->newVariable(index);
         ExprPtr gep_expr = ctx->newVariable(gep);
         eqExpr = Expression::mkEq(gep_expr, index_expr);
