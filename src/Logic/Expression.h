@@ -139,7 +139,6 @@ private:
      * True if the expresssion is soft (retractable).
      */
     bool soft;
-    bool valid;
     /**
      * LLVM instruction from which the expression was encoded.
      * In some cases, this variable can be null.
@@ -161,7 +160,7 @@ protected:
     static unsigned NbBoolVariables;
 protected:
     Expression()
-    : currentID(ID++), soft(true), valid(true), instruction(NULL), line(0) { }
+    : currentID(ID++), soft(true), instruction(NULL), line(0) { }
     virtual ~Expression() { }
     
 public:
@@ -333,12 +332,6 @@ public:
      */
     static unsigned getNbBoolVariables() {
         return NbBoolVariables;
-    }
-    bool isValid() {
-        return valid;
-    }
-    void invalidate() {
-        valid = false;;
     }
     /**
      * Return \a true if the expresseion is soft (retractable), 
