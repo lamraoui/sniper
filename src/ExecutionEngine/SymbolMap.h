@@ -134,7 +134,7 @@ public:
      * \param s3 A symbol (third argument of the operation).
      * \return A new symbol.
      */
-    SymbolPtr createSelectOp(Value *v, SymbolPtr v1, SymbolPtr s2, SymbolPtr s3);
+    SymbolPtr createSelectOp(Value *v, SymbolPtr s1, SymbolPtr s2, SymbolPtr s3);
     /**
      * Create a new symbol s(v) representating a select operation.
      * s(v)= s1 ? s(v2) : s3
@@ -145,7 +145,7 @@ public:
      * \param s3 A symbol (third argument of the operation).
      * \return A new symbol.
      */
-    SymbolPtr createSelectOp(Value *v, SymbolPtr v1, Value *v2, SymbolPtr s3);
+    SymbolPtr createSelectOp(Value *v, SymbolPtr s1, Value *v2, SymbolPtr s3);
     /**
      * Create a new symbol s(v) representating a select operation.
      * s(v)= s1 ? s2 : s(v3)
@@ -167,7 +167,7 @@ public:
      * \param v3 An LLVM value (third argument of the operation).
      * \return A new symbol.
      */
-    SymbolPtr createSelectOp(Value *v, SymbolPtr v1, Value *v2, Value *v3);
+    SymbolPtr createSelectOp(Value *v, SymbolPtr s1, Value *v2, Value *v3);
     /**
      * Create a new symbol s(v) representating a cast operation.
      * s(v)= cast s1
