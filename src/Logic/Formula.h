@@ -241,7 +241,7 @@ public:
     /**
      * \brief Utility to dump a formula to the standard ouput.
      *
-     * \detail Usage: std::out << \a f << std::endl;
+     * Usage: std::out << \a f << std::endl;
      */
     friend std::ostream& operator<<(std::ostream& os, const FormulaPtr f);
     
