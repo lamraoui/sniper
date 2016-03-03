@@ -35,7 +35,7 @@ void Symbol::dump(Value *v) {
 }
 
 // static 
-std::string getPredicateStr(CmpInst::Predicate p) {
+std::string Symbol::getPredicateStr(CmpInst::Predicate p) {
     switch (p) {
         case CmpInst::FCMP_UEQ: // True if unordered or equal
         case CmpInst::FCMP_OEQ: // True if ordered and equal
