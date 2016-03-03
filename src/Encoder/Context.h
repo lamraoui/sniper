@@ -22,8 +22,19 @@ using namespace llvm;
 
 
 // TODO : unordered_map
+/**
+ * Map LLVM values to logic expression.
+ */
 typedef std::map<Value*, ExprPtr> val2expr_map;
+/**
+ * Map string representations of transition expressions.
+ * For example a transition from a basic block bb0 to a 
+ * basic block bb1 is represented by the string bb0_bb1.
+ */
 typedef std::map<std::string, ExprPtr> str2trans_map;
+/**
+ * Map variable name to logic expressions.
+ */
 typedef std::map<std::string, ExprPtr> name2expr_map;
 
 /**
