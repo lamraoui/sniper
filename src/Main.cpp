@@ -25,7 +25,10 @@
 
 using namespace llvm;
 
-
+/**
+ * Entry point.
+ * See Option for command-line options.
+ */
 int main(int argc, char **argv) {
     
 	try {
