@@ -7,9 +7,21 @@
 
 #include "ConcolicProfiler.h"
 
+/**
+ * Maximum number of time the target function 
+ * should be executed. 
+ */
 static unsigned MAX_RUN = 20000; // TODO: --max-time
+/** 
+ * Minimum value for the random generation of 
+ * input argument values. 
+ */
 static int RND_MIN = -2147483648;
-static int RND_MAX =  2147483647;
+/** 
+ * Maximum value for the random generation of 
+ * input argument values. 
+ */
+static int RND_MAX = 2147483647;
 
 
 // =============================================================================
