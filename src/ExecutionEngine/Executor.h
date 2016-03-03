@@ -8,7 +8,6 @@
 #ifndef _EXECUTOR_H
 #define _EXECUTOR_H
 
-
 #include <string>
 #include <iostream>
 #include <map>
@@ -29,10 +28,15 @@
 #include "Frontend/LocalVariables.h"
 #include "Encoder/Encoder.h"
 
-
-#define NON_LINEAR_SUPPORTED 0
-
 using namespace llvm;
+
+/**
+ * If set to 1 non-linear operations are allowed 
+ * in the concolic execution module. If set to 0 
+ * linear operations are not allowed and these operation 
+ * will be replaced by concrete values. 
+ */
+#define NON_LINEAR_SUPPORTED 0
 
 /**
  * Executor status.
