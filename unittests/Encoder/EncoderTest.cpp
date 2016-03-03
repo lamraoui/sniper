@@ -78,7 +78,8 @@ TEST_F(EncoderTest, EncodeBinaryOperator) {
     verifyModule(*Mod, PrintMessageAction);
     
     // Initialize the SNIPER encoder
-    LocalVariables *LV = new LocalVariables(Fun);
+    LocalVariables *LV = new LocalVariables();
+    LV->processLoadStore(Fun);
     ::Context *ctx = new ::Context(LV);
     Encoder *encoder = new Encoder(ctx);
     EXPECT_TRUE(encoder!=NULL);
@@ -122,7 +123,8 @@ TEST_F(EncoderTest, EncodeSelectInst) {
     verifyModule(*Mod, PrintMessageAction);
     
     // Initialize the SNIPER encoder
-    LocalVariables *LV = new LocalVariables(Fun);
+    LocalVariables *LV = new LocalVariables();
+    LV->processLoadStore(Fun);
     ::Context *ctx = new ::Context(LV);
     Encoder *encoder = new Encoder(ctx);
     EXPECT_TRUE(encoder!=NULL);
