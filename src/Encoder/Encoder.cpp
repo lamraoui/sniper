@@ -1,22 +1,11 @@
 /**
- * Encoder.cpp
+ * \file Encoder.cpp
  *
- * This class can be used to encode LLVM instructions 
- * into logic formulas.
- *
- * Note: This is the light version of Encoder.
- * In this version, the control flow only consists 
- * of constraints encoded from branch and phi instructions.
- *
- * @author : Si-Mohamed Lamraoui
- * @contact : simohamed.lamraoui@gmail.com
- * @date : 2015/12/18
- * @copyright : NII 2014 & Hosei 2015
+ * \author Si-Mohamed Lamraoui
+ * \date   3 March 2016
  */
 
-
 #include "Encoder.h"
-
 
 // =============================================================================
 // encode - BinaryOperator
