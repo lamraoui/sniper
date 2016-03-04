@@ -46,6 +46,15 @@ private:
     std::vector<Value*> outputValuesVec;
     
 public:
+    /**
+     * Default constructor.
+     *
+     * \param _llvmMod An LLVM module in which the target function is.
+     * \param _targetFun An LLVM target function. 
+     * \param _options SNIPER options.
+     * \param tsFilename Test suite (test inputs) filename.
+     * \param goFilename Golden output (oracle) filename (not used by default).
+     */
     IRRunner(Module *_llvmMod, Function *_targetFun, Options *_options,
              const std::string &tsFilename, 
              /* optional */ const std::string &goFilename = std::string())

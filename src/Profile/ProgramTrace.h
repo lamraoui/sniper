@@ -76,18 +76,35 @@ private:
     AssertResult type;
     
 public:
+    /**
+     * Default constructor.
+     *
+     * \param _targetFun An LLVM target function.
+     */
     ProgramTrace(Function *_targetFun)
     : myID(ID++), targetFun(_targetFun), type(UNKNOW) {
         inputVars = std::make_shared<Variables>();
         expectedOutput = NULL;
     }
-    
+    /**
+     * Constructor with a predetermined assert result.
+     *
+     * \param _targetFun An LLVM target function.
+     * \param _type The assert outcome of this trace.
+     */
     ProgramTrace(Function *_targetFun, AssertResult _type)
     : myID(ID++), targetFun(_targetFun), type(_type) {
         inputVars = std::make_shared<Variables>();
         expectedOutput = NULL;
     }
-    
+    /**
+     * Constructor with a predetermined set of inputs and
+     * an assert result.
+     *
+     * \param _targetFun An LLVM target function.
+     * \param _inputs Program input values. 
+     * \param _type The assert outcome of this trace.
+     */
     ProgramTrace(Function *_targetFun, std::vector<Value*> _inputs,
                  AssertResult _type)
     : myID(ID++), targetFun(_targetFun), type(_type) {

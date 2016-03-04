@@ -43,6 +43,9 @@ private:
     unsigned status;
     
 public:
+    /**
+     * Default constructor. 
+     */
     MSTimer() : status(0) { }
     /**
      * Destructor.

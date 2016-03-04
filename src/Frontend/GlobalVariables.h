@@ -45,6 +45,9 @@ private:
     std::map<Value*, AllocaInst*> gv2a;
     
 public:
+    /**
+     * Default constructor.
+     */
     GlobalVariables() { }
     /**
      * Destructor.

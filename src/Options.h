@@ -25,6 +25,12 @@ using namespace llvm;
 class Options {
 
 public:
+    /**
+     * Default constructor.
+     *
+     * \param argc Argc variable from the main function.
+     * \param argv Argv variable from the main function.
+     */
     Options(int argc, char **argv);
     /**
      * Destructor.

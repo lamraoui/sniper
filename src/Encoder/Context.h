@@ -80,6 +80,12 @@ private:
     std::vector<ExprPtr> arrayCheckExprs;
     
 public:
+    /**
+     * Default constructor.
+     *
+     * \param _locVar Information about local variables of 
+     * the target function.
+     */
     Context(LocalVariables *_locVar)
     : locVar(_locVar), phiCounter(0), memPtr(0), memID(0),
     /*TCAS*/ arrayCheckId(0) { }

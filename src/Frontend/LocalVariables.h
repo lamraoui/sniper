@@ -54,6 +54,9 @@ private:
     std::vector<varArg_t> vars;
     
 public:
+    /**
+     * Default constructor.
+     */
     LocalVariables() { }
     /**
      * Destructor.

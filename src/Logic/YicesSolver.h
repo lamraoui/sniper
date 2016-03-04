@@ -71,6 +71,9 @@ private:
     std::map<ExprPtr, yices_expr> expr2yexpr;
     
 public:
+    /**
+     * Default constructor.
+     */
     YicesSolver() : ctx(0), model(NULL) { }
     /**
      * Destructor.

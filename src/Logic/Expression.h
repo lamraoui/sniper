@@ -159,6 +159,9 @@ protected:
      */
     static unsigned NbBoolVariables;
 protected:
+    /**
+     * Default constructor.
+     */
     Expression()
     : currentID(ID++), soft(true), instruction(NULL), line(0) { }
     /**

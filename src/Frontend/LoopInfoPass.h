@@ -80,6 +80,12 @@ private:
     std::map<BranchInst*, BasicBlock*> br2header;
     
 public:
+    /**
+     * Default constructor.
+     *
+     * \param _llvmMod An LLVM module in which the target function is.
+     * \param _dbgMsg If true, debug messages are displayed.
+     */
     LoopInfoPass(Module *_llvmMod, bool _dbgMsg) 
     : llvmMod(_llvmMod), dbgMsg(_dbgMsg), FunctionPass(ID) { }
     /**

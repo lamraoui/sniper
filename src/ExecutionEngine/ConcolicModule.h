@@ -105,6 +105,13 @@ protected:
     std::vector<std::pair<VariablesPtr,std::vector<State_t> > > pendingInputs;
     
 public:
+    /**
+     * Default constructor.
+     *
+     * \param _llvmMod An LLVM module in which \p _targetFun is. 
+     * \param _targetFun A target LLVM function.
+     * \param _options SNIPER options. 
+     */
     ConcolicModule(Module *_llvmMod, Function *_targetFun, Options *_options) 
     : llvmMod(_llvmMod), targetFun(_targetFun), options(_options), lastInputs(NULL) {
         // Create an instruction builder

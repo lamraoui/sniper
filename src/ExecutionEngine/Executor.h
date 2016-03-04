@@ -95,6 +95,9 @@ private:
     static Status status;
     
 public:
+    /**
+     * Default constructor.
+     */
     Executor() { }
     /**
      * Destructor.

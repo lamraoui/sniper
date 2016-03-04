@@ -71,6 +71,11 @@ protected:
     Value *v;
 
 public:
+    /**
+     * Default constructor.
+     *
+     * \param _v An LLVM value.
+     */
     Symbol(Value *_v) : v(_v), currentID(ID++) {
         assert(v && "No value for symbol!");
     }

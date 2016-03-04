@@ -56,6 +56,11 @@ private:
     Context *ctx;
     
 public:
+    /**
+     * Default constructor.
+     *
+     * \param _ctx A context.
+     */
     Encoder(Context *_ctx) : ctx(_ctx)  { }
     /**
      * Destructor.

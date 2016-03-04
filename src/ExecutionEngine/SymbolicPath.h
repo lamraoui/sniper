@@ -79,7 +79,15 @@ private:
     unsigned nbBranch;
 
 public:
+    /**
+     * Default constructor.
+     */
     SymbolicPath() : nbBranch(0) { }
+    /**
+     * Copy constructor.
+     *
+     * \param obj A symbolic path object to copy.
+     */
     SymbolicPath(SymbolicPath &obj) {
         path = obj.path;
         nbBranch = obj.nbBranch;

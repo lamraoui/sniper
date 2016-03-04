@@ -35,6 +35,9 @@ private:
     std::map<Value*, SymbolPtr> memory;
 
 public:
+    /**
+     * Default constructor.
+     */
     SymbolMap() { }
     /**
      * Destructor.

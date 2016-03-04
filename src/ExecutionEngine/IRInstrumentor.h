@@ -60,6 +60,12 @@ private:
     Function *PopArgsFun;
 
 public:
+    /**
+     * Default constructor.
+     *
+     * \param _llvmMod An LLVM module in which the target function is.
+     * \param _EE An LLVM execution engine to run (JIT) the target function.
+     */
     IRInstrumentor(Module *_llvmMod, ExecutionEngine *_EE);
     /**
      * Destructor.

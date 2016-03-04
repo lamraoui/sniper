@@ -83,6 +83,12 @@ private:
     LoopInfoPass  *loopInfo;
 
 public:
+    /**
+     * Default constructor.
+     *
+     * \param _llvmMod An LLVM module in which the target function is.
+     * \param _options SNIPER options.
+     */
     Frontend(Module *llvmMod, Options *options) :
     llvmMod(llvmMod), options(options) {}
     /**

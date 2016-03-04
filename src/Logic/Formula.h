@@ -40,9 +40,27 @@ private:
     std::vector<ExprPtr> exprs;
     
 public:
+    /**
+     * Default constructor.
+     */
     Formula() { }
+    /**
+     * Copy constructor.
+     * 
+     * \param f A formula to copy.
+     */
     Formula(Formula *f);
+     /**
+     * Copy constructor.
+     *
+     * \param f A formula to copy.
+     */
     Formula(const Formula& other) : exprs(other.exprs) { }
+    /**
+     * Copy constructor.
+     * 
+     * \param _exprs A vector of expression to set.
+     */
     Formula(std::vector<ExprPtr> _exprs) : exprs(_exprs) { }
     /**
      * Destructor.

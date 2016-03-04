@@ -48,6 +48,11 @@ private:
     Options *options;
     
 public:
+    /**
+     * Default constructor.
+     *
+     * \param _options SNIPER options.
+     */
     FullFunctionInliningPass(Options *_options) 
     : FunctionPass(ID), options(_options) { }
     /**

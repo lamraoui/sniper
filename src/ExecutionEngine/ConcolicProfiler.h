@@ -32,6 +32,13 @@ private:
     ExecutionEngine *EE;
     
 public:
+    /**
+     * Default constructor.
+     *
+     * \param _llvmMod An LLVM module in which the target function is.
+     * \param _targetFun An LLVM target function. 
+     * \param _options SNIPER options.
+     */
     ConcolicProfiler(Module *_llvmMod, Function *_targetFun, Options *_options) 
 					: ConcolicModule(_llvmMod, _targetFun, _options) {
     	this->targetFun = _targetFun;
