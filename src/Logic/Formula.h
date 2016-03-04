@@ -44,6 +44,9 @@ public:
     Formula(Formula *f);
     Formula(const Formula& other) : exprs(other.exprs) { }
     Formula(std::vector<ExprPtr> _exprs) : exprs(_exprs) { }
+    /**
+     * Destructor.
+     */
     ~Formula() { }
     
     /**

@@ -84,6 +84,9 @@ public:
         path = obj.path;
         nbBranch = obj.nbBranch;
     }
+    /**
+     * Destructor.
+     */
     ~SymbolicPath() { }
     SymbolicPath* clone() {
         return new SymbolicPath(*this);

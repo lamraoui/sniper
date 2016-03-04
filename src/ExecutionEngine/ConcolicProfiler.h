@@ -37,6 +37,9 @@ public:
     	this->targetFun = _targetFun;
     	srand(time(NULL));
 	}
+    /**
+     * Destructor.
+     */
 	~ConcolicProfiler() {
 		//delete EE;
 	}

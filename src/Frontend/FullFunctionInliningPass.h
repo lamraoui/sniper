@@ -50,6 +50,9 @@ private:
 public:
     FullFunctionInliningPass(Options *_options) 
     : FunctionPass(ID), options(_options) { }
+    /**
+     * Destructor.
+     */
     ~FullFunctionInliningPass() { }
     
     /**

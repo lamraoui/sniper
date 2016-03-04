@@ -57,6 +57,9 @@ private:
     
 public:
     Encoder(Context *_ctx) : ctx(_ctx)  { }
+    /**
+     * Destructor.
+     */
     ~Encoder() { }
     
     /**

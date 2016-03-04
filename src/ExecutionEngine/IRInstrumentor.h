@@ -61,6 +61,9 @@ private:
 
 public:
     IRInstrumentor(Module *_llvmMod, ExecutionEngine *_EE);
+    /**
+     * Destructor.
+     */
     ~IRInstrumentor() { }
     
     /**

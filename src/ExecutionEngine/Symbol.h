@@ -74,6 +74,9 @@ public:
     Symbol(Value *_v) : v(_v), currentID(ID++) {
         assert(v && "No value for symbol!");
     }
+    /**
+     * Destructor.
+     */
     virtual ~Symbol() { }
 
     /**

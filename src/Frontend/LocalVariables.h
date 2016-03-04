@@ -55,6 +55,9 @@ private:
     
 public:
     LocalVariables() { }
+    /**
+     * Destructor.
+     */
     ~LocalVariables() { }
    
     /**

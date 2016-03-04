@@ -85,6 +85,10 @@ private:
 public:
     Frontend(Module *llvmMod, Options *options) :
     llvmMod(llvmMod), options(options) {}
+    /**
+     * Destructor.
+     */
+     ~Frontend() { }
     
     /**
      * Pre-process the target function.

@@ -36,6 +36,9 @@ private:
 
 public:
     SymbolMap() { }
+    /**
+     * Destructor.
+     */
     ~SymbolMap() {
         memory.clear();
     }

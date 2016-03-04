@@ -161,6 +161,9 @@ protected:
 protected:
     Expression()
     : currentID(ID++), soft(true), instruction(NULL), line(0) { }
+    /**
+     * Destructor.
+     */
     virtual ~Expression() { }
     
 public:

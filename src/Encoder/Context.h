@@ -83,6 +83,9 @@ public:
     Context(LocalVariables *_locVar)
     : locVar(_locVar), phiCounter(0), memPtr(0), memID(0),
     /*TCAS*/ arrayCheckId(0) { }
+    /**
+     * Destructor.
+     */
     ~Context() { }
     
     /**

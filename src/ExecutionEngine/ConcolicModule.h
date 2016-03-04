@@ -113,6 +113,9 @@ public:
         // Set the maximum depth for the executions
         Executor::setMaxDepth(options->getMaxDepth());
     }
+    /**
+     * Destructor.
+     */
     virtual ~ConcolicModule() {
         delete IRB;
         delete this->solver;

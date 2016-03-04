@@ -82,6 +82,9 @@ private:
 public:
     LoopInfoPass(Module *_llvmMod, bool _dbgMsg) 
     : llvmMod(_llvmMod), dbgMsg(_dbgMsg), FunctionPass(ID) { }
+    /**
+     * Destructor.
+     */
     ~LoopInfoPass() { }
 
     /**

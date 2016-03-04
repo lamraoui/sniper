@@ -44,6 +44,9 @@ private:
     
 public:
     MSTimer() : status(0) { }
+    /**
+     * Destructor.
+     */
     ~MSTimer() { };
     
     /**

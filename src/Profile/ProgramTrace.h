@@ -103,7 +103,9 @@ public:
         }
         expectedOutput = NULL;
     }
-    
+    /**
+     * Destructor.
+     */
     ~ProgramTrace() {  }
     
     // ==== Input values ====

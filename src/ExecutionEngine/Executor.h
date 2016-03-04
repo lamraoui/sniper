@@ -96,6 +96,9 @@ private:
     
 public:
     Executor() { }
+    /**
+     * Destructor.
+     */
     ~Executor() { }
 
     /**

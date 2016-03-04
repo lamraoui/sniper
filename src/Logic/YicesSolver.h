@@ -72,6 +72,9 @@ private:
     
 public:
     YicesSolver() : ctx(0), model(NULL) { }
+    /**
+     * Destructor.
+     */
     ~YicesSolver() { }
     
     /**

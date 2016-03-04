@@ -56,6 +56,9 @@ public:
             this->outputValuesVec = parseGoldenOutputsFile(goFilename);
         }
     }
+    /**
+     * Destructor.
+     */
     ~IRRunner() {
       //delete EE;
     }

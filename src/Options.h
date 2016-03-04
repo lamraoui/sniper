@@ -26,6 +26,9 @@ class Options {
 
 public:
     Options(int argc, char **argv);
+    /**
+     * Destructor.
+     */
     ~Options();
     
     /**

@@ -46,6 +46,9 @@ private:
     
 public:
     GlobalVariables() { }
+    /**
+     * Destructor.
+     */
     ~GlobalVariables() { }
     
     /**
