@@ -66,7 +66,7 @@ protected:
     static unsigned ID;
     unsigned currentID;
     /**
-     * LLVM value to be representated.
+     * LLVM value to be represented.
      */
     Value *v;
 
@@ -83,7 +83,7 @@ public:
      */
     virtual ExprPtr convertToExpr();
     /**
-     * Return the representated value.
+     * Return the represented value.
      */
     Value* getValue() { 
         return v; 
@@ -110,7 +110,7 @@ public:
 
     /**
      * Dump to the standard ouput the 
-     * representated variable.
+     * represented variable.
      */
     static void dump(Value *v);
     /**
