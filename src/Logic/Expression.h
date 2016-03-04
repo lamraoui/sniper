@@ -443,6 +443,12 @@ public:
 class SingleExpression : public Expression {
 protected:
     std::string name;
+    /**
+     * Default constructor.
+     *
+     * \param _name The name of the expression (for 
+     * example the name of a variable).
+     */
     SingleExpression(std::string _name) 
     : name(_name) { }
 public:
@@ -463,6 +469,12 @@ class BinaryExpression : public Expression {
 protected:
     ExprPtr e1;
     ExprPtr e2;
+    /**
+     * Default constructor.
+     *
+     * \param _e1 Left-hand side expression. 
+     * \param _e2 Right-hand side expression.
+     */
     BinaryExpression(ExprPtr _e1, ExprPtr _e2) 
     : e1(_e1),e2(_e2) { }
 public:
@@ -490,7 +502,14 @@ protected:
     ExprPtr e1;
     ExprPtr e2;
     ExprPtr e3;
-    TrinaryExpression(ExprPtr _e1, ExprPtr _e2, ExprPtr _e3 )
+    /**
+     * Default constructor.
+     *
+     * \param _e1 First expression.
+     * \param _e2 Second expression.
+     * \param _e3 Third expression.
+     */
+    TrinaryExpression(ExprPtr _e1, ExprPtr _e2, ExprPtr _e3)
     : e1(_e1),e2(_e2),e3(_e3) { }
 public:
     /**
@@ -521,8 +540,19 @@ public:
 class UnaryExpression : public Expression {
 protected:
     std::vector<ExprPtr> exprs;
+    /**
+     * Constructor.
+     *
+     * \param es A vector of expressions.
+     */
     UnaryExpression(std::vector<ExprPtr> es) 
     : exprs(es) { }
+    /**
+     * Constructor.
+     *
+     * \param _e1 First expression.
+     * \param _e2 Second expression.
+     */
     UnaryExpression(ExprPtr _e1, ExprPtr _e2) {
         exprs.push_back(_e1);
         exprs.push_back(_e2);
@@ -545,7 +575,10 @@ public:
  * An expression representing \a true.
  */
 class TrueExpression : public Expression {
-public:
+public:    
+    /**
+     * Default constructor.
+     */
     TrueExpression() { }
     virtual unsigned getOpCode() {
         return Expression::True;
@@ -562,6 +595,9 @@ public:
  */
 class FalseExpression : public Expression {
 public:
+    /**
+     * Default constructor.
+     */
     FalseExpression() { }
     virtual unsigned getOpCode() {
         return Expression::False;
@@ -580,6 +616,11 @@ class UInt32NumExpression : public Expression {
 protected:
     unsigned num;
 public:
+    /**
+     * Default constructor.
+     *
+     * \param n An unsigned 32 bit number to represent.
+     */
     UInt32NumExpression(unsigned n) : num(n) { }
     /**
      * Return the value.
@@ -604,6 +645,11 @@ class SInt32NumExpression : public Expression {
 protected:
     int num;
 public:
+    /**
+     * Default constructor.
+     *
+     * \param n An signed 32 bit number to represent.
+     */
     SInt32NumExpression(int n) : num(n) { }
     /**
      * Return the value.
@@ -626,6 +672,12 @@ public:
  */
 class BoolVarExpression : public SingleExpression {
 public:
+    /**
+     * Default constructor.
+     *
+     * \param _name The name of the Boolean variable to 
+     * represent. 
+     */
     BoolVarExpression(std::string _name) 
     : SingleExpression(_name) { 
          NbBoolVariables++;
@@ -648,6 +700,11 @@ public:
  */
 class IntVarExpression : public SingleExpression {
 public:
+    /**
+     * Default constructor.
+     *
+     * \param _name The name of the variable to represent.
+     */
     IntVarExpression(std::string _name) 
     : SingleExpression(_name) { 
         NbIntVariables++;
@@ -670,6 +727,11 @@ public:
  */
 class IntToIntVarExpression : public SingleExpression {
 public:
+    /**
+     * Default constructor.
+     *
+     * \param _name The name of variable to represent.
+     */
     IntToIntVarExpression(std::string _name) 
     : SingleExpression(_name) { }
     virtual unsigned getOpCode() {
@@ -689,6 +751,11 @@ class ToParseExpression : public Expression {
 private:
     std::string str;
 public:
+    /**
+     * Default constructor.
+     *
+     * \param s A string to parse into an expression.
+     */
     ToParseExpression(std::string s) : str(s) { }
     /**
      * Return the parsed string.
@@ -711,6 +778,12 @@ public:
  */
 class GeExpression : public BinaryExpression {
 public:
+    /**
+     * Default constructor.
+     *
+     * \param _e1 Left-hand side expression.
+     * \param _e2 Right-hand side expression.
+     */
     GeExpression(ExprPtr _e1, ExprPtr _e2) 
     : BinaryExpression(_e1, _e2) { }
     virtual unsigned getOpCode() {
@@ -732,6 +805,12 @@ public:
  */
 class GtExpression : public BinaryExpression {
 public:
+    /**
+     * Default constructor.
+     *
+     * \param _e1 Left-hand side expression.
+     * \param _e2 Right-hand side expression.
+     */
     GtExpression(ExprPtr _e1, ExprPtr _e2) 
     : BinaryExpression(_e1, _e2) { }
     virtual unsigned getOpCode() {
@@ -753,6 +832,12 @@ public:
  */
 class LeExpression : public BinaryExpression {
 public:
+    /**
+     * Default constructor.
+     *
+     * \param _e1 Left-hand side expression.
+     * \param _e2 Right-hand side expression.
+     */
     LeExpression(ExprPtr _e1, ExprPtr _e2) 
     : BinaryExpression(_e1, _e2) { }
     virtual unsigned getOpCode() {
@@ -774,6 +859,12 @@ public:
  */
 class LtExpression : public BinaryExpression {
 public:
+    /**
+     * Default constructor.
+     *
+     * \param _e1 Left-hand side expression.
+     * \param _e2 Right-hand side expression.
+     */
     LtExpression(ExprPtr _e1, ExprPtr _e2) 
     : BinaryExpression(_e1, _e2) { }
     virtual unsigned getOpCode() {
@@ -795,6 +886,12 @@ public:
  */
 class DiseqExpression : public BinaryExpression {
 public:
+    /**
+     * Default constructor.
+     *
+     * \param _e1 Left-hand side expression.
+     * \param _e2 Right-hand side expression.
+     */
     DiseqExpression(ExprPtr _e1, ExprPtr _e2) 
     : BinaryExpression(_e1, _e2) { }
     virtual unsigned getOpCode() {
@@ -816,6 +913,12 @@ public:
  */
 class EqExpression : public BinaryExpression {
 public:
+    /**
+     * Default constructor.
+     *
+     * \param _e1 Left-hand side expression.
+     * \param _e2 Right-hand side expression.
+     */
     EqExpression(ExprPtr _e1, ExprPtr _e2) 
     : BinaryExpression(_e1, _e2) { }
     virtual unsigned getOpCode() {
@@ -839,6 +942,11 @@ class NotExpression : public Expression {
 protected:
     ExprPtr e;
 public:
+    /**
+     * Default constructor.
+     *
+     * \param _e An expression.
+     */
     NotExpression(ExprPtr _e) : e(_e) { }
     /**
      * Return the expression not negated.
@@ -863,8 +971,19 @@ public:
  */
 class AndExpression : public UnaryExpression {
 public:
+    /**
+     * Constructor.
+     *
+     * \param es A vector of expressions.
+     */
     AndExpression(std::vector<ExprPtr> es) 
     : UnaryExpression(es) { }
+    /**
+     * Constructor.
+     *
+     * \param _e1 Left-hand side expression.
+     * \param _e2 Right-hand side expression.
+     */
     AndExpression(ExprPtr _e1, ExprPtr _e2) 
     : UnaryExpression(_e1, _e2) {}
     virtual unsigned getOpCode() {
@@ -896,8 +1015,19 @@ public:
  */
 class OrExpression : public UnaryExpression {
 public:
+    /**
+     * Constructor.
+     *
+     * \param es A vector of expressions.
+     */
     OrExpression(std::vector<ExprPtr> es) 
     : UnaryExpression(es) { }
+    /**
+     * Constructor.
+     *
+     * \param _e1 Left-hand side expression.
+     * \param _e2 Right-hand side expression.
+     */
     OrExpression(ExprPtr _e1, ExprPtr _e2) 
     : UnaryExpression(_e1, _e2) {}
     virtual unsigned getOpCode() {
@@ -929,8 +1059,19 @@ public:
  */
 class XorExpression : public UnaryExpression {
 public:
+    /**
+     * Constructor.
+     *
+     * \param es A vector of expressions.
+     */
     XorExpression(std::vector<ExprPtr> es) 
     : UnaryExpression(es) { }
+    /**
+     * Constructor.
+     *
+     * \param _e1 Left-hand side expression.
+     * \param _e2 Right-hand side expression.
+     */
     XorExpression(ExprPtr _e1, ExprPtr _e2) 
     : UnaryExpression(_e1, _e2) {}
     virtual unsigned getOpCode() {
@@ -962,8 +1103,19 @@ public:
  */
 class SumExpression : public UnaryExpression {
 public:
+    /**
+     * Constructor.
+     *
+     * \param es A vector of expressions.
+     */
     SumExpression(std::vector<ExprPtr> es) 
     : UnaryExpression(es) { }
+    /**
+     * Constructor.
+     *
+     * \param _e1 Left-hand side expression.
+     * \param _e2 Right-hand side expression.
+     */
     SumExpression(ExprPtr _e1, ExprPtr _e2) 
     : UnaryExpression(_e1, _e2) {}
     virtual unsigned getOpCode() {
@@ -995,8 +1147,19 @@ public:
  */
 class SubExpression : public UnaryExpression {
 public:
+    /**
+     * Constructor.
+     *
+     * \param es A vector of expressions.
+     */
     SubExpression(std::vector<ExprPtr> es) 
     : UnaryExpression(es) { }
+    /**
+     * Constructor.
+     *
+     * \param _e1 Left-hand side expression.
+     * \param _e2 Right-hand side expression.
+     */
     SubExpression(ExprPtr _e1, ExprPtr _e2) 
     : UnaryExpression(_e1, _e2) {}
     virtual unsigned getOpCode() {
@@ -1028,8 +1191,19 @@ public:
  */
 class MulExpression : public UnaryExpression {
 public:
+    /**
+     * Constructor.
+     *
+     * \param es A vector of expressions.
+     */
     MulExpression(std::vector<ExprPtr> es) 
     : UnaryExpression(es) { }
+    /**
+     * Constructor.
+     *
+     * \param _e1 Left-hand side expression.
+     * \param _e2 Right-hand side expression.
+     */
     MulExpression(ExprPtr _e1, ExprPtr _e2) 
     : UnaryExpression(_e1, _e2) {}
     virtual unsigned getOpCode() {
@@ -1061,6 +1235,12 @@ public:
  */
 class DivExpression : public BinaryExpression {
 public:
+    /**
+     * Default constructor.
+     *
+     * \param e1 Left-hand side expression.
+     * \param e2 Right-hand side expression.
+     */
     DivExpression(ExprPtr e1, ExprPtr e2) 
     :  BinaryExpression(e1, e2) {}
     virtual unsigned getOpCode() {
@@ -1082,6 +1262,12 @@ public:
  */
 class ModExpression : public BinaryExpression {
 public:
+    /**
+     * Default constructor.
+     *
+     * \param e1 Left-hand side expression.
+     * \param e2 Right-hand side expression.
+     */
     ModExpression(ExprPtr e1, ExprPtr e2) 
     :  BinaryExpression(e1, e2) {}
     virtual unsigned getOpCode() {
@@ -1103,6 +1289,15 @@ public:
  */
 class IteExpression : public TrinaryExpression {
 public:
+    /**
+     * Default constructor.
+     *
+     * \param cond A condition expression (comparison).
+     * \param then An expression to satisfy if \p cond is 
+     * \a true.
+     * \param eelse An expression to satisfy if \p cond is 
+     * \a false.
+     */
     IteExpression(ExprPtr cond, ExprPtr then, ExprPtr eelse)
     : TrinaryExpression(cond, then, eelse) {}
     virtual unsigned getOpCode() {
@@ -1127,6 +1322,12 @@ public:
  */
 class AppExpression : public BinaryExpression {
 public:
+    /**
+     * Default constructor.
+     *
+     * \param f An uninterpreted function expression.
+     * \param arg An argument expression (for exmample a Boolean variable).
+     */
     AppExpression(ExprPtr f, ExprPtr arg) 
     :  BinaryExpression(f, arg) {}
     virtual unsigned getOpCode() {
@@ -1149,6 +1350,13 @@ public:
  */
 class UpdateExpression : public TrinaryExpression {
 public:
+    /**
+     * Default constructor.
+     *
+     * \param f An uninterpreted function expression.
+     * \param arg An argument expression (for exmample a Boolean variable).
+     * \param v A the expression to use to update the returned value of \a (f arg).
+     */
     UpdateExpression(ExprPtr f, ExprPtr arg, ExprPtr v) 
     :  TrinaryExpression(f, arg, v) {}
     virtual unsigned getOpCode() {
