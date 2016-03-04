@@ -1,13 +1,10 @@
 /**
- * GlobalVariables.cpp
+ * \file GlobalVariables.cpp
  *
- * 
- *
- * @author : Si-Mohamed Lamraoui
- * @contact : simo@nii.ac.jp
- * @date : 2013/02/13
- * @copyright : NII 2013
+ * \author Si-Mohamed Lamraoui
+ * \date   29 January 2015
  */
+
 
 #include "GlobalVariables.h"
 
