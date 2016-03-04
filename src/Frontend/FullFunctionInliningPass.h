@@ -43,7 +43,7 @@ class FullFunctionInliningPass : public FunctionPass {
     
 private:
     /**
-     * User fined options.
+     * User defined options.
      */
     Options *options;
     
