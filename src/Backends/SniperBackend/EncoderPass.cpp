@@ -1,29 +1,13 @@
 /**
- * EncoderPass.cpp
+ * \file EncoderPass.cpp
  *
- * This class can be used to encode an LLVM function 
- * into a logic formula.
- *
- * Note: This class uses a light version of Encoder.
- * In the light version, the control flow only consists
- * of contraints of branch and phi instructions.
- *
- * @author : Si-Mohamed Lamraoui
- * @contact : simohamed.lamraoui@gmail.com
- * @date : 2015/12/18
- * @copyright : NII 2014 & Hosei 2015
+ * \author Si-Mohamed Lamraoui
+ * \date   7 March 2016
  */
 
-
 #include "EncoderPass.h"
+ 
 
-
-
-// =============================================================================
-// makeFormula
-// 
-// Encode the target function into a partial SMT formula.
-// =============================================================================
 Formula* EncoderPass::makeTraceFormula() {
 
     MSTimer timer1;
@@ -275,31 +259,14 @@ Formula* EncoderPass::makeTraceFormula() {
     return formula;
 }
 
-// =============================================================================
-// getPostCondition
-//
-// Return a formula representating the post-condition.
-// =============================================================================
 Formula *EncoderPass::getPostCondition() {
     return postCond;
 }
 
-// =============================================================================
-// getPreCondition
-//
-// Return a formula representating the post-condition.
-// =============================================================================
 Formula *EncoderPass::getPreCondition() {
     return preCond;
 }
 
-// =============================================================================
-// initAssertCalls
-//
-// Check the line number to see if the current instruction is used in a
-// call to assert function. If it is the case, we have to put the related
-// constraints as hard.
-// =============================================================================
 void EncoderPass::initAssertCalls() {
     bool hasAsserts = false;
     inst_iterator ii0;
@@ -344,22 +311,12 @@ void EncoderPass::initAssertCalls() {
            "No call to assert function nor oracle!");
 }
 
-
-// =============================================================================
-// init_globalValues
-// =============================================================================
 void EncoderPass::initGlobalVariables() {
     // TODO: support for gloabl variables
     Module *llvmMod = this->targetFun->getParent();
     //assert(llvmMod->global_empty() && "Global variables are not supported!");
 }
 
-
-// =============================================================================
-// isAtoiFunction
-//
-// Return true if I is a atoi function, otherwise false.
-// =============================================================================
 bool EncoderPass::isAtoiFunction(Instruction *I) {
     if(I->getOpcode()==Instruction::Add && I->getName().substr(0, 1) == "_") {
         CallInst *call = dyn_cast<CallInst>(I->getOperand(0));

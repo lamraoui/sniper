@@ -1,17 +1,8 @@
 /**
- * EncoderPass.h
+ * \file EncoderPass.h
  *
- * This class can be used to encode an LLVM function
- * into a logic formula.
- *
- * Note: This class uses a light version of Encoder.
- * In the light version, the control flow only consists
- * of contraints of branch and phi instructions.
- *
- * @author : Si-Mohamed Lamraoui
- * @contact : simohamed.lamraoui@gmail.com
- * @date : 2015/12/18
- * @copyright : NII 2014 & Hosei 2015
+ * \author Si-Mohamed Lamraoui
+ * \date   7 March 2016
  */
 
 #ifndef _ENCODERPASS_H
@@ -33,8 +24,16 @@
 
 using namespace llvm;
 
-
-//============================================================================
+/**
+ * \class EncoderPass
+ *
+ * This class is used to encode an LLVM function
+ * into a logic formula, a trace formula.
+ *
+ * Note: This class uses a light version of Encoder.
+ * In the light version, the control flow only consists
+ * of contraints of branch and phi instructions.
+ */
 class EncoderPass {
     
 private:
@@ -57,20 +56,44 @@ public:
         this->preCond  = new Formula();
         this->postCond = new Formula();
     }
-    
     EncoderPass() {
         delete encoder;
     }
+
+    /**
+     * Return a trace formula that encodes the function 
+     * EncoderPass::targetFun.
+     */
     Formula* makeTraceFormula();
+    /**
+     * Return a formula that represents the pre-conditions 
+     * for the function EncoderPass::targetFun.
+     */
     Formula* getPreCondition();
+    /**
+     * Return a formula that represents the post-conditions 
+     * for the function EncoderPass::targetFun.
+     */
     Formula* getPostCondition();
     
 private:
+    /**
+     * Process global variables of the parent module of 
+     * the function EncoderPass::targetFun.
+     * [NOT YET IMPLEMENTED!]
+     */
     void initGlobalVariables();
+    /**
+     * Check the line numbers of all instructions 
+     * that are related to assert or assume functions. 
+     */
     void initAssertCalls();
+    /**
+     * Return true if \p I is a call to an "atoi" function, 
+     * otherwise false.
+     */
     bool isAtoiFunction(Instruction *I);
     
 };
-//============================================================================
 
-#endif
+#endif // _ENCODERPASS_H
