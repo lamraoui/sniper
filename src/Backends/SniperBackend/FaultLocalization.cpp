@@ -1,5 +1,5 @@
 /**
- * IterationAlgorithm.cpp
+ * FaultLocalization.cpp
  *
  * 
  *
@@ -9,11 +9,11 @@
  * @copyright : NII 2013
  */
 
-#include "IterationAlgorithm.h"
+#include "FaultLocalization.h"
 
 unsigned nbCallsToSolver = 0;
 
-void IterationAlgorithm::run(Formula *TF, Formula *preCond, Formula *postCond,
+void FaultLocalization::run(Formula *TF, Formula *preCond, Formula *postCond,
                              ProgramProfile *prof,
                              Combine::Method combineMethod) {
     // Nothing to do
@@ -73,7 +73,7 @@ void IterationAlgorithm::run(Formula *TF, Formula *preCond, Formula *postCond,
     switch (combineMethod) {
         case Combine::MHS:
             // Minimal-hitting set
-            combMCSes = Combine::combineByMHS(MCSes);
+            combMCSes = Combine::combineByMHS(MCSes, options->getNbLOC());
             break;
         case Combine::PWU:
             // Pair-wise union
@@ -101,7 +101,7 @@ void IterationAlgorithm::run(Formula *TF, Formula *preCond, Formula *postCond,
             if (options->verbose()) {
                 std::cout << "\nMCSes size: ";
                 std::cout << MCSes.size() << std::endl;
-                std::cout << "MCSes (not combined):\n";
+                /*std::cout << "MCSes (not combined):\n";
                 std::cout << "{";
                 std::vector<SetOfFormulasPtr>::iterator it;
                 for (it=MCSes.begin(); it!=MCSes.end(); ++it) {
@@ -111,7 +111,7 @@ void IterationAlgorithm::run(Formula *TF, Formula *preCond, Formula *postCond,
                         std::cout << ", ";
                     }
                 }
-                std::cout << "}\n";
+                std::cout << "}\n";*/
             }
         } else {
             std::cout << "SNIPER was unable to localize any root causes.\n";
@@ -129,7 +129,7 @@ void IterationAlgorithm::run(Formula *TF, Formula *preCond, Formula *postCond,
 // Compute the root causes (MCSes)
 //
 std::vector<SetOfFormulasPtr>
-IterationAlgorithm::allDiagnosis(Formula *TF,
+FaultLocalization::allDiagnosis(Formula *TF,
                                  std::vector<ProgramTrace*> traces,
                                  YicesSolver *yices) {
     std::vector<SetOfFormulasPtr> MCSes;
@@ -189,6 +189,28 @@ IterationAlgorithm::allDiagnosis(Formula *TF,
             eiExpr->dump();
             std::cout << std::endl;
         }
+        // Assert as hard the golden output (if any)
+        // (= return_var golden_output)
+        Value *goldenOutput = E->getExpectedOutput();
+        if (goldenOutput) {
+            BasicBlock *lastBB = &targetFun->back();
+            Instruction *lastInst = &lastBB->back();
+            if (ReturnInst *ret= dyn_cast<ReturnInst>(lastInst)) {
+                Value *retVal = ret->getReturnValue();
+                if (retVal) {
+                    ExprPtr retExpr = Expression::getExprFromValue(retVal);
+                    ExprPtr goExpr = Expression::getExprFromValue(goldenOutput);
+                    ExprPtr eqExpr = Expression::mkEq(retExpr, goExpr);
+                    eqExpr->setHard();
+                    yices->addToContext(eqExpr);
+                    if (options->dbgMsg()) {
+                        std::cout << "-- Golden ouput: ";
+                        eqExpr->dump();
+                        std::cout << std::endl;
+                    }
+                }
+            }
+        }
         // Compute a MCS
         SetOfFormulasPtr M = allMinMCS(yices, AV, AVMap);
         if (!M->empty()) {
@@ -220,7 +242,7 @@ IterationAlgorithm::allDiagnosis(Formula *TF,
 // Input:  a weighted formula in CNF
 // Output: a set of minimal MCS
 SetOfFormulasPtr 
-IterationAlgorithm::allMinMCS(YicesSolver *yices,
+FaultLocalization::allMinMCS(YicesSolver *yices,
                               std::vector<BoolVarExprPtr> &AV,
                               std::map<BoolVarExprPtr, ExprPtr> &AVMap) {
     SetOfFormulasPtr MCSes = SetOfFormulas::make();
@@ -289,7 +311,7 @@ IterationAlgorithm::allMinMCS(YicesSolver *yices,
 // the corresponding expressions in AVMap and save them in M2.
 // =============================================================================
 SetOfFormulasPtr
-IterationAlgorithm::avToClauses(SetOfFormulasPtr M,
+FaultLocalization::avToClauses(SetOfFormulasPtr M,
                                 std::map<BoolVarExprPtr, ExprPtr> AVMap) {
     SetOfFormulasPtr M2 = SetOfFormulas::make();
     for (FormulaPtr f : M->getFormulas()) {
@@ -320,7 +342,7 @@ IterationAlgorithm::avToClauses(SetOfFormulasPtr M,
 //
 // Check the given model for control flow conflicts.
 // =============================================================================
-void IterationAlgorithm::checkControlFlow(YicesSolver *solver) {
+void FaultLocalization::checkControlFlow(YicesSolver *solver) {
     std::cout << "Checking control flow...";
     assert(solver && "Solver is null!");
     // Iterate over basic blocks of the main function
@@ -341,7 +363,8 @@ void IterationAlgorithm::checkControlFlow(YicesSolver *solver) {
             }
             nbPredTrans++;
         }
-        assert(nbTruePredTrans==0 && "Invalid control flow value!");
+        assert((nbTruePredTrans==0 || nbTruePredTrans==1) 
+                && "Invalid control flow value!");
         if (nbPredTrans==0) { // Entry block doesn't have any predecessors
             nbTruePredTrans = 1;
         }
@@ -391,7 +414,7 @@ void IterationAlgorithm::checkControlFlow(YicesSolver *solver) {
 //
 // Return the value of the transition <bb1,bb2> in the given model.
 // =============================================================================
-int IterationAlgorithm::getBlockTransVal(YicesSolver *s,
+int FaultLocalization::getBlockTransVal(YicesSolver *s,
                                          BasicBlock *bb1, BasicBlock *bb2) {
     assert(s && "Solver is null!");
     assert((bb1 && bb2) && "Basic block is null!");
@@ -407,7 +430,7 @@ int IterationAlgorithm::getBlockTransVal(YicesSolver *s,
 //
 //  Given a model, print all basic block transitions values.
 // =============================================================================
-void IterationAlgorithm::dumpTransValues(YicesSolver *solver) {
+void FaultLocalization::dumpTransValues(YicesSolver *solver) {
     std::cout <<  "\n---------------------" << std::endl;
     for (Function::iterator i=targetFun->begin(), e=targetFun->end(); i!=e; ++i) {
         BasicBlock *bb = i;

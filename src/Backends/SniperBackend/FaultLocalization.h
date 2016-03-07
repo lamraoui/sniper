@@ -1,5 +1,5 @@
 /**
- * IterationAlgorithm.h
+ * FaultLocalization.h
  *
  * 
  *
@@ -9,8 +9,8 @@
  * @copyright : NII 2013
  */
 
-#ifndef _ITERATIONALGORITHM_H
-#define _ITERATIONALGORITHM_H
+#ifndef _FAULTLOCALIZATION_H
+#define _FAULTLOCALIZATION_H
 
 #include <vector>
 #include <iostream>
@@ -32,7 +32,7 @@ using namespace llvm;
 
 
 //============================================================================
-class IterationAlgorithm {
+class FaultLocalization {
     
 private:
     Function *targetFun;
@@ -41,11 +41,11 @@ private:
     Options *options;
     
 public:
-    IterationAlgorithm(Function *_targetFun, YicesSolver *_solver,
+    FaultLocalization(Function *_targetFun, YicesSolver *_solver,
                        Options *_options) :
                        targetFun(_targetFun), solver(_solver),
                        options(_options) { }
-    ~IterationAlgorithm() { }
+    ~FaultLocalization() { }
     
     void run(Formula *TF, Formula *preCond, Formula *postCond,
              ProgramProfile *prof, Combine::Method combineMethod);

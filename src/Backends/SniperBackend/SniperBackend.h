@@ -20,7 +20,7 @@
 
 #include "Options.h"
 #include "Frontend/Frontend.h"
-#include "Backends/SniperBackend/IterationAlgorithm.h"
+#include "Backends/SniperBackend/FaultLocalization.h"
 #include "Backends/SniperBackend/EncoderPass.h"
 #include "Encoder/Context.h"
 #include "Logic/Combine.h"
@@ -29,7 +29,6 @@
 #include "ExecutionEngine/ConcolicProfiler.h"
 #include "ExecutionEngine/IRRunner.h"
 #include "Utils/Utils.h"
-
 
 using namespace llvm;
 

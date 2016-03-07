@@ -15,7 +15,7 @@ bin_PROGRAMS = sniper
 sniper_SOURCES = Main.cpp \
 		Options.cpp \
 		Backends/SniperBackend/EncoderPass.cpp \
-		Backends/SniperBackend/IterationAlgorithm.cpp \
+		Backends/SniperBackend/FaultLocalization.cpp \
 		Backends/SniperBackend/SniperBackend.cpp \
 		Encoder/Context.cpp \
 		Encoder/Encoder.cpp \
@@ -27,8 +27,8 @@ sniper_SOURCES = Main.cpp \
 		ExecutionEngine/Symbol.cpp \
 		ExecutionEngine/SymbolicPath.cpp \
 		ExecutionEngine/SymbolMap.cpp \
-        	Frontend/Frontend.cpp \
-        	Frontend/FullFunctionInliningPass.cpp \
+		Frontend/Frontend.cpp \
+		Frontend/FullFunctionInliningPass.cpp \
 		Frontend/GlobalVariables.cpp \
 		Frontend/LocalVariables.cpp \
 		Frontend/LoopInfoPass.cpp \

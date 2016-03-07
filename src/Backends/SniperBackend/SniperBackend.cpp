@@ -88,6 +88,7 @@ void SniperBackend::run() {
     // Encode the IR into a partial weighted formula
     Context     *C  = new Context(LV);
     EncoderPass *EP = new EncoderPass(targetFun, C, LIP, PP, options);
+    //EncoderCFGPass *EP = new EncoderCFGPass(targetFun, C, LIP, PP, options);
     Formula     *TF = EP->makeTraceFormula();
     Formula     *preCond  = EP->getPreCondition();
     Formula     *postCond = EP->getPostCondition();
@@ -124,7 +125,7 @@ void SniperBackend::run() {
     }
     
     // Run the fault localization algorithm
-    IterationAlgorithm *IA = new IterationAlgorithm(targetFun, solver, options);
+    FaultLocalization *FL = new FaultLocalization(targetFun, solver, options);
     Combine::Method CM = (Combine::Method) options->getCombineMethod();
-    IA->run(TF, preCond, postCond, PP, CM);
+    FL->run(TF, preCond, postCond, PP, CM);
 }
