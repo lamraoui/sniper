@@ -1,12 +1,8 @@
 /**
- * FaultLocalization.cpp
+ * \file FaultLocalization.cpp
  *
- * 
- *
- * @author : Si-Mohamed Lamraoui
- * @contact : simo@nii.ac.jp
- * @date : 2014/01/23
- * @copyright : NII 2013
+ * \author Si-Mohamed Lamraoui
+ * \date   7 March 2016
  */
 
 #include "FaultLocalization.h"
@@ -125,9 +121,6 @@ void FaultLocalization::run(Formula *TF, Formula *preCond, Formula *postCond,
     }
 }
 
-//
-// Compute the root causes (MCSes)
-//
 std::vector<SetOfFormulasPtr>
 FaultLocalization::allDiagnosis(Formula *TF,
                                  std::vector<ProgramTrace*> traces,
@@ -239,8 +232,6 @@ FaultLocalization::allDiagnosis(Formula *TF,
     return MCSes;
 }
 
-// Input:  a weighted formula in CNF
-// Output: a set of minimal MCS
 SetOfFormulasPtr 
 FaultLocalization::allMinMCS(YicesSolver *yices,
                               std::vector<BoolVarExprPtr> &AV,
@@ -303,13 +294,6 @@ FaultLocalization::allMinMCS(YicesSolver *yices,
     return MCSes;
 }
 
-
-// =============================================================================
-// avToClauses
-//
-// From the negated auxiliary variables (not a_i) in M, retreive
-// the corresponding expressions in AVMap and save them in M2.
-// =============================================================================
 SetOfFormulasPtr
 FaultLocalization::avToClauses(SetOfFormulasPtr M,
                                 std::map<BoolVarExprPtr, ExprPtr> AVMap) {
@@ -336,12 +320,6 @@ FaultLocalization::avToClauses(SetOfFormulasPtr M,
     return M2;
 }
 
-
-// =============================================================================
-// checkControlFlowIte
-//
-// Check the given model for control flow conflicts.
-// =============================================================================
 void FaultLocalization::checkControlFlow(YicesSolver *solver) {
     std::cout << "Checking control flow...";
     assert(solver && "Solver is null!");
@@ -409,11 +387,6 @@ void FaultLocalization::checkControlFlow(YicesSolver *solver) {
     std::cout << "OK\n";
 }
 
-// =============================================================================
-// getBlockTransVal
-//
-// Return the value of the transition <bb1,bb2> in the given model.
-// =============================================================================
 int FaultLocalization::getBlockTransVal(YicesSolver *s,
                                          BasicBlock *bb1, BasicBlock *bb2) {
     assert(s && "Solver is null!");
@@ -425,11 +398,6 @@ int FaultLocalization::getBlockTransVal(YicesSolver *s,
     return val;
 }
 
-// =============================================================================
-// dumpTransValues
-//
-//  Given a model, print all basic block transitions values.
-// =============================================================================
 void FaultLocalization::dumpTransValues(YicesSolver *solver) {
     std::cout <<  "\n---------------------" << std::endl;
     for (Function::iterator i=targetFun->begin(), e=targetFun->end(); i!=e; ++i) {
