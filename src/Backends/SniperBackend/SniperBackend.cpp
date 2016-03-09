@@ -1,12 +1,8 @@
 /**
- * SniperBackend.cpp
+ * \file SniperBackend.cpp
  *
- *
- *
- * @author : Si-Mohamed Lamraoui
- * @contact : simo@nii.ac.jp
- * @date : 2013/04/04
- * @copyright : NII 2013
+ * \author Si-Mohamed Lamraoui
+ * \date   8 March 2016
  */
 
 #include "SniperBackend.h"
