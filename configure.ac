@@ -9,7 +9,7 @@ AC_CONFIG_SRCDIR([src/main.cpp])
 AC_PREREQ([2.59])
 # Disable the -Wextra-portability option until developers can all use
 # automake-1.11.2 or newer, at which point we'll use the new AM_PROG_AR instead.
-AM_INIT_AUTOMAKE([1.10 -Wall no-define subdir-objects -Wno-extra-portability])
+AM_INIT_AUTOMAKE([1.10 -Wall no-define subdir-objects -Wno-extra-portability foreign])
 AC_CONFIG_HEADERS([config.h])
 
 AC_GNU_SOURCE
