@@ -52,8 +52,16 @@ private:
     bool bugFreeBlocksComputed;
     
 public:
+    /**
+     * Default constructor.
+     *
+     * \param _targetFun An LLVM target function.
+     */
     ProgramProfile(Function *_targetFun) 
-    : targetFun(_targetFun), bugFreeBlocksComputed(false) {  }    
+    : targetFun(_targetFun), bugFreeBlocksComputed(false) {  } 
+    /**
+     * Destructor.
+     */ 
     ~ProgramProfile() { }
     
     /**
@@ -81,7 +89,16 @@ public:
      * Return program execution traces that are neither failing or successful.
      */
     std::vector<ProgramTrace*> getUnkownProgramTraces();
-    
+    /**
+     * Load testcases inputs and golden outputs.
+     *
+     * \param inputsFilename 
+     * \param outputsFilename
+     * \return \a true if the testcases and golden were successfully 
+     * loaded, \a false otherwise.
+     */
+    bool loadTestcases(std::string inputsFilename,
+                       std::string outputsFilename, Options *o);
     
     // ==== For constructing HFTF ====
     

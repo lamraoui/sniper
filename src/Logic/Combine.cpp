@@ -66,7 +66,8 @@ void Combine::pairwiseUnion(std::vector<SetOfFormulasPtr> MCSes,
 }
 
 // Minimal-hitting set based combination
-SetOfFormulasPtr Combine::combineByMHS(std::vector<SetOfFormulasPtr> D) {
+SetOfFormulasPtr Combine::combineByMHS(std::vector<SetOfFormulasPtr> D, 
+                                       unsigned totalNbLine) {
     // Compute the MUSes
     SetOfFormulasPtr MUSes = SetOfFormulas::make();
     for (SetOfFormulasPtr M : D) {
@@ -99,6 +100,10 @@ SetOfFormulasPtr Combine::combineByMHS(std::vector<SetOfFormulasPtr> D) {
         std::set<ExprPtr> Eset(E.begin(), E.end());
         InMUSes.push_back(Eset);
     }
+    // ACSR
+    if (totalNbLine>0) {
+        std::cout << "ACSR: " << getCodeSizeReduction(InMUSes, totalNbLine) << "%\n";;
+    }
     HittingSet<ExprPtr>::getMinimalHittingSets_LP(InMUSes, OutCombMCSes);
     SetOfFormulasPtr combMCSes = SetOfFormulas::make();
     for (std::set<ExprPtr> s : OutCombMCSes) {
@@ -119,4 +124,22 @@ SetOfFormulasPtr Combine::combineByFlatten(std::vector<SetOfFormulasPtr> D) {
         allElts->add(M->getFormulas());
     }
     return allElts;
+}
+
+double Combine::getCodeSizeReduction(std::vector<std::set<ExprPtr> > MUSes, 
+                                     unsigned totalNbLine) {
+
+    std::vector<double> CSR(MUSes.size());
+    unsigned i = 0;
+    for (std::set<ExprPtr> mus : MUSes) {
+        CSR[i] = ((100.0*(double)mus.size())/(double)totalNbLine);
+        i++;
+    }
+    double sum = 0;
+    std::vector<double>::const_iterator it2;
+    for (it2=CSR.begin(); it2!=CSR.end(); ++it2) {
+        double crs_i = *it2;
+        sum = sum + crs_i;
+    }
+    return sum/(double)CSR.size();
 }

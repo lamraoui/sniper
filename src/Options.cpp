@@ -7,8 +7,6 @@
 
 #include "Options.h"
 
-
-
 /*==== Global options ====*/
 
 static cl::opt <std::string>
@@ -55,6 +53,26 @@ DbgMsg("dbg-msg", cl::desc("Print debug messages"));
 static cl::opt <bool>
 Verbose("v", cl::desc("Display messages"));
 
+/**
+ * \brief Granularity level of the encoding of target programs  
+ * into trace formulas. 
+ *  
+ * With the instruction-level granularity, each LLVM instruction is 
+ * encoded in a single clause. With the line-level granularity all 
+ * instructions belonging to the same statement line in the original 
+ * source are grouped in a single clause. With the block-level granularity, 
+ * all instructions belonging to the same LLVM basic block are grouped 
+ * in a single clause.
+ *
+ * A trace formula, with an instruction-level granularity, contains the 
+ * same number or more soft clauses than a trace formula with a line-level 
+ * granularity or a block-level granularity. The comparison between a trace 
+ * formula with a line-level granularity to a formula with a block-level 
+ * granularity depends on the way the source code is arranged. Usually, 
+ * however, there are more instructions in a line than in a basic blocks. 
+ * Note that the granularity level has a big impact on both the computing 
+ * time and the precision of the fault localization algorithm.
+ */
 enum Granularity {
     line, inst, block
 };
@@ -65,8 +83,16 @@ cl::opt<Granularity> TFGranularityLevel(cl::desc("Choose a level of granularity 
       clEnumVal(block, "Block-level"),
       clEnumValEnd));
 
+/**
+ * \brief Program input generation methods.  
+ *
+ * The bounded model checking (bmc) method can be used to 
+ * generate a single failing input. 
+ * The concolic execution method can generate with a high program 
+ * coverage many inputs, both failing and successful inputs. 
+ */
 enum Method {
-    bmc, pe, ce
+    bmc, ce
 };
 cl::opt<Method> TracesGenerationMethod(cl::desc("Choose a traces generation method:"),
 cl::values(
@@ -99,6 +125,14 @@ MCSMaxSize("max-mcs-size", cl::desc("Maximum size of MCSes"),
 static cl::opt <bool>
 OutputCFGDotFile("cfg-dot", cl::desc("Output the CFG in a dot file."));
 
+/**
+ * \brief Diagnosis combination methods. 
+ *
+ * SNIPER implements three combination techniques: 
+ * a flattening-based combination (fla), 
+ * a pair-wise-based combination (pwu), 
+ * and a hitting-set-based combination (mhs). 
+ */
 enum CombineMethod {
     none, fla, pwu, mhs
 };

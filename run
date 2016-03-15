@@ -18,24 +18,27 @@ then
 	"1")
     	# Concolic execution with 
     	# Full Flow-sensitive Trace Formula (FFTF)
-		time ./src/sniper -inst -ce -function $1 -cfile $2 $2.bc
+		#time ./src/sniper -mhs -dbg-msg -v -inst -ce -function $1 -cfile $2 $2.bc
+		time ./src/sniper -line -print-dura -ce -dbg-msg -v -function $1 -cfile $2 $2.bc
    		;;
 	"2")
 		# Concolic execution with 
 		# Hardened Flow-sensitive Trace Formula (HFTF)
-		time ./src/sniper -inst -ce -htf -function $1 -cfile $2 $2.bc 
+		#time ./src/sniper -inst -ce -htf -function $1 -cfile $2 $2.bc 
+		time ./src/sniper -line -print-dura -dbg-msg -v  -htf -ce -function $1 -cfile $2 $2.bc
     	;;
 	"3")
     	# BMC
-    	time ./src/sniper -dbg-msg -v -inst -bmc -function $1 -cfile $2 $2.bc 
+    	time ./src/sniper -unroll 30 -dbg-msg -v -inst -bmc -function $1 -cfile $2 $2.bc 
     	;;
     "4")
     	# TCAS/IO - FFTF
-    	time ./src/sniper -dbg-msg -v -inst -ce -function $1 -cfile $2 $2.bc -loc 173 -ts ./examples/tcas_nomain_ret/testcases-argok.txt -go ./examples/tcas_nomain_ret/golden_outputs.txt 
+    	#time ./src/sniper -dbg-msg -v -inst -ce -function $1 -cfile $2 $2.bc -loc 173 -ts ./examples/tcas_nomain_ret/testcases-argok.txt -go ./examples/tcas_nomain_ret/golden_outputs.txt 
+    	time ./src/sniper -dbg-msg -v -inst -ce -function $1 -cfile $2 $2.bc -loc 173 -ts ../sniper_examples/tcas_nomain_ret/testcases-argok.txt -go ../sniper_examples/tcas_nomain_ret/golden_outputs.txt 
     	;;
     "5")
     	# TCAS/IO - HFTF
-    	time ./src/sniper -dbg-msg -v -inst -ce -htf -function $1 -cfile $2 $2.bc -loc 173 -ts ./examples/tcas_nomain_ret/testcases-argok.txt -go ./examples/tcas_nomain_ret/golden_outputs.txt
+    	time ./src/sniper -dbg-msg -v -inst -ce -htf -function $1 -cfile $2 $2.bc -loc 173 -ts ../sniper_examples/tcas_nomain_ret/testcases-argok.txt -go ../sniper_examples/tcas_nomain_ret/golden_outputs.txt
     	;;
     *)
     	echo "invalid option (x_X)"

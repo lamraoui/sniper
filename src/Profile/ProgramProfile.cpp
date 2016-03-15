@@ -120,6 +120,79 @@ void ProgramProfile::addProgramTrace(ProgramTrace *e) {
     }
 }
 
+bool ProgramProfile::loadTestcases(std::string inputsFilename,
+                                   std::string outputsFilename,
+                                   Options *o) {
+    // Load testcases (inputs)
+    std::ifstream infile(inputsFilename.c_str());
+    if (!infile) {
+        std::cerr << "error: cannot open the testcase file.\n";
+        exit(1);
+    }
+    if (o->verbose()) {
+        std::cout << "Opened testcase file for reading..." << std::endl;
+    }
+    std::string line;
+    std::vector<std::vector<int> > allInputs;
+    while (getline(infile, line)) {
+        std::istringstream is( line );
+        allInputs.push_back(
+        std::vector<int>( std::istream_iterator<int>(is),
+        std::istream_iterator<int>() ) );
+    }
+
+    // Load golden outputs ===
+    std::ifstream outfile(outputsFilename.c_str());
+    if (!outfile) {
+        std::cerr << "error: cannot open the golden output file.\n";
+        exit(1);
+    }
+    if (o->verbose()) {
+        std::cout << "Opened golden output file for reading..." << std::endl;
+    }
+    std::vector<int> allGOutputs;
+    int value;
+    while (outfile >> value) {
+        allGOutputs.push_back(value);
+    }
+    
+    // Check the if the file is wellformed
+    if (allInputs.size()!=allGOutputs.size()) {
+        std::cerr << "error: number of testcases does not";
+        std::cerr << " match the number of golden outputs.\n";
+        exit(1);
+    }
+    int lastSize = -1;
+    for(std::vector<int> lineInts : allInputs) {
+        if (lineInts.size()!=lastSize && lastSize!=-1) {
+            std::cerr << "error: malformed testcase file.\n";
+            exit(1);
+        }
+        lastSize = lineInts.size();
+    }
+    
+    // Save the inputs/outputs
+    LLVMContext &context = getGlobalContext();
+    IRBuilder<> IRB(context);
+    std::vector<std::vector<Value*> > TS;
+    unsigned i = 0;
+    for(std::vector<int> lineInts : allInputs) {
+        std::vector<Value*> TC;
+        for (int val : lineInts) {
+            Value *V = IRB.getInt32(val);
+            TC.push_back(V);
+        }
+        ProgramTrace *trace = new ProgramTrace(targetFun, TC, FAIL);
+        Value *O = IRB.getInt32(allGOutputs[i++]);
+        trace->setExpectedOutput(O);
+        addProgramTrace(trace);
+    }
+    if (o->verbose()) {
+        std::cout << allInputs.size() << " testcase(s) loaded.\n";
+    }
+    return true;
+}
+
 std::vector<ProgramTrace*> ProgramProfile::getProgramTraces() {
     return traces;
 }

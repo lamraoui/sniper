@@ -57,9 +57,12 @@ public:
      * set in \a M by having at least one element in common with it.
      *
      * \param M A vector of MCSes.
+     * \param totalNbLine The total number of lines in the original source code.
+     *                     This parameter is optional, it is only needed to calculate ACSR. 
      * \return a set of complete diagnosis.
      */
-    static SetOfFormulasPtr combineByMHS(std::vector<SetOfFormulasPtr> M);
+    static SetOfFormulasPtr combineByMHS(std::vector<SetOfFormulasPtr> M, 
+                                         unsigned totalNbLine = 0);
     
     /**
      * \brief Pair-wise-union-based combination method.
@@ -101,6 +104,15 @@ private:
      */
     static void pairwiseUnion(std::vector<SetOfFormulasPtr> M,
                             SetOfFormulasPtr Diag);
+
+    /**
+     * \brief Calculate the average code size reduction (ACSR).
+     *
+     * \param MUSes A set of minimal unsatisfiable subsets (MUSes).
+     * \param totalNbLine The total number of line in the original source code.
+     */
+    static double getCodeSizeReduction(std::vector<std::set<ExprPtr> > MUSes, 
+                                       unsigned totalNbLine);
 
 };
 
