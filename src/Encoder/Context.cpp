@@ -46,18 +46,22 @@ ExprPtr Context::getLocalVariable(Instruction *i, Value *arg, int pos) {
     // Assert the local variable initialization
     if(arg->getValueID()!=Value::UndefValueVal) {
         
+        /*******************************************
+         *   TODO                                  *
+         *******************************************/
 
-        std::cout << "[REMOVED CODE]:[Context:68]" << std::endl;
-        
-        
-        /* ExprPtr argExpr = newVariable(arg);
+        //std::cout << "[REMOVED CODE]:[Context:68]" << std::endl;
+
+         /*
+         ExprPtr argExpr = newVariable(arg);
          ExprPtr eqExpr = Expression::mkEq(localVar, argExpr);
          // Assert as soft
          assert(formula && "Formula is null!");
          unsigned line = locVar->getLine(name);
          eqExpr->setInstruction(i);
          formula->assertSoft(eqExpr);
-         eqExpr->setLine(line);*/
+         eqExpr->setLine(line);
+         */
     }
     // Add the newly created number into the map
     this->name2expr[name] = localVar;
