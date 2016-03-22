@@ -150,7 +150,7 @@ ChoosedCombineMethod(cl::desc("Choose a combination method:"),
 void printVersionInformation() {
     std::cout << "SNIPER:\n";
     std::cout << "  Version 2.0\n";
-    std::cout << "  Built Jan 11 2014 (16:19:35).\n\n";
+    std::cout << "  Built March 22 2016 (16:19:35).\n\n";
     std::cout << "  Yices version 1.0.39 (http://yices.csl.sri.com/)\n";
     std::cout << "  LLVM version 3.3 (http://llvm.org/)\n";
 }
@@ -162,9 +162,9 @@ Options::Options(int argc, char **argv) {
     "Automatic Error Localizer for Imperative Programs (SNIPER)\n\n"
     "  This program automatically locates root causes\n" 
     "  in imperative programs such as ANSI-C\n\n"
-    "  Si-mohamed Lamraoui, Shin Nakajima\n"
-    "  SOKENDAI University & National Institute of Informatics (Tokyo, Japan)\n"
-    "  contact: simo@nii.ac.jp\n");
+    "  Si-mohamed LAMRAOUI, Shin NAKAJIMA, and Hiroshi HOSOBE\n"
+    "  SOKENDAI University, Hosei University & National Institute of Informatics  (Tokyo, Japan)\n"
+    "  contact: simohamed.lamraoui(AT)gmail(DOT)com\n");
 }
 
 std::string Options::getInputIRFilename() {
