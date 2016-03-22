@@ -93,11 +93,11 @@ void FaultLocalization::run(Formula *TF, Formula *preCond, Formula *postCond,
             std::cout << combMCSes << std::endl;
         }
     } else {
-        if (combineMethod==Combine::NONE) {
+        if (combineMethod==Combine::NONE && !MCSes.empty()) {
             if (options->verbose()) {
                 std::cout << "\nMCSes size: ";
                 std::cout << MCSes.size() << std::endl;
-                /*std::cout << "MCSes (not combined):\n";
+                std::cout << "MCSes (not combined):\n";
                 std::cout << "{";
                 std::vector<SetOfFormulasPtr>::iterator it;
                 for (it=MCSes.begin(); it!=MCSes.end(); ++it) {
@@ -107,7 +107,7 @@ void FaultLocalization::run(Formula *TF, Formula *preCond, Formula *postCond,
                         std::cout << ", ";
                     }
                 }
-                std::cout << "}\n";*/
+                std::cout << "}\n";
             }
         } else {
             std::cout << "SNIPER was unable to localize any root causes.\n";
