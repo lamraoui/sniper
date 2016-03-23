@@ -2,19 +2,13 @@
 
 ## Overview
 
-**SNIPER** (SNIPER is Not an Imperative Errors Repairer) is a tool to automatically localize faults in imperative programs, such as ANSI C. SNIPER makes use of the LLVM compiler infrastructure for processing input programs, and uses Yices 1 as a backend SMT solver. 
-The architecture of SNIPER is based on the LLVM compiler infrastructure to facilitate 
-the handling of programs to be analyzed. 
-Because SNIPER includes in itself the 
-LLVM and Yices 1 libraries, the tool can be considered as standalone. 
-The advantage of a standalone tool is that we have full control at each stage. 
-The control can be on the manipulation of the LLVM’s IR 
-or on the manipulation of the Yices’ context. This makes it 
-possible for SNIPER to collect several information leading the fault localization 
-to be precise and extensive. 
+**SNIPER** (SNIPER is Not an Imperative Errors Repairer) is a tool to automatically localize faults in imperative programs, such as ANSI C. 
+SNIPER makes use of the LLVM compiler infrastructure for processing input programs, and uses Yices 1 as a backend SMT solver. 
+The architecture of SNIPER is based on the LLVM compiler infrastructure to facilitate the handling of programs to be analyzed. 
 
+**SNIPER** can also be viewed as a framework on top of what it is possible to implement various backends. For example, in the current version, **SNIPER** implements a backend to automatically localize faults (see SniperBackend). Other methods to analyse computer software can be implemented as well, witout much effort. 
 
-More details on the architecture of SNIPER and can be found in [Publications](#publications).
+More details on SNIPER and its the architecture can be found in [Publications](#publications).
 
 
 ## Installation
@@ -42,11 +36,12 @@ For `yices 1.0.39` installation on MacOS/Linux, please visit [here](http://yices
 
 To compile **SNIPER** follow the steps below.
 1. Open a terminal, cd to `sniper`. 
-2. Run the script `./configure`. This will check that all requirements are fulfilled and configure autotools to compile **SNIPER**. 
-3. Run `make -j x` with x the number of CPU cores available in your computer. This will compile **SNIPER**, this can take awhile. 
-4. Run `make check -j x`. This will execute unit tests to check if the compilation went well. 
+2. Run the script `./autogen.sh`.
+3. Run the script `./configure`. This will check that all requirements are fulfilled and configure autotools to compile **SNIPER**. 
+4. Run `make -j x` with x the number of CPU cores available in your computer. This will compile **SNIPER**, this can take awhile. 
+5. Run `make check -j x`. This will execute unit tests to check if the compilation went well. 
 [comment]: <> (5. Run `make test-suite`. This will execute regression tests.)
-5. Run `make install`. This will install **SNIPER**'s binaries on your computer. 
+6. Run `make install`. This will install **SNIPER**'s binaries on your computer. 
 
 
 ### Installation on Windows
@@ -93,7 +88,7 @@ sniper -v -ce -function foo -cfile ./examples/bekkouche_benchmark/MinmaxKO.c ./e
 This command will execute **SNIPER** with Concolic execution and FFTF.
 
 The result of the analysis is ouput as below.
-```
+```c
 =================================================
 Running AllDiagnosis algorithm [NOCOMB][FFTF][Line-lvl]
 
