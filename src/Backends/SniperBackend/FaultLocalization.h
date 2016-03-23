@@ -28,7 +28,7 @@ using namespace llvm;
 /**
  * \class FaultLocalization
  *
- * This class implements various algorithm to do automatic 
+ * This class implements various algorithms to do automatic 
  * fault localization of imperative programs with multiple faults.
  */
 class FaultLocalization {
@@ -61,7 +61,7 @@ public:
     
     /**
      * Enumerate diagnoses for the given trace formula and 
-     * for each failing inputs. 
+     * for each error-inducing input. 
      *
      * \param TF A trace formula (partial formula in CNF).
      * \param traces A set of program traces that contain error-inducing inputs.
@@ -81,8 +81,8 @@ public:
      * problem consists of finding all MCSes of C (independent of their size).
      *
      * \param yices A partial max-sat solver.
-     * \param AV 
-     * \param AVMap 
+     * \param AV A set of auxiliary variables.
+     * \param AVMap A map between auxiliary variables and their associated expressions.
      * \return a set of minimal MCSes.
      */
     SetOfFormulasPtr allMinMCS(YicesSolver *yices,
@@ -91,9 +91,12 @@ public:
 
 private:
     /**
-     * From the negated auxiliary variables (not a_i) in M, 
-     * retreive the corresponding expressions in AVMap and 
-     * save them in M2.
+     * Retreive in \p AVMap the expressions for which their 
+     * associated auxiliary variables are negated in \p M. 
+     *
+     * \param M A set of auxiliary variables (negated or not).
+     * \param AVMap A map between auxiliary variables and their associated expressions.
+     * \return A set of expressions (from the trace formula).
      */
     SetOfFormulasPtr avToClauses(SetOfFormulasPtr M,
                                  std::map<BoolVarExprPtr, ExprPtr> AVMap);
@@ -102,15 +105,24 @@ private:
 
     /**
      * Check the given model for control flow conflicts.
+     *
+     * \param solver A max-sat solver that contains a model.
      */
     void checkControlFlow(YicesSolver *solver);
     /**
-     * Return the value of the transition <bb1,bb2> in 
+     * Return the value of the transition variable <\p bb1,\p bb2> in 
      * the given model.
+     *
+     * \param s A max-sat solver that contains a model.
+     * \param bb1 An LLVM basic block.
+     * \param bb2 An LLVM basic block.
+     * \return The value of the <\p bb1,\p bb2> in the model of \p s.
      */
     int  getBlockTransVal(YicesSolver *s, BasicBlock *bb1, BasicBlock *bb2);
     /**
      * Given a model, print all basic block transitions values.
+     *
+     * \param s A max-sat solver that contains a model.
      */
     void dumpTransValues(YicesSolver *solver);
     
