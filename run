@@ -19,7 +19,7 @@ then
     	# Concolic execution with 
     	# Full Flow-sensitive Trace Formula (FFTF)
 		#time ./src/sniper -mhs -dbg-msg -v -inst -ce -function $1 -cfile $2 $2.bc
-		time ./src/sniper -line -print-dura -ce -dbg-msg -v -function $1 -cfile $2 $2.bc
+		time ./src/sniper -pwu -ce -v -function $1 -cfile $2 $2.bc
    		;;
 	"2")
 		# Concolic execution with 

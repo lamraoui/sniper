@@ -1,2 +1,0 @@
-#!/bin/bash
-xargs -L1 gzip < my_file

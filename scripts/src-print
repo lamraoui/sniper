@@ -1,3 +1,0 @@
-a2ps tcas.c --line-numbers=1 --prologue=color -o tcas.ps
-ps2pdf tcas.ps tcas.pdf
-rm tcas.ps
