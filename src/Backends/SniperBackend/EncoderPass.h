@@ -32,7 +32,7 @@ using namespace llvm;
  *
  * Note: This class uses a light version of Encoder.
  * In the light version, the control flow only consists
- * of contraints of branch and phi instructions.
+ * of constraints of branch and phi instructions.
  */
 class EncoderPass {
     
