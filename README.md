@@ -55,7 +55,12 @@ Contributions to port **SNIPER** on Windows are welcome.
 The example below demonstrates a simple fault localization using **SNIPER**. 
 This example uses a small function, which contains an error in the assignment of line 12.
 
+Note the include definition in line 1. It includes **SNIPER**'s special functions, such as the ones to define a pre-condition (`sniper_assume`)
+or a post-condition (`sniper_assert`). 
+
 ```c
+#include <sniper/sniper.h>
+
 void foo(int in1,int in2,int in3){
 	int least;
 	int most;
@@ -73,7 +78,7 @@ void foo(int in1,int in2,int in3){
 	if (least > in3){ 
 		least = in3; 
 	}
-	assert(least <= most);
+	sniper_assert(least <= most);
 }
 ```
 
