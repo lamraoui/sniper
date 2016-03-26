@@ -47,6 +47,9 @@ private:
     Formula *postCond;
 
 public:
+    /**
+     * Default constructor.
+     */
     EncoderPass(Function *_targetFun, Context *_ctx, LoopInfoPass *_loops,
                 ProgramProfile *_profile, Options *_options)
                 : targetFun(_targetFun), ctx(_ctx), loops(_loops),
@@ -56,6 +59,9 @@ public:
         this->preCond  = new Formula();
         this->postCond = new Formula();
     }
+    /**
+     * Destructor.
+     */
     EncoderPass() {
         delete encoder;
     }
