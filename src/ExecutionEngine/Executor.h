@@ -33,13 +33,13 @@ using namespace llvm;
 /**
  * If set to 1 non-linear operations are allowed 
  * in the concolic execution module. If set to 0 
- * linear operations are not allowed and these operation 
+ * linear operations are not allowed and these operations 
  * will be replaced by concrete values. 
  */
 #define NON_LINEAR_SUPPORTED 0
 
 /**
- * Executor status.
+ * Executor running statuses.
  */
 enum Status {
     IDLE,  /*< Executor is stopped and not yet initialized. */
@@ -106,8 +106,8 @@ public:
 
     /**
      * Initialize the executor.
-     * Should be called before executing the instrumented 
-     * target function. 
+     * This procedure should be called before executing 
+     * the instrumented target function. 
      *
      * \param lip Information about loops in the target function. 
      * \param p Information about the target function.
@@ -120,8 +120,8 @@ public:
                      bool disableSymbExe = false, bool noAssert = false);
     /**
      * Start the executor. 
-     * Should be called before executing the instrumented 
-     * target function and right after Executor::init. 
+     * this procedure should be called before executing the 
+     * instrumented target function and right after Executor::init. 
      *
      * \param f An instrumented LLVM function (target function).
      * \param vals Input values. 
@@ -180,7 +180,7 @@ public:
      */
     static void ReportEnd();
     /**
-     * Push an argument before calling a function (stack simulation). 
+     * Push an argument before calling a function (stack emulation). 
      * This function is required when the target function has 
      * function calls. 
      * See Executor::PopArgs.
@@ -189,7 +189,7 @@ public:
      */
     static void PushArgs(Value *i);
     /**
-     * Pop an argument after a function call (stack simulation). 
+     * Pop an argument after a function call (stack emulation). 
      * This function is required when the target function has 
      * function calls. 
      * See Executor::PushArgs.
@@ -199,8 +199,8 @@ public:
     static void PopArgs(Value *i);
     /**
      * Set the maximum program depth. 
-     * The executor stop when the maximum program depth is reach, 
-     * which prevent long or infinite run of the concolic execution 
+     * The executor stops when the maximum program depth is reached, 
+     * which prevents long or infinite run of the concolic execution 
      * algorithm. 
      *
      * \param d A depth (number of maximum conditional branches to be executed).
