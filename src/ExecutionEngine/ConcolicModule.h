@@ -53,7 +53,7 @@
 using namespace llvm;
 
 /**
- * Search strategy for selecting 
+ * Search strategies for selecting 
  * the node to expand.
  */
 enum SearchStrategy {
@@ -74,7 +74,7 @@ enum SearchStrategy {
  * testing method that simultaneously performs 
  * symbolic and concrete execution. This method 
  * provides a high code coverage for program testing. 
- * We follow the approach of CUTE. The algorithm 
+ * SNIPER follows the approach of CUTE. The algorithm 
  * first executes the program on some random input values. 
  * The method keeps track of a path constraint (PC) 
  * to collect symbolic predicate expressions from 
