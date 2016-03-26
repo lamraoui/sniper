@@ -73,8 +73,8 @@ public:
     ~IRInstrumentor() { }
     
     /**
-     * Instrument each functions in the LLVM module \p llvmMod 
-     * except the llvm functions (intrinsic) or the functions 
+     * Instrument each function in the LLVM module \p llvmMod 
+     * except the LLVM's special functions (intrinsic) or the functions 
      * with an unknown body.
      *
      * \param llvmMod A LLVM module to instrument.
@@ -88,7 +88,7 @@ private:
      * step to do concolic execution or execution profilling. 
      *
      * \param f The LLVM function to be instrumented.
-     * \param isTarget Is true when the \p f is the target function, 
+     * \param isTarget Is true when \p f is the target function, 
      * false otherwise.
      */
     void instrumentFunction(Function *f, bool isTarget);
@@ -175,9 +175,18 @@ private:
     /**
      * Replace in \p targetFun all call to sniper_assume,  
      * sniper_assert and exit functions by profiling functions.
+     *
+     * \param targetFun An LLVM function.
      */    
     void replaceAssertAssumeExitCall(Function *targetFun);
 
+    /**
+     * Execute the LLVM function \p f with the input 
+     * values \p args.
+     *
+     * \param f An LLVM function to execute.
+     * \param args Concrete values to pass as arguments.
+     */
     void callFunction(Function *f, std::vector<Value*> args);
 
 };
