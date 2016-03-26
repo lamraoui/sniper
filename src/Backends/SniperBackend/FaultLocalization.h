@@ -40,10 +40,16 @@ private:
     Options *options;
     
 public:
+    /**
+     * Default constructor.
+     */
     FaultLocalization(Function *_targetFun, YicesSolver *_solver,
                        Options *_options) :
                        targetFun(_targetFun), solver(_solver),
                        options(_options) { }
+    /**
+     * Destructor.
+     */
     ~FaultLocalization() { }
     
     /**
