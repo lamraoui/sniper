@@ -53,6 +53,7 @@ typedef std::shared_ptr<GepOpSymbol> GepOpSymbolPtr;
 /**
  * \class Symbol
  *
+ * This class represents symbols. 
  * In concolic execution (see ConcolicModule), 
  * variables are treated as symbolic variables during 
  * symbolic execution. 
