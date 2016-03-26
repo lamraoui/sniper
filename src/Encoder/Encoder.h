@@ -47,7 +47,7 @@ using namespace llvm;
  * into logic formulas (expressions).
  *
  * Note: This is the light version of Encoder.
- * In this version, the program skeleton only consists
+ * In this version, the program "skeleton" only consists
  * of constraints encoded from branch and phi instructions.
  */
 class Encoder {
@@ -77,9 +77,9 @@ public:
     void prepareControlFlow(Function *targetFun);
 
     /**
-     * Encode an LLVM instruction which compute a 
+     * Encode an LLVM instruction which computes a 
      * binary operation into a logic expression. 
-     * Supported binary operations are the following. 
+     * Supported binary operations are as follows. 
      * Arithmetic operations: Add, Sub, Mul, and Rem. 
      * Boolean operations: And, Or, Xor, Shl, LShr, and AShr.
      *
@@ -151,7 +151,7 @@ public:
     /**
      * Encode an LLVM memory load instruction into a 
      * logic expression. 
-     * The encoding may add post-condition to \p AS 
+     * The encoding may add post-conditions to \p AS 
      * in order to force the load operation to behave 
      * correctly. 
      *
