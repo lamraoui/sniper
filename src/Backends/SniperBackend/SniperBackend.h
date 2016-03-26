@@ -44,8 +44,14 @@ private:
     struct timeval start; // Timer
     
 public:
+    /**
+     * Default constructor.
+     */
     SniperBackend(Frontend *frontend, Options *options) :
     frontend(frontend), options(options) {}
+    /**
+     * Destructor.
+     */
     ~SniperBackend() { }
 
     /**
