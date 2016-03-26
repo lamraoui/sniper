@@ -23,7 +23,7 @@ using namespace llvm;
 
 // TODO : unordered_map
 /**
- * Map LLVM values to logic expression.
+ * Map LLVM values to logic expressions.
  */
 typedef std::map<Value*, ExprPtr> val2expr_map;
 /**
@@ -33,7 +33,7 @@ typedef std::map<Value*, ExprPtr> val2expr_map;
  */
 typedef std::map<std::string, ExprPtr> str2trans_map;
 /**
- * Map variable name to logic expressions.
+ * Map variable names to logic expressions.
  */
 typedef std::map<std::string, ExprPtr> name2expr_map;
 
@@ -46,8 +46,7 @@ typedef std::map<std::string, ExprPtr> name2expr_map;
  * such as add or get.
  * In addition, it maps assert functions in the IR to line numbers.
  * The main goal of a context is to avoid duplicated expressions 
- * and to make the processing of IR faster and convenient.
- *
+ * and to make the processing of IR faster and more convenient.
  */
 class Context {
 
@@ -95,7 +94,7 @@ public:
     ~Context() { }
     
     /**
-     * Create a new expression representating an LLVM value 
+     * Create a new expression representing an LLVM value 
      * and store it to the context.
      *
      * \param val An LLVM value to be encoded.
@@ -104,7 +103,7 @@ public:
      */
     ExprPtr newVariable(Value *val);
     /**
-     * Create a new expression representating a transition 
+     * Create a new expression representing a transition 
      * between two basic blocks and store it to the context.
      *
      * \param pred An LLVM basic block (start).
@@ -184,7 +183,7 @@ public:
         return bb2id[bb]; 
     }
     /**
-     * Return the current a memory allocation ID. 
+     * Return the current memory allocation ID. 
      */
     unsigned getCurrentMemId() { 
         return memID; 
@@ -225,7 +224,7 @@ public:
      * \param bb An LLVM basic block to populate.
      * \return null when there is no predecessor basic blocks,
      *         null when there is a single predecessor basic block, or
-     *         return an expression that represente a phi node which 
+     *         return an expression that represents a phi node which 
      *         selects pointers from predecessor basic blocks.
      */
     ExprPtr propagatePointers(BasicBlock *bb);
