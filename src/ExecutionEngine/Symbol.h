@@ -170,7 +170,7 @@ protected:
  * \class SSBinaryOpSymbol
  *
  * This class is a binary op symbol with 
- * two of this arguments begin symbolic variables. 
+ * two of its arguments being symbolic variables. 
  *
  * S(v)= S(v1) op S(v2)
  */
@@ -204,8 +204,8 @@ public:
  * \class SVBinaryOpSymbol
  *
  * This class is a binary op symbol with 
- * the first argument begin a symbolic variable 
- * and the second argument begin a concrete value.
+ * the first argument being a symbolic variable 
+ * and the second argument being a concrete value.
  *
  * S(v)= S(v1) op v2
  */
@@ -237,8 +237,8 @@ public:
  * \class VSBinaryOpSymbol
  *
  * This class is a binary op symbol with 
- * the first argument begin a concrete value 
- * and the second argument begin a symbolic variable. 
+ * the first argument being a concrete value 
+ * and the second argument being a symbolic variable. 
  *
  * S(v)= v1 op S(v2)
  */
@@ -283,7 +283,7 @@ public:
  * \class SSSelectOpSymbol
  *
  * This class is a select symbol with all   
- * of this arguments begin symbolic variables. 
+ * of its arguments being symbolic variables. 
  *
  * S(v)= S(v1) ? S(v2) : S(v3)
  */
@@ -316,8 +316,8 @@ public:
  * \class VSSelectOpSymbol
  *
  * This class is a select symbol with the 
- * second argument begin a concrete value and    
- * the other arguments begin symbolic variables. 
+ * second argument being a concrete value and    
+ * the other arguments being symbolic variables. 
  *
  * S(v)= S(v1) ? v2 : S(v3)
  */
@@ -350,8 +350,8 @@ public:
  * \class SVSelectOpSymbol
  *
  * This class is a select symbol with the 
- * last argument begin a concrete value and    
- * the other arguments begin symbolic variables. 
+ * last argument being a concrete value and    
+ * the other arguments being symbolic variables. 
  *
  * S(v)= S(v1) ? S(v2) : v3
  */
@@ -384,8 +384,8 @@ public:
  * \class VVSelectOpSymbol
  *
  * This class is a select symbol with the  
- * first argument begin a symbolic variable and    
- * the other arguments begin concrete values. 
+ * first argument being a symbolic variable and    
+ * the other arguments being concrete values. 
  *
  * S(v)= S(v1) ? v2 : v3
  */
