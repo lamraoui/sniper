@@ -50,14 +50,14 @@ public:
      * Create and add a new symbol from an LLVM input value.
      *
      * \param v An LLVM value (function argument) to map.
-     * \return A new symbol representating the value \p v.
+     * \return A new symbol representing the value \p v.
      */
     SymbolPtr addInput(Value *v);
     /**
      * Create and add a new symbol from an LLVM value.
      *
      * \param v An LLVM value to map.
-     * \return A new symbol representating the value \p v.
+     * \return A new symbol representing the value \p v.
      */
     SymbolPtr create(Value *v);
     /**
@@ -101,7 +101,7 @@ public:
     void dump();
     
     /**
-     * Create a new symbol s(v) representating a binary operation (add, sub, ...).
+     * Create a new symbol s(v) representing a binary operation (add, sub, ...).
      * s(v)= s1 op s2.
      *
      * \param v An LLVM value (binary instruction).
@@ -111,7 +111,7 @@ public:
      */
     SymbolPtr createBinaryOp(Value *v, SymbolPtr s1, SymbolPtr s2);
     /**
-     * Create a new symbol s(v) representating a binary operation (add, sub, ...).
+     * Create a new symbol s(v) representing a binary operation (add, sub, ...).
      * s(v)= s1 op s(v2).
      *
      * \param v An LLVM value (binary instruction).
@@ -121,7 +121,7 @@ public:
      */
     SymbolPtr createBinaryOp(Value *v, SymbolPtr s1, Value *v2);
     /**
-     * Create a new symbol s(v) representating a binary operation (add, sub, ...).
+     * Create a new symbol s(v) representing a binary operation (add, sub, ...).
      * s(v)= s(v1) op s2.
      *
      * \param v An LLVM value (binary instruction).
@@ -131,7 +131,7 @@ public:
      */
     SymbolPtr createBinaryOp(Value *v, Value *v1,  SymbolPtr s2);
     /**
-     * Create a new symbol s(v) representating a select operation.
+     * Create a new symbol s(v) representing a select operation.
      * s(v)= s1 ? s2 : s3
      *
      * \param v An LLVM value (select instruction).
@@ -142,7 +142,7 @@ public:
      */
     SymbolPtr createSelectOp(Value *v, SymbolPtr s1, SymbolPtr s2, SymbolPtr s3);
     /**
-     * Create a new symbol s(v) representating a select operation.
+     * Create a new symbol s(v) representing a select operation.
      * s(v)= s1 ? s(v2) : s3
      *
      * \param v An LLVM value (select instruction).
@@ -153,7 +153,7 @@ public:
      */
     SymbolPtr createSelectOp(Value *v, SymbolPtr s1, Value *v2, SymbolPtr s3);
     /**
-     * Create a new symbol s(v) representating a select operation.
+     * Create a new symbol s(v) representing a select operation.
      * s(v)= s1 ? s2 : s(v3)
      *
      * \param v An LLVM value (select instruction).
@@ -164,7 +164,7 @@ public:
      */
     SymbolPtr createSelectOp(Value *v, SymbolPtr v1, SymbolPtr s2, Value *v3);
     /**
-     * Create a new symbol s(v) representating a select operation.
+     * Create a new symbol s(v) representing a select operation.
      * s(v)= s1 ? s(v2) : s(v3)
      *
      * \param v An LLVM value (select instruction).
@@ -175,7 +175,7 @@ public:
      */
     SymbolPtr createSelectOp(Value *v, SymbolPtr s1, Value *v2, Value *v3);
     /**
-     * Create a new symbol s(v) representating a cast operation.
+     * Create a new symbol s(v) representing a cast operation.
      * s(v)= cast s1
      *
      * \param v An LLVM value (cast instruction).
@@ -184,7 +184,7 @@ public:
      */
     SymbolPtr createCastOp(Value *v, SymbolPtr s1);
     /**
-     * Create a new symbol p(ptr) representating a get pointer operation.
+     * Create a new symbol p(ptr) representing a get pointer operation.
      * p(ptr) = gep *a, s1
      * Limitation: only support integer values (*a cannot be symbolic)
      *
