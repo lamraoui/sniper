@@ -46,7 +46,7 @@ typedef struct State {
  * \class SymbolicPath
  *　
  * This class is used in the concolic execution engine. 
- * This class represent a path constraint (PC) 
+ * This class represents a path constraint (PC) 
  * to collect symbolic predicate expressions from branching 
  * points. The conjunction of the predicates in PC holds for 
  * the execution path. The CUTE algorithm (concolic execution 
@@ -203,7 +203,15 @@ protected:
     Instruction *i;
 
 public:
+     /**
+     * Default constructor.
+     *
+     * \param i The LLVM instruction related to this cell.
+     */
     ExprCell(Instruction *i) : i(i) { }
+     /**
+     * Destructor.
+     */
     virtual ~ExprCell() { }
 
     /**
@@ -262,7 +270,7 @@ public:
 /**
  *\class BranchExprCell
  *
- * This class represent an element (cell) of a path constraint, 
+ * This class represents an element (cell) of a path constraint, 
  * which holds a branch instruction. 
  */
 class BranchExprCell : public ExprCell {
@@ -275,6 +283,14 @@ protected:
     bool branchTaken;
 
 public:
+     /**
+     * Default constructor.
+     *
+     * \param svcond The symbolic value related to this cell.
+     * \param branchTaken True if the "then" branch was taken, 
+     * false if the "else" branch was taken.
+     * \param i An LLVM branch instruction.
+     */
     BranchExprCell(SymbolPtr svcond, bool branchTaken, Instruction *i) 
     : ExprCell(i), branchTaken(branchTaken) {
         this->expr    = svcond->convertToExpr();
@@ -289,7 +305,7 @@ public:
         return branchTaken; 
     }
     /**
-     * Set the which branch was taken by the br instruction.
+     * Set which branch was taken by the br instruction.
      */
     void setBranchTaken(bool branch) { 
         branchTaken = branch; 
@@ -320,14 +336,14 @@ public:
 /**
  *\class CallExprCell
  *
- * This class represent an element (cell) of a path constraint, 
+ * This class represents an element (cell) of a path constraint, 
  * which holds a call instruction. 
  */
 class CallExprCell : public ExprCell {
 
 protected:
     /**
-     * Return value of the function being call.
+     * Return the value of the function being call.
      */
     Value *vret;
     /**
@@ -335,22 +351,50 @@ protected:
      */
     std::vector<SymbolPtr> sargs;
     /**
-     *  Arguments (concrete value) of the function being call.
+     *  Arguments (concrete values) of the function being call.
      */
     std::vector<Value*> vargs;
 
 public:
+    /**
+     * Constructor (call with one argument).
+     *
+     * \param vret The return value of the related call instruction.
+     * \param varg1 The argument value of the related call instruction.
+     * \param i The call instruction related to this cell.
+     */
     CallExprCell(Value *vret, Value *varg1, Instruction *i) 
     : ExprCell(i), vret(vret) { 
         vargs.push_back(varg1);
     }
+    /**
+     * Constructor (call with many arguments).
+     *
+     * \param vret The return value of the related call instruction.
+     * \param vargs The argument values of the related call instruction.
+     * \param i The call instruction related to this cell.
+     */
     CallExprCell(Value *vret, std::vector<Value*> vargs, Instruction *i) 
     : ExprCell(i), vret(vret), vargs(vargs) { 
     }
+    /**
+     * Constructor (call with one symbolic arguement).
+     *
+     * \param vret The return value of the related call instruction.
+     * \param sarg1 The symbolic argument of the related call instruction.
+     * \param i The call instruction related to this cell.
+     */
     CallExprCell(Value *vret, SymbolPtr sarg1, Instruction *i) 
     : ExprCell(i), vret(vret) {
         sargs.push_back(sarg1);
     }
+    /**
+     * Constructor (call with many symbolic arguments).
+     *
+     * \param vret The return value of the related call instruction.
+     * \param sargs The symbolic arguments of the related call instruction.
+     * \param i The call instruction related to this cell.
+     */
     CallExprCell(Value *vret, std::vector<SymbolPtr> sargs, Instruction *i) 
     : ExprCell(i), vret(vret), sargs(sargs) { 
     }
@@ -368,7 +412,7 @@ public:
         return sargs; 
     }
     /**
-     * Return the arguments (concrete value) of the function being call.
+     * Return the arguments (concrete values) of the function being call.
      */
     std::vector<Value*> getArgsValues() { 
         return vargs; 
@@ -382,7 +426,7 @@ public:
     }
     /**
      * \warning{This function cannot be called because 
-     * a CallExprCell does not hold any expression.}
+     * a CallExprCell does not hold any expressions.}
      */
     ExprPtr getExpr() {
         std::cout << "error: no expression for function node!\n";
@@ -390,7 +434,7 @@ public:
     }
     /**
      * \warning{This function cannot be called because 
-     * a CallExprCell does not hold any expression.}
+     * a CallExprCell does not hold any expressions.}
      */
     ExprPtr getNotExpr() {
         std::cout << "error: no expression for function node!\n";
@@ -409,7 +453,7 @@ public:
 /**
  *\class AssertExprCell
  *
- * This class represent an element (cell) of a path constraint, 
+ * This class represents an element (cell) of a path constraint, 
  * which holds a call to a assert function (sniper_assert(bool)). 
  */
 class AssertExprCell : public CallExprCell {
@@ -421,6 +465,13 @@ private:
     bool assertResult;
 
 public:
+    /**
+     * Default constructor.
+     *
+     * \param sarg1 The symbolic value related to this cell.
+     * \param assertResult The outcome of this assert function.
+     * \param i An LLVM function call to an assert function.
+     */
     AssertExprCell(SymbolPtr sarg1, bool assertResult, Instruction *i) 
     : CallExprCell(NULL, sarg1, i), assertResult(assertResult) {
         assert(i && "Expecting an instruction!");
@@ -469,7 +520,7 @@ public:
 /**
  *\class AssumeExprCell
  *
- * This class represent an element (cell) of a path constraint, 
+ * This class represents an element (cell) of a path constraint, 
  * which holds a call to a assume function (sniper_assume(bool)). 
  */
 class AssumeExprCell : public CallExprCell {
@@ -481,6 +532,13 @@ private:
     bool assumeResult;
 
 public:
+    /**
+     * Default constructor.
+     *
+     * \param sarg1 The symbolic value related to this cell.
+     * \param assertResult The outcome of this assume function.
+     * \param i An LLVM function call to an assume function.
+     */
     AssumeExprCell(SymbolPtr sarg1, bool assumeResult, Instruction *i) 
     : CallExprCell(NULL, sarg1, i), assumeResult(assumeResult) { 
         this->expr =  sarg1->convertToExpr();
