@@ -16,27 +16,71 @@ More details on SNIPER and its the architecture can be found in [Publications](#
 
 ### Download SNIPER
 
+<p style='color:red'>TODO: change URLs!</p>
 
-Click [here](https://bitbucket.org/lamraous/hosobe-project/get/b654a4ad5bfb.zip) to download **SNIPER** zip package and extract it to `sniper` on your computer. 
+Click [here](https://bitbucket.org/lamraoui/sniper/get/b654a4ad5bfb.zip) to download **SNIPER** zip package and extract it to `sniper` on your computer. 
 Alternatively, you can checkout the last version of sniper by running the command: 
 ```c
-git clone https://lamraous@bitbucket.org/lamraous/hosobe-project.git
+git clone https://lamraoui@github.org/lamraoui/sniper.git
 ```
 
 ### Installation on Mac OS/Linux
 
-Before proceeding to the following steps, please make sure that you have `gcc >4.8` installed on your computer and correctly installed `clang 3.3`, `llvm 3.3` and `yices 1.0.39`.  
-To install `gcc 4.8`:  
-For Ubuntu, simply run `sudo apt-get install gcc 4.8`.  
-For Mac, simply run `sudo port install gcc 4.8`.  
-For `clang 3.3` and `llvm 3.3` installation on MacOS/Linux, please visit [here](http://llvm.org). 
+Before proceeding to the installation of **SNIPER**, please make sure that you have `gcc >4.8` installed on your computer and correctly installed `clang 3.3`, `llvm 3.3` and `yices 1.0.40`.  
 Note that **SNIPER** requires LLVM to be compiled with the build mode `Release+Debug+Asserts`. You can check this by running the command `llvm-config --build-mode`.
 Also, please note that **SNIPER** will most likely not compile or work with a different version of Clang or LLVM. 
-For `yices 1.0.39` installation on MacOS/Linux, please visit [here](http://yices.csl.sri.com).
+
+If you do not have these tools already installed on your computer, 
+please find below the steps to configure and install them.
+
+
+#### GCC
+
+To install `gcc 4.8`:  
+For Ubuntu, simply run `sudo apt-get install gcc 4.8`
+For Mac, simply run `sudo port install gcc 4.8` or 
+via Homebrew by running the following commands:
+1. brew tap homebrew/versions
+2. brew install gcc48
+
+
+#### Yices API
+
+To install `yices 1.0.40`: 
+1. Download Yices API 1 [here](http://yices.csl.sri.com/old/download-yices1.shtml).
+2. Open a terminal, untar the file: `tar xvzf yices-1.0.40-x86_64-apple-darwin10.8.0-static-gmp.tar.gz`.
+3. `cd yices-1.0.40`
+4. `sudo cp lib/libyices.a /usr/lib/libyices.a`
+5. `sudo cp include/yices_c.h /usr/include/yices_c.h`
+6. `sudo cp include/yicesl_c.h /usr/include/yicesl_c.h`
+
+
+#### Clang and LLVM
+
+
+To install `clang 3.3`:
+1. Open a terminal, an run `sudo port install clang-3.3`
+2. Check Clang version: `clang --version`.
+
+To build and install `llvm 3.3` follow the steps below. 
+The build uses [CMake](http://llvm.org/docs/CMake.html). Although the build is known to work with CMake >= 2.8.8, we recommend CMake >= v3.2.
+
+1. Download LLVM source code [here](http://llvm.org/releases/download.html#3.3).
+2. Open a terminal, untar the file: `tar xvzf llvm-3.3.src.tar.gz`.
+3. Move to the LLVM source code directory: `cd llvm-3.3.src`
+4. `mkdir build`
+5. `cd build`
+6. Generate build targets for LLVM: `cmake -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=RelWithDebInfo -DLLVM_ENABLE_ASSERTIONS=On ../`
+7. Run `make -j x` with x the number of CPU cores available in your computer.
+8. Run `make check-all -j x` to run the regression tests and ensure everything is in working order.
+9. Finally, run `make install` to install LLVM's binaries and libraries on your computer.  
+
+
+#### SNIPER
 
 To compile **SNIPER** follow the steps below.
 1. Open a terminal, cd to `sniper`. 
-2. Run the script `./autogen.sh`.
+2. Run the script `./autogen.sh`
 3. Run the script `./configure`. This will check that all requirements are fulfilled and configure autotools to compile **SNIPER**. 
 4. Run `make -j x` with x the number of CPU cores available in your computer. This will compile **SNIPER**, this can take awhile. 
 5. Run `make check -j x`. This will execute unit tests to check if the compilation went well. 
@@ -90,9 +134,9 @@ Then, run **SNIPER** on the previously generated bitecode:
 ```c
 sniper -v -ce -function foo -cfile ./examples/bekkouche_benchmark/MinmaxKO.c ./examples/bekkouche_benchmark/MinmaxKO.bc
 ```
-This command will execute **SNIPER** with Concolic execution and FFTF.
+This command will execute **SNIPER** with Concolic execution as test-cases generator and the Full Flow-sensitive Trace Formula (FFTF) as program encoding.
 
-The result of the analysis is ouput as below.
+The result of the analysis should be ouput as below.
 ```c
 =================================================
 Running AllDiagnosis algorithm [NOCOMB][FFTF][Line-lvl]
@@ -115,21 +159,41 @@ MCSes (not combined):
 
 ## Help
 
-`sniper --help`
+Command-line options to run can be displayed with the command `sniper --help`.
+
+
+## Documentation
+
+See [doc/html/index.html](./doc/html/index.html) for the documentation of **SNIPER**.
 
 
 ## Experiments
 
-	# Granularity Level Experiment
-	The script `sniper/examples/tcas_benchmark/tcas-granularity-runall.sh` can be 
-	used to run SNIPER on TCAS programs with different granularity levels.
+### TCAS Benchmark
+
+
+### Bekkouche Benchmark
+
+
+
+### Granularity Level Experiment
+
+One of the experiment we performed is the evalution of **SNIPER** on TCAS programs 
+with different granularity levels. To do the experiment run 
+the script `sniper/examples/tcas_benchmark/tcas-granularity-runall.sh` .
 
 
 
 ## Limitations
 
-Supported: subset of ANSI-C, handeling of loops/recursion in currenlty broken,
-array and pointer are partially handled, global variables, 
+The present version of **SNIPER** is rather young and needs much improvements. 
+Currently, **SNIPER** can analyse programs that use a subset of ANSI-C. 
+The handeling of loops and recursion in currenlty broken and needs to be fixed. 
+Global variables, arrays and pointers are partially handled. 
+
+- Unit tests
+
+- Regression tests
 
 
 <a name="publications"></a>
