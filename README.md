@@ -38,6 +38,7 @@ To install `gcc 4.8`:
 For Ubuntu, simply run `sudo apt-get install gcc 4.8`
 For Mac, simply run `sudo port install gcc 4.8` or 
 via Homebrew by running the following commands:
+
 1. brew tap homebrew/versions
 2. brew install gcc48
 
@@ -45,6 +46,7 @@ via Homebrew by running the following commands:
 #### Yices API
 
 To install `yices 1.0.40`: 
+
 1. Download Yices API 1 [here](http://yices.csl.sri.com/old/download-yices1.shtml).
 2. Open a terminal, untar the file: `tar xvzf yices-1.0.40-x86_64-apple-darwin10.8.0-static-gmp.tar.gz`.
 3. `cd yices-1.0.40`
@@ -57,6 +59,7 @@ To install `yices 1.0.40`:
 
 
 To install `clang 3.3`:
+
 1. Open a terminal, an run `sudo port install clang-3.3`
 2. Check Clang version: `clang --version`.
 
@@ -77,6 +80,7 @@ The build uses [CMake](http://llvm.org/docs/CMake.html). Although the build is k
 #### SNIPER
 
 To compile **SNIPER** follow the steps below.
+
 1. Open a terminal, cd to `sniper`. 
 2. Run the script `./autogen.sh`
 3. Run the script `./configure`. This will check that all requirements are fulfilled and configure autotools to compile **SNIPER**. 
@@ -164,6 +168,7 @@ Command-line options to run can be displayed with the command `sniper --help`.
 ## Documentation
 
 The documentation of **SNIPER** can be generated with the following commands:
+
 1. Run `cd docs` to move to the documentation folder.
 2. Run `doxygen doxygen.cfg.in` to generate the documentation.
 3. Open [doc/html/index.html](./doc/html/index.html) to see the documentation.
