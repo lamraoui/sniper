@@ -1,4 +1,4 @@
-.
+# SNIPER Documentation
 
 ## Overview
 
@@ -16,12 +16,10 @@ More details on SNIPER and its the architecture can be found in [Publications](#
 
 ### Download SNIPER
 
-<p style='color:red'>TODO: change URLs!</p>
-
-Click [here](https://bitbucket.org/lamraoui/sniper/get/b654a4ad5bfb.zip) to download **SNIPER** zip package and extract it to `sniper` on your computer. 
+Click [here](https://github.com/lamraoui/sniper/archive/master.zip) to download **SNIPER** zip package and extract it to `sniper` on your computer. 
 Alternatively, you can checkout the last version of sniper by running the command: 
 ```c
-git clone https://lamraoui@github.org/lamraoui/sniper.git
+git clone https://github.com/lamraoui/sniper.git
 ```
 
 ### Installation on Mac OS/Linux
@@ -165,7 +163,10 @@ Command-line options to run can be displayed with the command `sniper --help`.
 
 ## Documentation
 
-See [doc/html/index.html](./doc/html/index.html) for the documentation of **SNIPER**.
+The documentation of **SNIPER** can be generated with the following commands:
+1. Run `cd docs` to move to the documentation folder.
+2. Run `doxygen doxygen.cfg.in` to generate the documentation.
+3. Open [doc/html/index.html](./doc/html/index.html) to see the documentation.
 
 
 ## Experiments
