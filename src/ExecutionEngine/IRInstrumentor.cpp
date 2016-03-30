@@ -1,12 +1,8 @@
 /**
- * IRInstrumentor.cpp
+ * \file IRInstrumentor.cpp
  *
- * 
- *
- * @author : Si-Mohamed Lamraoui
- * @contact : simo@nii.ac.jp
- * @date : 2013/08/21
- * @copyright : NII 2013
+ * \author Si-Mohamed Lamraoui
+ * \date   30 March 2016
  */
 
 #include "IRInstrumentor.h"
