@@ -55,7 +55,13 @@ int main(int argc, char **argv) {
         // Tool options
         Options *opt = new Options(argc, argv);
         
-        
+        if (opt->verbose()) {
+            std::cout <<  "SNIPER  Copyright (C) 2016  Si-Mohamed LAMRAOUI\n";
+            std::cout <<  "This program comes with ABSOLUTELY NO WARRANTY.\n";
+            std::cout <<  "This is free software, and you are welcome to redistribute it\n";
+            std::cout <<  "under certain conditions; see LICENSE.TXT for details.\n\n";
+        }
+
         // Tell user if NDEBUG is defined and do assert
         if(opt->dbgMsg()) {
 #if defined(NDEBUG)

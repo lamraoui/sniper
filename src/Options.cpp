@@ -179,6 +179,10 @@ Options::Options(int argc, char **argv) {
     hideOptions();
     cl::SetVersionPrinter(printVersionInformation);
     cl::ParseCommandLineOptions(argc, argv, 
+    "SNIPER  Copyright (C) 2016  Si-Mohamed LAMRAOUI\n"
+    "This program comes with ABSOLUTELY NO WARRANTY.\n"
+    "This is free software, and you are welcome to redistribute it\n"
+    "under certain conditions; see LICENSE.TXT for details.\n\n"
     "Automatic Error Localizer for Imperative Programs (SNIPER)\n\n"
     "  This program automatically locates root causes\n" 
     "  in imperative programs such as ANSI-C\n\n"
