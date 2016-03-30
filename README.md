@@ -6,7 +6,7 @@
 SNIPER makes use of the LLVM compiler infrastructure for processing input programs, and uses Yices 1 as a backend SMT solver. 
 The architecture of SNIPER is based on the LLVM compiler infrastructure to facilitate the handling of programs to be analyzed. 
 
-**SNIPER** can also be viewed as a framework on top of what it is possible to implement various backends. For example, in the current version, **SNIPER** implements a backend to automatically localize faults (see SniperBackend). Other methods to analyse computer software can be implemented as well, witout much effort. 
+**SNIPER** can also be viewed as a framework on top of what it is possible to implement various backends. For example, in the current version, **SNIPER** implements a backend to automatically localize faults (see SniperBackend). Other methods to analyze computer programs can be implemented as well, without much effort. 
 
 More details on SNIPER and its the architecture can be found in [Publications](#publications).
 
@@ -129,7 +129,7 @@ void foo(int in1,int in2,int in3){
 }
 ```
 
-To analyse this function with **SNIPER** you first need to compile the function into an LLVM bitecode. To do so, run the following command:
+To analyze this function with **SNIPER** you first need to compile the function into an LLVM bitecode. To do so, run the following command:
 ```c
 clang ./examples/bekkouche_benchmark/MinmaxKO.c -S -emit-llvm -O0 -gline-tables-only -o ./examples/bekkouche_benchmark/MinmaxKO.bc
 ```
@@ -139,7 +139,7 @@ sniper -v -ce -function foo -cfile ./examples/bekkouche_benchmark/MinmaxKO.c ./e
 ```
 This command will execute **SNIPER** with Concolic execution as test-cases generator and the Full Flow-sensitive Trace Formula (FFTF) as program encoding.
 
-The result of the analysis should be ouput as below.
+The result of the analysis should be output as below.
 ```c
 =================================================
 Running AllDiagnosis algorithm [NOCOMB][FFTF][Line-lvl]
@@ -162,7 +162,7 @@ MCSes (not combined):
 
 ## Help
 
-Command-line options to run can be displayed with the command `sniper --help`.
+Command-line options to run **SNIPER** can be displayed with the command `sniper --help`.
 
 
 ## Documentation
@@ -171,7 +171,7 @@ The documentation of **SNIPER** can be generated with the following commands:
 
 1. Run `cd docs` to move to the documentation folder.
 2. Run `doxygen doxygen.cfg.in` to generate the documentation.
-3. Open [doc/html/index.html](./doc/html/index.html) to see the documentation.
+3. Open `docs/html/index.html` to see the documentation.
 
 
 ## Experiments
@@ -185,7 +185,7 @@ The documentation of **SNIPER** can be generated with the following commands:
 
 ### Granularity Level Experiment
 
-One of the experiment we performed is the evalution of **SNIPER** on TCAS programs 
+One of the experiment we performed is the evaluation of **SNIPER** on TCAS programs 
 with different granularity levels. To do the experiment run 
 the script `sniper/examples/tcas_benchmark/tcas-granularity-runall.sh` .
 
@@ -194,8 +194,8 @@ the script `sniper/examples/tcas_benchmark/tcas-granularity-runall.sh` .
 ## Limitations
 
 The present version of **SNIPER** is rather young and needs much improvements. 
-Currently, **SNIPER** can analyse programs that use a subset of ANSI-C. 
-The handeling of loops and recursion in currenlty broken and needs to be fixed. 
+Currently, **SNIPER** can analyze programs that use a subset of ANSI-C. 
+The handling of loops and recursion in currently broken and needs to be fixed. 
 Global variables, arrays and pointers are partially handled. 
 
 - Unit tests
