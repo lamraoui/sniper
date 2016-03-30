@@ -86,6 +86,7 @@ To compile **SNIPER** follow the steps below.
 5. Run `make check -j x`. This will execute unit tests to check if the compilation went well. 
 [comment]: <> (5. Run `make test-suite`. This will execute regression tests.)
 6. Run `make install`. This will install **SNIPER**'s binaries on your computer. 
+7. Finally, run `sudo cp includes/sniper/sniper.h /usr/include/sniper/sniper.h`.
 
 
 ### Installation on Windows
@@ -230,6 +231,11 @@ In IEICE Technical Report, SS2013-13, 2013.
 Si-Mohamed Lamraoui and Shin Nakajima. 
 *SNIPER: An LLVM-based Automatic Fault Localization Tool for Imperative Programs.* 
 In IEICE Technical Report, SS2015-15, 2015.
+
+## Licence
+
+**SNIPER** is open source software. You may freely distribute it under the terms of
+the license agreement found in LICENSE.txt.
 
 ## Support
 
