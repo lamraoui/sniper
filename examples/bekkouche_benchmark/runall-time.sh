@@ -59,7 +59,7 @@ function run {
         total=$(echo $output + $total | bc -l)
     done
     total=$(echo "scale=4; $total / $NB_RUN" | bc -l)
-    echo "total = $total"
+    echo "total = $total seconds"
     rm $1.bc
 }
 
@@ -73,8 +73,16 @@ function runFFTF {
     run $1 "FFTF"
 }
 
+# Check if SNIPER binarie exists
+if [ ! -f ../../src/sniper ]; then
+    echo "SNIPER binarie not found!"
+    exit 1
+fi
 
 # Run all programs for both types of formulas
+echo "Experiment for SNIPER on the Bekkouche Benchmark."
+echo ""
+echo "Granularity level:" $GRANU_LEVEL
 echo "Running" $NB_RUN "times each program..."
 echo ""
 
