@@ -39,8 +39,8 @@ For Ubuntu, simply run `sudo apt-get install gcc 4.8`
 For Mac, simply run `sudo port install gcc 4.8` or 
 via Homebrew by running the following commands:
 
-1. brew tap homebrew/versions
-2. brew install gcc48
+1. `brew tap homebrew/versions`
+2. `brew install gcc48`
 
 
 #### Yices API
@@ -86,7 +86,6 @@ To compile **SNIPER** follow the steps below.
 3. Run the script `./configure`. This will check that all requirements are fulfilled and configure autotools to compile **SNIPER**. 
 4. Run `make -j x` with x the number of CPU cores available in your computer. This will compile **SNIPER**, this can take awhile. 
 5. Run `make check -j x`. This will execute unit tests to check if the compilation went well. 
-[comment]: <> (5. Run `make test-suite`. This will execute regression tests.)
 6. Run `make install`. This will install **SNIPER**'s binaries on your computer. 
 7. Finally, run `sudo cp includes/sniper/sniper.h /usr/include/sniper/sniper.h`.
 
