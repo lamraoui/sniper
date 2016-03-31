@@ -2,7 +2,7 @@
 
 ## Overview
 
-**SNIPER** (SNIPER is Not an Imperative Errors Repairer) is a tool to automatically localize faults in imperative programs, such as ANSI C. 
+**SNIPER** (SNIPER is Not an Imperative Errors Repairer) is a tool to automatically localize faults in imperative programs, such as the ones written in *ANSI C*. 
 SNIPER makes use of the LLVM compiler infrastructure for processing input programs, and uses Yices 1 as a backend SMT solver. 
 The architecture of SNIPER is based on the LLVM compiler infrastructure to facilitate the handling of programs to be analyzed. 
 
@@ -180,8 +180,9 @@ The documentation of **SNIPER** can be generated with the following commands:
 
 #### Runtime: FFTF vs. HFTF
 
-Runtime of **SNIPER** on the TCAS benchmark with different program encodings, 
-Full Flow-sensitive Trace Formula (FFTF) and Hardened Flow-sensitive Trace Formula (HFTF).
+This experiment aims at comparing the runtime of **SNIPER** on the TCAS benchmark 
+with different program encodings, Full Flow-sensitive Trace Formula (FFTF) 
+and Hardened Flow-sensitive Trace Formula (HFTF).
 To run the experiment, follow the steps below.  
 
 1. `cd examples/tcas_benchmark/`
@@ -201,7 +202,7 @@ To run the experiment, follow the steps below.
 
 #### Granularity Level Experiment
 
-One of the experiment we performed is the evaluation of **SNIPER** on TCAS programs 
+One of the experiments we performed is the evaluation of **SNIPER** on TCAS programs 
 with different granularity levels. To run the experiment, follow the steps below.  
 
 1. `cd examples/tcas_benchmark/`
@@ -213,8 +214,9 @@ with different granularity levels. To run the experiment, follow the steps below
 
 #### Runtime: FFTF vs. HFTF
 
-Runtime of **SNIPER** on the Bekkouche's benchmark with different program encodings, 
-Full Flow-sensitive Trace Formula (FFTF) and Hardened Flow-sensitive Trace Formula (HFTF).
+This experiment aims at comparing the runtime  of **SNIPER** on the Bekkouche's benchmark 
+with different program encodings, Full Flow-sensitive Trace Formula (FFTF) 
+and Hardened Flow-sensitive Trace Formula (HFTF).
 To run the experiment, follow the steps below.  
 
 1. `cd examples/bekkouche_benchmark/`
@@ -235,13 +237,9 @@ To run the experiment, follow the steps below.
 ## Limitations
 
 The present version of **SNIPER** is rather young and needs much improvements. 
-Currently, **SNIPER** can analyze programs that use a subset of ANSI-C. 
+Currently, **SNIPER** can analyze programs that use a subset of ANSI-C only. 
 The handling of loops and recursion in currently broken and needs to be fixed. 
 Global variables, arrays and pointers are partially handled. 
-
-- Unit tests
-
-- Regression tests
 
 
 <a name="publications"></a>
