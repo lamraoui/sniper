@@ -1,4 +1,4 @@
-# SNIPER Documentation
+# SNIPER
 
 ## Overview
 
