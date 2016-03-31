@@ -54,7 +54,7 @@ void MSG(std::string msg, Options *o = NULL);
 /**
  * \class MSTimer
  *
- * This class provides a timer.
+ * \brief This class provides a timer.
  */
 class MSTimer {
     

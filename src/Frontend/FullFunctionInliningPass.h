@@ -50,7 +50,8 @@ using namespace llvm;
 /**
  * \class FullFunctionInliningPass
  *
- * This class is an LLVM pass that inline function calls.
+ * \brief This class is an LLVM pass that inline function calls.
+ *
  * Inlining a function call consist of replacing a call instruction by 
  * the callee function bodies.
  */

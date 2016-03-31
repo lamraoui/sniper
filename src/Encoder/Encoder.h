@@ -63,7 +63,7 @@ using namespace llvm;
 /**
  * \class Encoder
  *
- * This class provides functions to encode LLVM instructions
+ * \brief This class provides functions to encode LLVM instructions
  * into logic formulas (expressions).
  *
  * Note: This is the light version of Encoder.

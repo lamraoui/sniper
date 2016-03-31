@@ -51,7 +51,7 @@ class FunctionSummary;
 /**
  * \class ProgramProfile
  *
- * This class holds program execution traces.
+ * \brief This class holds program execution traces.
  */
 class ProgramProfile {
 

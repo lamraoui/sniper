@@ -55,7 +55,7 @@ using namespace llvm;
 /**
  * \class IRInstrumentor
  *
- * This class is used to instrument an LLVM code 
+ * \brief This class is used to instrument an LLVM code 
  * so that the concolic execution can collect concrete 
  * and symbolic values at execution time. 
  */

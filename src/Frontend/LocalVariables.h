@@ -42,7 +42,7 @@
 using namespace llvm;
 
 /**
- * A variable of an LLVM instruction.
+ * \brief A variable of an LLVM instruction.
  */
 typedef struct varArg {
     Instruction *inst; /*< Instruction that uses the variable */
@@ -53,6 +53,8 @@ typedef struct varArg {
 
 /**
  * \class LocalVariables
+ *
+ * \brief This class stores LLVM local variable information. 
  *
  * While putting the IR into SSA form, LLVM automatically propagates 
  * constant values. This is something we want to avoid because we 

@@ -71,8 +71,9 @@ enum Status {
 /**
  * \class Executor
  *
- * This class provides static functions that are called 
+ * \brief This class provides static functions that are called 
  * in the instrumented version of the target function. 
+ *
  * It collects various information related to program exections. 
  * It also collects path constraints and symbols for concolic execution. 
  */

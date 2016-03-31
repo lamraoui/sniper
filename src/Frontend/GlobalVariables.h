@@ -47,7 +47,7 @@ using namespace llvm;
 /**
  * \class GlobalVariables
  *
- * This class provides a method to move global variable
+ * \brief This class provides a method to move global variable
  * declarations to the target function.
  */
 class GlobalVariables {

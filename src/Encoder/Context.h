@@ -60,7 +60,8 @@ typedef std::map<std::string, ExprPtr> name2expr_map;
 /**
  * \class Context
  *
- * A context stores a collection of variables and expressions.
+ * \brief A context stores a collection of variables and expressions.
+ *
  * The context maps LLVM variables to SNIPER expressions.  
  * It also provides functions to manipulate the map, 
  * such as add or get.

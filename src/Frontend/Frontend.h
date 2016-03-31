@@ -55,7 +55,8 @@ using namespace llvm;
 /**
  * \class Frontend
  *
- * This class provides functions that pre-process the input program.
+ * \brief This class provides functions that pre-process the input program.
+ *
  * The pre-processing consist of inlining function calls, puting the intermediate
  * representation in SSA form, and unwinding loops fully (if prossible) or
  * to given a bound.

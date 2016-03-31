@@ -85,7 +85,7 @@ enum SearchStrategy {
 /**
  * \class ConcolicModule
  *
- * This class provides a base class to 
+ * \brief This class provides a base class to 
  * implement a concolic execution algorithm. 
  *
  * Concolic execution can be used to generate 

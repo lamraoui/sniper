@@ -40,7 +40,7 @@ using namespace llvm;
 /**
  * \class Options
  *
- * User defined options.
+ * \brief User defined options.
  */
 class Options {
 

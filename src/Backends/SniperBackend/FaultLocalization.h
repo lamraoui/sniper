@@ -48,7 +48,7 @@ using namespace llvm;
 /**
  * \class FaultLocalization
  *
- * This class implements various algorithms to do automatic 
+ * \brief This class implements various algorithms to do automatic 
  * fault localization of imperative programs with multiple faults.
  */
 class FaultLocalization {

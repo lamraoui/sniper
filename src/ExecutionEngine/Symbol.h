@@ -73,7 +73,8 @@ typedef std::shared_ptr<GepOpSymbol> GepOpSymbolPtr;
 /**
  * \class Symbol
  *
- * This class represents symbols. 
+ * \brief This class represents symbolic variables. 
+ *
  * In concolic execution (see ConcolicModule), 
  * variables are treated as symbolic variables during 
  * symbolic execution. 
@@ -152,8 +153,9 @@ public:
 /**
  * \class InputSymbol
  *
- * An input symbol is a symbol that represents an 
+ * \brief An input symbol is a symbol that represents an 
  * argument of the target function.
+ *
  * See ConcolicModule for more details. 
  */
 class InputSymbol : public Symbol {
@@ -178,7 +180,7 @@ public:
 /**
  * \class BinaryOpSymbol
  *
- * A binary op symbol is a symbol that represents 
+ * \brief A binary op symbol is a symbol that represents 
  * a binary instruction (add, sub, ...).
  */
 class BinaryOpSymbol : public Symbol {
@@ -189,7 +191,7 @@ protected:
 /**
  * \class SSBinaryOpSymbol
  *
- * This class is a binary op symbol with 
+ * \brief This class is a binary op symbol with 
  * two of its arguments being symbolic variables. 
  *
  * S(v)= S(v1) op S(v2)
@@ -223,7 +225,7 @@ public:
 /**
  * \class SVBinaryOpSymbol
  *
- * This class is a binary op symbol with 
+ * \brief This class is a binary op symbol with 
  * the first argument being a symbolic variable 
  * and the second argument being a concrete value.
  *
@@ -256,7 +258,7 @@ public:
 /**
  * \class VSBinaryOpSymbol
  *
- * This class is a binary op symbol with 
+ * \brief This class is a binary op symbol with 
  * the first argument being a concrete value 
  * and the second argument being a symbolic variable. 
  *
@@ -289,7 +291,7 @@ public:
 /**
  * \class SelectOpSymbol
  *
- * A select symbol is a symbol that represents 
+ * \brief A select symbol is a symbol that represents 
  * a select instruction (a?b:c).
  */
 class SelectOpSymbol : public Symbol {
@@ -302,7 +304,7 @@ public:
 /**
  * \class SSSelectOpSymbol
  *
- * This class is a select symbol with all   
+ * \brief This class is a select symbol with all   
  * of its arguments being symbolic variables. 
  *
  * S(v)= S(v1) ? S(v2) : S(v3)
@@ -335,7 +337,7 @@ public:
 /**
  * \class VSSelectOpSymbol
  *
- * This class is a select symbol with the 
+ * \brief This class is a select symbol with the 
  * second argument being a concrete value and    
  * the other arguments being symbolic variables. 
  *
@@ -369,7 +371,7 @@ public:
 /**
  * \class SVSelectOpSymbol
  *
- * This class is a select symbol with the 
+ * \brief This class is a select symbol with the 
  * last argument being a concrete value and    
  * the other arguments being symbolic variables. 
  *
@@ -403,7 +405,7 @@ public:
 /**
  * \class VVSelectOpSymbol
  *
- * This class is a select symbol with the  
+ * \brief This class is a select symbol with the  
  * first argument being a symbolic variable and    
  * the other arguments being concrete values. 
  *
@@ -437,7 +439,7 @@ public:
 /**
  * \class CastOpSymbol
  *
- * A cast op symbol is a symbol that represents 
+ * \brief A cast op symbol is a symbol that represents 
  * a cast instruction.
  *
  * S(v)= cast S(v1)
@@ -483,7 +485,7 @@ public:
 /**
  * \class GepOpSymbol
  *
- * A gep op symbol is a symbol that represents 
+ * \brief A gep op symbol is a symbol that represents 
  * a get pointer element instruction.
  *
  * P(ptr) = gep *a, S(v1)

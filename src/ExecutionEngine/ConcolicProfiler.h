@@ -42,7 +42,7 @@ using namespace llvm;
 /**
  * \class ConcolicProfiler
  *
- * This class implements the concolic execution algorithm.
+ * \brief This class implements the concolic execution algorithm.
  * See ConcolicModule for details.
  */
 class ConcolicProfiler : public ConcolicModule {

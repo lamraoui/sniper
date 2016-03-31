@@ -51,8 +51,9 @@ using namespace llvm;
 /**
  * \class SniperBackend
  *
- * This class implements a backend to do automatic 
+ * \brief This class implements a backend to do automatic 
  * fault localization of multi-fault imperative programs.
+ *
  * The backend follows the formula-based approach for 
  * imperative programs. 
  */

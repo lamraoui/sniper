@@ -45,8 +45,9 @@ using namespace llvm;
 /**
  * \class IRRunner
  *
- * This class is used in case the user has already 
+ * \brief This class is used in case the user has already 
  * a set of test cases available. 
+ *
  * This class implements a module to parse the test cases 
  * in the format used by SNIPER. This module uses the same 
  * implementation of the ConcolicProfiler but with the 

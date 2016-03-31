@@ -458,7 +458,7 @@ public:
 /**
  * \class SingleExpression
  *
- * A class representing a leaf expression such as a variable.
+ * \brief A class representing a leaf expression such as a variable.
  */
 class SingleExpression : public Expression {
 protected:
@@ -483,7 +483,7 @@ public:
 /**
  * \class BinaryExpression
  * 
- * A class representing an expression with two arguments.
+ * \brief A class representing an expression with two arguments.
  */
 class BinaryExpression : public Expression {
 protected:
@@ -515,7 +515,7 @@ public:
 /**
  * \class TrinaryExpression
  *
- * A class representing an expression with three arguments.
+ * \brief A class representing an expression with three arguments.
  */
 class TrinaryExpression : public Expression {
 protected:
@@ -555,7 +555,7 @@ public:
 /**
  * \class UnaryExpression
  *
- * A class representing an expression with \a n arguments.
+ * \brief A class representing an expression with \a n arguments.
  */
 class UnaryExpression : public Expression {
 protected:
@@ -592,7 +592,7 @@ public:
 /**
  * \class TrueExpression
  *
- * An expression representing \a true.
+ * \brief An expression representing \a true.
  */
 class TrueExpression : public Expression {
 public:    
@@ -611,7 +611,7 @@ public:
 /**
  * \class FalseExpression
  *
- * An expression representing \a false.
+ * \brief An expression representing \a false.
  */
 class FalseExpression : public Expression {
 public:
@@ -630,7 +630,7 @@ public:
 /**
  * \class UInt32NumExpression
  *
- * An expression representing an unsigned integer value.
+ * \brief An expression representing an unsigned integer value.
  */
 class UInt32NumExpression : public Expression {
 protected:
@@ -659,7 +659,7 @@ public:
 /**
  * \class SInt32NumExpression
  *
- * An expression representing a signed integer value.
+ * \brief An expression representing a signed integer value.
  */
 class SInt32NumExpression : public Expression {
 protected:
@@ -688,7 +688,7 @@ public:
 /**
  * \class BoolVarExpression
  *
- * An expression representing a Boolean variable.
+ * \brief An expression representing a Boolean variable.
  */
 class BoolVarExpression : public SingleExpression {
 public:
@@ -716,7 +716,7 @@ public:
 /**
  * \class IntVarExpression
  *
- * An expression representing an integer variable.
+ * \brief An expression representing an integer variable.
  */
 class IntVarExpression : public SingleExpression {
 public:
@@ -743,7 +743,7 @@ public:
 /**
  * \class IntToIntVarExpression
  *
- * An expression representing a function (int->int) variable.
+ * \brief An expression representing a function (int->int) variable.
  */
 class IntToIntVarExpression : public SingleExpression {
 public:
@@ -765,7 +765,7 @@ public:
 /**
  * \class ToParseExpression
  * 
- * An expression representing a parsed expression.
+ * \brief An expression representing a parsed expression.
  */
 class ToParseExpression : public Expression {
 private:
@@ -794,7 +794,7 @@ public:
 /**
  * \class GeExpression
  * 
- * An expression representing \a e1 >= e2.
+ * \brief An expression representing \a e1 >= e2.
  */
 class GeExpression : public BinaryExpression {
 public:
@@ -821,7 +821,7 @@ public:
 /**
  * \class GtExpression
  * 
- * An expression representing \a e1 > e2.
+ * \brief An expression representing \a e1 > e2.
  */
 class GtExpression : public BinaryExpression {
 public:
@@ -848,7 +848,7 @@ public:
 /**
  * \class LeExpression
  *
- * An expression representing \a e1 <= e2.
+ * \brief An expression representing \a e1 <= e2.
  */
 class LeExpression : public BinaryExpression {
 public:
@@ -875,7 +875,7 @@ public:
 /**
  * \class LtExpression 
  * 
- * An expression representing \a e1 < e2.
+ * \brief An expression representing \a e1 < e2.
  */
 class LtExpression : public BinaryExpression {
 public:
@@ -902,7 +902,7 @@ public:
 /**
  * \class DiseqExpression
  *
- * An expression representing \a e1 != e2.
+ * \brief An expression representing \a e1 != e2.
  */
 class DiseqExpression : public BinaryExpression {
 public:
@@ -929,7 +929,7 @@ public:
 /**
  * \class EqExpression
  *
- * An expression representing \a e1 = e2.
+ * \brief An expression representing \a e1 = e2.
  */
 class EqExpression : public BinaryExpression {
 public:
@@ -956,7 +956,7 @@ public:
 /**
  * \class NotExpression
  *
- * An expression representing \a (not e).
+ * \brief An expression representing \a (not e).
  */
 class NotExpression : public Expression {
 protected:
@@ -987,7 +987,7 @@ public:
 /**
  * \class AndExpression
  *
- * An expression representing \a e1 and e2.
+ * \brief An expression representing \a e1 and e2.
  */
 class AndExpression : public UnaryExpression {
 public:
@@ -1031,7 +1031,7 @@ public:
 /**
  * \class OrExpression
  * 
- * An expression representing \a e1 or e2.
+ * \brief An expression representing \a e1 or e2.
  */
 class OrExpression : public UnaryExpression {
 public:
@@ -1075,7 +1075,7 @@ public:
 /**
  * \class XorExpression
  *
- * An expression representing \a e1 xor e2.
+ * \brief An expression representing \a e1 xor e2.
  */
 class XorExpression : public UnaryExpression {
 public:
@@ -1119,7 +1119,7 @@ public:
 /**
  * \class SumExpression
  *
- * An expression representing \a e1 + e2.
+ * \brief An expression representing \a e1 + e2.
  */
 class SumExpression : public UnaryExpression {
 public:
@@ -1163,7 +1163,7 @@ public:
 /**
  * \class SubExpression
  *
- * An expression representing \a e1 - e2.
+ * \brief An expression representing \a e1 - e2.
  */
 class SubExpression : public UnaryExpression {
 public:
@@ -1207,7 +1207,7 @@ public:
 /**
  * \class MulExpression
  *
- * An expression representing \a e1 * e2.
+ * \brief An expression representing \a e1 * e2.
  */
 class MulExpression : public UnaryExpression {
 public:
@@ -1251,7 +1251,7 @@ public:
 /**
  * \class DivExpression
  *
- * An expression representing \a e1 / e2.
+ * \brief An expression representing \a e1 / e2.
  */
 class DivExpression : public BinaryExpression {
 public:
@@ -1278,7 +1278,7 @@ public:
 /**
  * \class ModExpression
  *
- * An expression representing \a e1 % e2.
+ * \brief An expression representing \a e1 % e2.
  */
 class ModExpression : public BinaryExpression {
 public:
@@ -1305,7 +1305,7 @@ public:
 /**
  * \class IteExpression
  *
- * An expression representing \a (IF cond then eelse).
+ * \brief An expression representing \a (IF cond then eelse).
  */
 class IteExpression : public TrinaryExpression {
 public:
@@ -1337,7 +1337,7 @@ public:
 /**
  * \class AppExpression
  *
- * An expression representing the function 
+ * \brief An expression representing the function 
  * application term \a (e1 e2).
  */
 class AppExpression : public BinaryExpression {
@@ -1365,7 +1365,7 @@ public:
 /**
  * \class UpdateExpression
  *
- * An expression representing a function 
+ * \brief An expression representing a function 
  * update term \a (update f (arg) v).
  */
 class UpdateExpression : public TrinaryExpression {

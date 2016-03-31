@@ -66,7 +66,7 @@ using namespace llvm;
 /**
  * \class LoopInfoPass
  *
- * This class is an LLVM pass that processes loops in the target function.
+ * \brief This class is an LLVM pass that processes loops in the target function.
  */
 class LoopInfoPass : public FunctionPass {
     

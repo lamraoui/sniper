@@ -41,7 +41,7 @@
 /**
  * \class HittingSet
  *
- * This class provides a method to compute minimal hitting-set.
+ * \brief This class provides a method to compute minimal hitting-set.
  */
 template <typename T>
 class HittingSet {

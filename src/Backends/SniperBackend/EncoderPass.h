@@ -47,7 +47,7 @@ using namespace llvm;
 /**
  * \class EncoderPass
  *
- * This class is used to encode an LLVM function
+ * \brief This class is used to encode an LLVM function
  * into a logic formula, a trace formula.
  *
  * Note: This class uses a light version of Encoder.

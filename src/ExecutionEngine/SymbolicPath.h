@@ -55,7 +55,7 @@ typedef std::shared_ptr<AssertExprCell> AssertExprCellPtr;
 typedef std::shared_ptr<AssumeExprCell> AssumeExprCellPtr;
 
 /**
- * State of a branching point.
+ * \brief State of a branching point.
  */
 typedef struct State {
     bool branch; /**< Value of the branch instruction condition (true:bb1,false:bb2). */
@@ -65,10 +65,12 @@ typedef struct State {
 /**
  * \class SymbolicPath
  *　
- * This class is used in the concolic execution engine. 
- * This class represents a path constraint (PC) 
+ * \brief This class represents a path constraint (PC) 
  * to collect symbolic predicate expressions from branching 
- * points. The conjunction of the predicates in PC holds for 
+ * points. 
+ * 
+ * This class is used in the concolic execution engine. 
+ * The conjunction of the predicates in PC holds for 
  * the execution path. The CUTE algorithm (concolic execution 
  * algorithm) checks whether the PC with the last constraint 
  * negated is satisfiable. If so, new input values can be generated 
@@ -207,7 +209,7 @@ private:
 /**
  *\class ExprCell
  *
- * Base class to represent an element (cell) of a path constraint. 
+ * \brief Base class to represent an element (cell) of a path constraint. 
  */
 class ExprCell {
 
@@ -290,7 +292,7 @@ public:
 /**
  *\class BranchExprCell
  *
- * This class represents an element (cell) of a path constraint, 
+ * \brief This class represents an element (cell) of a path constraint, 
  * which holds a branch instruction. 
  */
 class BranchExprCell : public ExprCell {
@@ -356,7 +358,7 @@ public:
 /**
  *\class CallExprCell
  *
- * This class represents an element (cell) of a path constraint, 
+ * \brief This class represents an element (cell) of a path constraint, 
  * which holds a call instruction. 
  */
 class CallExprCell : public ExprCell {
@@ -473,7 +475,7 @@ public:
 /**
  *\class AssertExprCell
  *
- * This class represents an element (cell) of a path constraint, 
+ * \brief This class represents an element (cell) of a path constraint, 
  * which holds a call to a assert function (sniper_assert(bool)). 
  */
 class AssertExprCell : public CallExprCell {
@@ -540,7 +542,7 @@ public:
 /**
  *\class AssumeExprCell
  *
- * This class represents an element (cell) of a path constraint, 
+ * \brief This class represents an element (cell) of a path constraint, 
  * which holds a call to a assume function (sniper_assume(bool)). 
  */
 class AssumeExprCell : public CallExprCell {

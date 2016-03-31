@@ -59,7 +59,7 @@ typedef std::shared_ptr<InputVariableTrace> InputVarTracePtr;
 /**
  * \class ProgramTrace
  *
- * \brief Execution trace.
+ * \brief Program execution trace.
  *
  * An execution trace holds the input values that trigger the execution,
  * the executed LLVM basicblocks, and the expected program output (oracle).
@@ -277,7 +277,7 @@ public:
 /**
  * \class InputVariableTrace
  * 
- * An input variable of a program execution trace.
+ * \brief An input variable of a program execution trace.
  */
 class InputVariableTrace {
     
@@ -372,7 +372,7 @@ public:
 /**
  * \class Variables
  *
- * A set of input variables of a program execution trace.
+ * \brief  A set of input variables of a program execution trace.
  */
 class Variables {
     
