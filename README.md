@@ -288,3 +288,7 @@ the license agreement found in LICENSE.txt.
 
 If you have questions about **SNIPER**, please contact [simohamed.lamraoui AT gmail DOT com].
 
+
+## Acknowledgement
+
+This research was partially supported by *JSPS KAKENHI Grant Number 24300010* and the *Kayamori Foundation of Informational Science Advancement*.
