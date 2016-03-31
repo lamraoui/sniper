@@ -69,6 +69,12 @@ function runFFTFb {
      run $1 "block"
 }
 
+# Check if SNIPER binarie exists
+if [ ! -f ../../src/sniper ]; then
+    echo "SNIPER binarie not found!"
+    exit 1
+fi
+
 # Run all TCAS programs for both type of formula
 echo "Running all TCAS versions with time()..."
 echo ""
