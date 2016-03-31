@@ -178,17 +178,58 @@ The documentation of **SNIPER** can be generated with the following commands:
 
 ### TCAS Benchmark
 
+#### Runtime: FFTF vs. HFTF
+
+Runtime of **SNIPER** on the TCAS benchmark with different program encodings, 
+Full Flow-sensitive Trace Formula (FFTF) and Hardened Flow-sensitive Trace Formula (HFTF).
+To run the experiment, follow the steps below.  
+
+1. `cd examples/tcas_benchmark/`
+2. `chmod +x runall-time.sh`
+3. `./runall-time.sh`
+
+#### CSR: FFTF vs. HFTF
+
+This experiment aims at comparing the Code Size Reduction (CSR) obtained with **SNIPER** 
+on the TCAS benchmark programs.
+To run the experiment, follow the steps below. 
+
+1. `cd examples/tcas_benchmark/`
+2. `chmod +x runall-csr.sh`
+3. `./runall-csr.sh`
+
+
+#### Granularity Level Experiment
+
+One of the experiment we performed is the evaluation of **SNIPER** on TCAS programs 
+with different granularity levels. To run the experiment, follow the steps below.  
+
+1. `cd examples/tcas_benchmark/`
+2. `chmod +x tcas-granularity-runall.sh`
+3. `./tcas-granularity-runall.sh`
+
 
 ### Bekkouche Benchmark
 
+#### Runtime: FFTF vs. HFTF
 
+Runtime of **SNIPER** on the Bekkouche's benchmark with different program encodings, 
+Full Flow-sensitive Trace Formula (FFTF) and Hardened Flow-sensitive Trace Formula (HFTF).
+To run the experiment, follow the steps below.  
 
-### Granularity Level Experiment
+1. `cd examples/bekkouche_benchmark/`
+2. `chmod +x runall-time.sh`
+3. `./runall-time.sh`
 
-One of the experiment we performed is the evaluation of **SNIPER** on TCAS programs 
-with different granularity levels. To do the experiment run 
-the script `sniper/examples/tcas_benchmark/tcas-granularity-runall.sh` .
+#### CSR: FFTF vs. HFTF
 
+This experiment aims at comparing the Code Size Reduction (CSR) obtained with **SNIPER** 
+on the Bekkouche's benchmark programs.
+To run the experiment, follow the steps below. 
+
+1. `cd examples/bekkouche_benchmark/`
+2. `chmod +x runall-csr.sh`
+2. `./runall-csr.sh`
 
 
 ## Limitations
@@ -206,35 +247,35 @@ Global variables, arrays and pointers are partially handled.
 <a name="publications"></a>
 ## Publications
 
-Si-Mohamed Lamraoui. 
+* Si-Mohamed Lamraoui. 
 *Formula-based Fault Localization for Imperative Programs with Multiple Faults.*
 Supervisor: Shin Nakajima. PhD Thesis, 2016.
 
-Si-Mohamed Lamraoui and Shin Nakajima. 
+* Si-Mohamed Lamraoui and Shin Nakajima. 
 *A Formula-based Approach for Automatic Fault Localization of Imperative Programs.*
 In Journal of Information Processing, 24(1):pages 88–98, January 2016.
 
-Si-Mohamed Lamraoui, Shin Nakajima, and Hiroshi Hosobe. 
+* Si-Mohamed Lamraoui, Shin Nakajima, and Hiroshi Hosobe. 
 *Hardened Flow-sensitive Trace %Formula for Fault Localization.* 
 In Proc. ICECCS’15, pages 50–59, 2015.
 
-Clàudio Belo Loureno, Si-Mohamed Lamraoui, Shin Nakajima, and Jorge Sousa Pinto. 
+* Clàudio Belo Loureno, Si-Mohamed Lamraoui, Shin Nakajima, and Jorge Sousa Pinto. 
 *Studying Verification Conditions for Imperative Programs.* 
 In Proc. AVoCS 2015.
 
-Si-Mohamed Lamraoui and Shin Nakajima. 
+* Si-Mohamed Lamraoui and Shin Nakajima. 
 *A Formula-based Approach for Automatic Fault Localization of Imperative Programs.* 
 In Proc. ICFEM’14, pages 251–266, 2014.
 
-Si-Mohamed Lamraoui and Shin Nakajima. 
+* Si-Mohamed Lamraoui and Shin Nakajima. 
 *SNIPER: A Tool for Automatically Localizing Errors in Imperative Programs.* 
 In Proc. SES2013, 2013.
 
-Si-Mohamed Lamraoui and Shin Nakajima. 
+* Si-Mohamed Lamraoui and Shin Nakajima. 
 *Automated Error Localization with Weighted Partial Maximum Satisfiability.* 
 In IEICE Technical Report, SS2013-13, 2013.
 
-Si-Mohamed Lamraoui and Shin Nakajima. 
+* Si-Mohamed Lamraoui and Shin Nakajima. 
 *SNIPER: An LLVM-based Automatic Fault Localization Tool for Imperative Programs.* 
 In IEICE Technical Report, SS2015-15, 2015.
 
