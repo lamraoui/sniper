@@ -33,6 +33,12 @@ then
   exit 0
 fi
 
+# Check if SNIPER binarie exists
+if [ ! -f src/sniper ]; then
+    echo "SNIPER binarie not found!"
+    exit 1
+fi
+
 clang-mp-3.3 $2 -S -emit-llvm -O0 -gline-tables-only -o $2.bc 
 echo "Bitecode generated"
 
