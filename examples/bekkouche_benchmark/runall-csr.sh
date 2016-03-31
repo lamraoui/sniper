@@ -69,7 +69,7 @@ fi
 echo "Experiment for SNIPER on the Bekkouche Benchmark."
 echo ""
 echo "Granularity level:" $GRANU_LEVEL
-echo "Running" $NB_RUN "times each program..."
+echo "Getting average code size reductions (ACSR) for each program..."
 echo ""
 
 echo "=== HFTF ==================================="
